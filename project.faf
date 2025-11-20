@@ -1,0 +1,42 @@
+name: grok-faf-elite
+version: 0.1.0
+description: Zero faff from day zero — Grok-ready in one click. F1-Inspired Elite Edition for elite devs.
+ai_readiness: 95%
+
+tech_stack:
+  framework: SvelteKit 5
+  language: TypeScript (strict)
+  styling: Tailwind CSS 4
+  deployment: Vercel
+
+architecture:
+  pattern: Component-based SPA
+  state: Svelte 5 runes ($state, $props, $effect)
+  routing: SvelteKit file-based routing
+
+features:
+  - New project creation from template
+  - GitHub repository FAF integration
+  - Direct MCP server URL access
+  - Copy-to-clipboard commands
+  - Native dialog modals for accessibility
+
+components:
+  BigOrange: Animated logo with hover effects
+  ActionButton: Reusable button with icon snippets
+  Modal: Native dialog-based accessible modal
+
+performance_targets:
+  bundle_size: <20 kB gzipped
+  build_time: <5s
+  first_paint: <100ms
+
+integrations:
+  - grok-faf-mcp (npm package)
+  - MCP server at https://grok-faf-mcp.vercel.app/sse
+
+commands:
+  dev: npm run dev
+  build: npm run build
+  check: npm run check
+  preview: npm run preview

@@ -1,0 +1,17 @@
+{
+	"name": "Grok-FAF-Elite",
+	"short_name": "FAF Elite",
+	"description": "Zero faff from day zero — Grok-ready in one click",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#000000",
+	"theme_color": "#FF8C00",
+	"icons": [
+		{
+			"src": "/icon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any maskable"
+		}
+	]
+}
