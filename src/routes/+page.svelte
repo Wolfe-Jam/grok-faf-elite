@@ -114,19 +114,39 @@
 			{/snippet}
 		</ActionButton>
 
-		<!-- Branded Share on X -->
+		<!-- Branded Share on X - X black theme -->
 		<div class="mt-6 pt-6 border-t border-muted-foreground/20">
-			<ActionButton
+			<button
 				onclick={() => showBiSync = true}
-				label="Share on X"
-				description="Post your bi-sync to X (requires API keys)"
+				class="group relative w-full p-6 bg-black rounded-xl border border-white/20
+					hover:border-white/40 hover:bg-black/80 transition-all duration-200
+					focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-background"
+				type="button"
 			>
-				{#snippet icon()}
-					<svg viewBox="0 0 24 24" fill="currentColor">
-						<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+				<div class="flex items-start gap-4">
+					<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center
+						group-hover:bg-white/20 transition-colors duration-200">
+						<span class="text-white w-5 h-5">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+							</svg>
+						</span>
+					</div>
+					<div class="text-left">
+						<h3 class="text-lg font-semibold text-white group-hover:text-white transition-colors duration-200">
+							Share on X
+						</h3>
+						<p class="text-sm text-white/60 mt-1">
+							Post your bi-sync to X
+						</p>
+					</div>
+				</div>
+				<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+					<svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M5 12h14M12 5l7 7-7 7" />
 					</svg>
-				{/snippet}
-			</ActionButton>
+				</div>
+			</button>
 		</div>
 	</div>
 
