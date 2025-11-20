@@ -163,6 +163,9 @@
 		<p class="mt-4 text-xs italic text-muted-foreground/70">
 			"It's so logical if it didn't exist, AI would have built it itself" — Claude
 		</p>
+		<p class="mt-6">
+			<a href="https://faf.one" target="_blank" rel="noopener" class="text-primary hover:underline">faf.one</a>
+		</p>
 	</footer>
 </main>
 
