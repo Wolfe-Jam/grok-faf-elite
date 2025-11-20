@@ -3,14 +3,14 @@
 </script>
 
 <div
-	class="relative animate-pulse-glow"
+	class="relative animate-pulse-glow animate-pulse-heart"
 	role="img"
 	aria-label="Big Orange Logo"
 	onmouseenter={() => hover = true}
 	onmouseleave={() => hover = false}
 >
 	<!-- Orange Body -->
-	<div class="w-32 h-32 rounded-full relative z-10 flex items-center justify-center overflow-hidden animate-pulse-heart">
+	<div class="w-32 h-32 rounded-full relative z-10 flex items-center justify-center overflow-hidden">
 		<div class="absolute inset-0 bg-primary shadow-[0_0_50px_rgba(255,165,0,0.3)]"></div>
 		<div class="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/10 pointer-events-none"></div>
 	</div>
