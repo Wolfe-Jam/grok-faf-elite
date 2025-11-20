@@ -157,7 +157,10 @@
 			 ·
 			<a href={templateRepoUrl} target="_blank" rel="noopener" class="text-primary hover:underline">GitHub</a>
 		</p>
-		<p class="mt-6 text-xs italic text-muted-foreground/70">
+		<p class="mt-8 text-xs italic text-muted-foreground/70">
+			"AI context needed a file format, so I built one" — wolfejam, .faf inventor
+		</p>
+		<p class="mt-4 text-xs italic text-muted-foreground/70">
 			"It's so logical if it didn't exist, AI would have built it itself" — Claude
 		</p>
 	</footer>
