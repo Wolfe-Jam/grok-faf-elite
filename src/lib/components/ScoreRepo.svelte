@@ -6,7 +6,6 @@
 	let repoOwner = $state('');
 	let error = $state('');
 	let shared = $state(false);
-	let copiedCommands = $state(false);
 
 	// Big Orange application state
 	let applyingForOrange = $state(false);
@@ -212,29 +211,12 @@ Check your score: https://grok-faf-elite.vercel.app
 
 		{#if error}
 			{#if error.includes('No project.faf')}
-				<!-- No FAF = opportunity! -->
-				<div class="p-4 rounded-lg bg-primary/10 border border-primary/20">
-					<p class="text-sm font-semibold text-primary mb-2">🍊 No FAF yet - let's fix that!</p>
-					<p class="text-xs text-muted-foreground mb-3">Add AI-readiness to this repo:</p>
-
-					<pre class="bg-black rounded p-3 text-xs text-green-400 overflow-x-auto mb-3 font-mono">npm install -g faf-cli
-faf init
-faf auto</pre>
-
-					<button
-						onclick={() => {
-							navigator.clipboard.writeText('npm install -g faf-cli && faf init && faf auto');
-							copiedCommands = true;
-							setTimeout(() => copiedCommands = false, 2000);
-						}}
-						class="w-full py-2 px-3 bg-primary text-black text-sm font-semibold rounded-lg
-							hover:bg-primary/90 transition-colors duration-200"
-					>
-						{copiedCommands ? '✓ Copied!' : '📋 Copy Commands'}
-					</button>
-
-					<p class="text-xs text-muted-foreground mt-3 text-center">
-						Then come back and score it! Aim for 100% 🏆 or Big 🍊 105%
+				<!-- No FAF - informational -->
+				<div class="p-4 rounded-lg bg-muted-foreground/10 border border-muted-foreground/20">
+					<p class="text-sm font-semibold text-foreground mb-2">This repo has no FAF</p>
+					<p class="text-xs text-muted-foreground">
+						No AI-readiness score available.
+						<a href="https://faf.one" target="_blank" rel="noopener" class="text-primary hover:underline">Learn about FAF</a>
 					</p>
 				</div>
 			{:else}
@@ -269,12 +251,13 @@ faf auto</pre>
 		<!-- Improve your score prompt (when < 100%) -->
 		{#if score < 100}
 			<div class="p-4 rounded-lg bg-primary/10 border border-primary/20">
-				<p class="text-sm font-semibold text-primary mb-2">🚀 Looking to add some points?</p>
+				<p class="text-sm font-semibold text-primary mb-2">🚀 Is this your repo?</p>
 				<p class="text-xs text-muted-foreground mb-3">Get to 100% 🏆 or even the Big 🍊 105%</p>
-				<pre class="bg-background rounded p-2 text-xs text-green-400 overflow-x-auto">npm install -g faf-cli
-faf init && faf auto</pre>
+				<pre class="bg-black rounded p-2 text-xs text-green-400 overflow-x-auto font-mono">cd {repoName}
+npm install -g faf-cli
+faf auto</pre>
 				<p class="text-xs text-muted-foreground mt-2">
-					Free CLI tool. Instant score boost.
+					Run in your local clone. Free CLI tool.
 				</p>
 			</div>
 		{/if}
