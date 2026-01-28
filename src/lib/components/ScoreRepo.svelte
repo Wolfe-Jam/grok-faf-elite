@@ -176,7 +176,7 @@ Check your score: https://grok-faf-elite.vercel.app
 			} else {
 				orangeResult = {
 					awarded: false,
-					feedback: `Not quite yet (${points}/11 points, need 8+):\n\n${feedback.join('\n')}\n\n💡 Tips to earn Big Orange:\n- Add more detail to project.faf\n- Include architecture in CLAUDE.md\n- Add code examples to README\n- Consider adding badges`
+					feedback: `Not quite yet (${points}/11 points, need 8+):\n\n${feedback.join('\n')}\n\n💡 Be the next Big 🍊:\n- Run: faf auto (enhances all files)\n- Add architecture section to CLAUDE.md\n- Add code examples to README\n- Add badges to show off\n\nThen come back and Juice UP again!`
 				};
 			}
 		} catch (err) {
@@ -236,6 +236,19 @@ Check your score: https://grok-faf-elite.vercel.app
 			{/if}
 			<div class="text-sm text-foreground mt-2">{repoName}</div>
 		</div>
+
+		<!-- Improve your score prompt (when < 100%) -->
+		{#if score < 100}
+			<div class="p-4 rounded-lg bg-primary/10 border border-primary/20">
+				<p class="text-sm font-semibold text-primary mb-2">🚀 Looking to add some points?</p>
+				<p class="text-xs text-muted-foreground mb-3">Get to 100% and become the next Big 🍊</p>
+				<pre class="bg-background rounded p-2 text-xs text-green-400 overflow-x-auto">npm install -g faf-cli
+faf init && faf auto</pre>
+				<p class="text-xs text-muted-foreground mt-2">
+					Free CLI tool. Instant score boost.
+				</p>
+			</div>
+		{/if}
 
 		<!-- Progress bar -->
 		<div class="w-full bg-muted-foreground/20 rounded-full h-3 overflow-hidden">
