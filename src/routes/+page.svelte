@@ -65,32 +65,54 @@
 
 <main class="min-h-screen bg-background flex flex-col items-center justify-center p-6">
 	<!-- Hero Section -->
-	<div class="text-center mb-12">
+	<div class="text-center mb-8">
 		<div class="flex justify-center mb-6">
 			<BigOrange />
 		</div>
 		<h1 class="text-4xl md:text-5xl font-bold text-foreground mb-3">
-			Grok-FAF-Elite
+			Make Your Repos AI-Ready
 		</h1>
 		<p class="text-lg text-muted-foreground max-w-md mx-auto">
-			Zero faff from day zero — Grok-ready in one click
+			Score your AI-readiness. Aim for 100% 🏆 or Big 🍊 105%
 		</p>
 	</div>
 
-	<!-- Action Cards -->
-	<div class="w-full max-w-xl space-y-4">
-		<!-- Score is the hook - top of the list -->
-		<ActionButton
+	<!-- Live Demo - Show what 100% looks like -->
+	<div class="w-full max-w-md mb-8">
+		<div class="bg-muted/30 border border-muted-foreground/20 rounded-xl p-6 text-center">
+			<p class="text-xs text-muted-foreground mb-3">LIVE EXAMPLE</p>
+			<div class="text-5xl mb-2">🍊</div>
+			<div class="text-4xl font-bold text-orange-500 mb-1">105%</div>
+			<div class="text-sm text-muted-foreground mb-1">Big Orange - The Michelin Star for Repos</div>
+			<a
+				href="https://github.com/Wolfe-Jam/grok-faf-elite"
+				target="_blank"
+				rel="noopener"
+				class="text-xs text-primary hover:underline"
+			>
+				grok-faf-elite
+			</a>
+			<!-- Progress bar -->
+			<div class="w-full bg-muted-foreground/20 rounded-full h-2 mt-4 overflow-hidden">
+				<div class="h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-400" style="width: 100%"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Primary CTA -->
+	<div class="w-full max-w-md mb-8">
+		<button
 			onclick={() => showScore = true}
-			label="Score My Repo"
-			description="Check your FAF AI-readiness score - aim for Big 🍊"
+			class="w-full py-4 px-6 bg-primary text-black font-bold text-lg rounded-xl
+				hover:bg-primary/90 transition-colors duration-200
+				focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background"
 		>
-			{#snippet icon()}
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-				</svg>
-			{/snippet}
-		</ActionButton>
+			Score Your Repo
+		</button>
+	</div>
+
+	<!-- Secondary Actions -->
+	<div class="w-full max-w-xl space-y-4">
 
 		<ActionButton
 			onclick={() => showNewProject = true}
