@@ -331,11 +331,11 @@
 		color: white;
 	}
 
-	/* Grok = White text on black */
+	/* Grok = White text on black with white outline */
 	.ai-chip.grok {
 		background: #0a0a0a;
 		color: #f5f5f5;
-		border: 1px solid #444;
+		border: 1px solid #f5f5f5;
 	}
 
 	/* Cursor = Black text on white */
