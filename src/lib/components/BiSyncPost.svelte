@@ -6,7 +6,7 @@
 
 Score yours: https://zero-faf-builder-amg.vercel.app
 
-@grok @xai
+@grok @xai 🚀🍊
 #AI #DevTools #dotFaffed #GoldCode`;
 
 	function useTemplate() {
