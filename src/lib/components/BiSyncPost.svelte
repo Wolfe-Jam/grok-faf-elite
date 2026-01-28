@@ -1,61 +1,43 @@
 <script lang="ts">
 	let message = $state('');
-	let posting = $state(false);
-	let result = $state<{ success: boolean; tweetId?: string; error?: string } | null>(null);
 	let charCount = $derived(message.length);
 
-	const defaultTemplate = `🍊 Just synced my project with FAF!
+	const defaultTemplate = `Just scored my repo on FAF AI-readiness! 🏆
 
-Zero faff from day zero — AI-ready context in one click.
+Score yours: https://zero-faf-builder-amg.vercel.app
 
-Try it: https://grok-faf-mcp.vercel.app
-
-#FAF #AI #DevTools`;
+@grok @xai
+#AI #DevTools #dotFaffed #GoldCode`;
 
 	function useTemplate() {
 		message = defaultTemplate;
 	}
 
-	async function postToX() {
-		if (!message.trim() || charCount > 280) return;
-
-		posting = true;
-		result = null;
-
-		try {
-			const response = await fetch('/api/post', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ text: message })
-			});
-
-			result = await response.json();
-
-			if (result?.success) {
-				message = '';
-			}
-		} catch (err) {
-			result = {
-				success: false,
-				error: err instanceof Error ? err.message : 'Failed to post'
-			};
-		} finally {
-			posting = false;
-		}
+	function shareToX() {
+		if (!message.trim()) return;
+		const text = encodeURIComponent(message);
+		window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
 	}
+
+	// Load template on mount
+	$effect(() => {
+		if (!message) {
+			message = defaultTemplate;
+		}
+	});
 </script>
 
 <div class="space-y-4">
 	<div class="flex items-center justify-between">
 		<p class="text-sm text-muted-foreground">
-			Share your bi-sync on X
+			Compose your post
 		</p>
 		<button
 			onclick={useTemplate}
 			class="text-xs text-primary hover:underline"
 			type="button"
 		>
-			Use template
+			Reset template
 		</button>
 	</div>
 
@@ -63,7 +45,7 @@ Try it: https://grok-faf-mcp.vercel.app
 		<textarea
 			bind:value={message}
 			placeholder="What's happening with your project?"
-			rows="4"
+			rows="6"
 			class="w-full px-4 py-3 bg-background border border-muted-foreground/20 rounded-lg
 				focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50
 				text-foreground placeholder-muted-foreground resize-none"
@@ -77,36 +59,18 @@ Try it: https://grok-faf-mcp.vercel.app
 		</span>
 	</div>
 
-	{#if result}
-		<div
-			class="p-3 rounded-lg text-sm {result.success ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}"
-		>
-			{#if result.success}
-				Posted successfully!
-				{#if result.tweetId}
-					<a
-						href={`https://x.com/i/web/status/${result.tweetId}`}
-						target="_blank"
-						rel="noopener"
-						class="underline ml-1"
-					>
-						View tweet
-					</a>
-				{/if}
-			{:else}
-				{result.error || 'Failed to post'}
-			{/if}
-		</div>
-	{/if}
-
 	<button
-		onclick={postToX}
-		disabled={posting || !message.trim() || charCount > 280}
-		class="w-full py-2 px-4 bg-primary text-black font-semibold rounded-lg
-			hover:bg-primary/90 transition-colors duration-200
-			focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-muted
-			disabled:opacity-50 disabled:cursor-not-allowed"
+		onclick={shareToX}
+		disabled={!message.trim() || charCount > 280}
+		class="w-full py-3 px-4 bg-black text-white font-bold rounded-lg border border-white/20
+			hover:bg-black/80 hover:border-white/40 transition-all duration-200
+			focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-background
+			disabled:opacity-50 disabled:cursor-not-allowed
+			flex items-center justify-center gap-2"
 	>
-		{posting ? 'Posting...' : 'Post to X'}
+		<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+			<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+		</svg>
+		Post to X
 	</button>
 </div>
