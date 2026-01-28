@@ -3,6 +3,7 @@
 	import ActionButton from '$lib/components/ActionButton.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import BiSyncPost from '$lib/components/BiSyncPost.svelte';
+	import ScoreRepo from '$lib/components/ScoreRepo.svelte';
 
 	// Environment configuration
 	const mcpServerUrl = 'https://grok-faf-mcp.vercel.app/sse';
@@ -13,6 +14,7 @@
 	let showGithub = $state(false);
 	let showDirectUrl = $state(false);
 	let showBiSync = $state(false);
+	let showScore = $state(false);
 
 	// Form inputs
 	let projectName = $state('my-faf-project');
@@ -113,6 +115,23 @@
 				</svg>
 			{/snippet}
 		</ActionButton>
+
+		<ActionButton
+			onclick={() => showScore = true}
+			label="Score My Repo"
+			description="Check your FAF AI-readiness score"
+		>
+			{#snippet icon()}
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+				</svg>
+			{/snippet}
+		</ActionButton>
+
+		<!-- Tagline -->
+		<p class="text-center text-primary font-semibold mt-6">
+			Get dotFaffed — context-on-demand, 1-click FAST⚡️AF
+		</p>
 
 		<!-- Branded Share on X - X black theme -->
 		<div class="mt-6 pt-6 border-t border-muted-foreground/20">
@@ -269,4 +288,9 @@
 <!-- Bi-Sync Post Modal -->
 <Modal open={showBiSync} onclose={() => showBiSync = false} title="Share on X">
 	<BiSyncPost />
+</Modal>
+
+<!-- Score Repo Modal -->
+<Modal open={showScore} onclose={() => showScore = false} title="Score My Repo">
+	<ScoreRepo />
 </Modal>
