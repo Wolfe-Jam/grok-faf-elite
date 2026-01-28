@@ -162,7 +162,7 @@
 		font-size: 1.1rem;
 		font-weight: 700;
 		margin-bottom: 1rem;
-		color: #888;
+		color: #aaa;
 	}
 
 	.faf-title {
@@ -194,11 +194,11 @@
 
 	.step-desc {
 		font-size: 0.7rem;
-		color: #666;
+		color: #999;
 	}
 
 	.loop-arrow {
-		color: #666;
+		color: #999;
 		font-size: 1rem;
 	}
 
@@ -218,7 +218,7 @@
 	.chaos-file {
 		background: #0a0a0a;
 		border: 1px solid #444;
-		color: #888;
+		color: #aaa;
 		padding: 0.2rem 0.4rem;
 		border-radius: 4px;
 		font-size: 0.6rem;
@@ -226,7 +226,7 @@
 	}
 
 	.chaos-q {
-		color: #666;
+		color: #999;
 		font-weight: bold;
 	}
 
@@ -270,12 +270,12 @@
 
 	.step-time {
 		font-size: 0.65rem;
-		color: #666;
+		color: #999;
 	}
 
 	.step-what {
 		font-size: 0.7rem;
-		color: #888;
+		color: #aaa;
 		margin-top: 0.2rem;
 	}
 
@@ -300,7 +300,7 @@
 	}
 
 	.step-arrow {
-		color: #666;
+		color: #999;
 		font-size: 1.2rem;
 		font-weight: bold;
 	}
@@ -390,14 +390,14 @@
 
 	.score-label {
 		font-size: 0.7rem;
-		color: #666;
+		color: #999;
 	}
 
 	.bottom-label {
 		margin-top: 0.75rem;
 		font-size: 0.75rem;
 		font-weight: 600;
-		color: #666;
+		color: #999;
 	}
 
 	.faf-bottom {
@@ -420,20 +420,20 @@
 	}
 
 	.divider-text {
-		color: #666;
+		color: #999;
 		font-size: 0.9rem;
 		font-weight: 600;
 	}
 
 	/* Instructions */
 	.instructions {
-		color: #666;
+		color: #999;
 		font-size: 0.85rem;
 		margin-top: 1.5rem;
 	}
 
 	.link {
-		color: #888;
+		color: #aaa;
 		font-size: 0.85rem;
 		margin-top: 0.5rem;
 	}
