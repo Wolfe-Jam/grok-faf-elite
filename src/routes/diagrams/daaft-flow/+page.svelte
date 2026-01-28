@@ -1,5 +1,6 @@
 <script lang="ts">
 	// Flow Diagram: Before/After - Drift vs .faf
+	// Palette: Black/white base, green for FAF, brand colors for AI logos only
 </script>
 
 <svelte:head>
@@ -10,33 +11,29 @@
 	<div class="diagram">
 		<!-- Left: Drift Loop -->
 		<div class="side drift-side">
-			<h3 class="side-title drift-title">Typical AI Reality</h3>
+			<h3 class="side-title">Typical AI Reality</h3>
 
 			<div class="drift-loop">
 				<div class="loop-step">
-					<div class="step-icon">🔍</div>
 					<div class="step-label">Discover</div>
 					<div class="step-desc">Scans files + scattered .md</div>
 				</div>
 				<div class="loop-arrow">↓</div>
 				<div class="loop-step">
-					<div class="step-icon">🎲</div>
 					<div class="step-label">Assume</div>
 					<div class="step-desc">Inconsistent parsing</div>
 				</div>
 				<div class="loop-arrow">↓</div>
 				<div class="loop-step">
-					<div class="step-icon">❓</div>
 					<div class="step-label">Ask</div>
 					<div class="step-desc">Needs clarification</div>
 				</div>
 				<div class="loop-arrow">↓</div>
 				<div class="loop-step">
-					<div class="step-icon">💨</div>
 					<div class="step-label">Forget</div>
 					<div class="step-desc">Next session = reset</div>
 				</div>
-				<div class="loop-arrow loop-back">↩️ repeat</div>
+				<div class="loop-arrow loop-back">↩ repeat</div>
 			</div>
 
 			<div class="chaos-files">
@@ -52,7 +49,7 @@
 				<span class="score-label">Variable</span>
 			</div>
 
-			<div class="bottom-label drift-bottom">Drift compounds every session</div>
+			<div class="bottom-label">Drift compounds every session</div>
 		</div>
 
 		<!-- Center Divider -->
@@ -67,25 +64,25 @@
 			<h3 class="side-title faf-title">.faf Free Path</h3>
 
 			<div class="faf-steps">
-				<div class="faf-step init-step">
+				<div class="faf-step">
 					<div class="step-cmd">faf init</div>
 					<div class="step-time">&lt;100ms</div>
 					<div class="step-what">Core tech definition</div>
-					<div class="step-score init-score">20-40%</div>
+					<div class="step-score">20-40%</div>
 				</div>
 				<div class="step-arrow">↓</div>
-				<div class="faf-step auto-step">
+				<div class="faf-step">
 					<div class="step-cmd">faf auto</div>
 					<div class="step-time">seconds</div>
 					<div class="step-what">150+ frameworks, 200+ formats</div>
-					<div class="step-score auto-score">~85%</div>
+					<div class="step-score">~85%</div>
 				</div>
 				<div class="step-arrow">↓</div>
-				<div class="faf-step go-step">
+				<div class="faf-step final-step">
 					<div class="step-cmd">faf go</div>
 					<div class="step-time">minutes</div>
 					<div class="step-what">Human context + 6 W's</div>
-					<div class="step-score go-score">100%</div>
+					<div class="step-score final-score">100%</div>
 				</div>
 			</div>
 
@@ -101,8 +98,7 @@
 			</div>
 
 			<div class="score-badge faf-badge">
-				<span class="trophy">🏆</span>
-				<span class="score-num">100%</span>
+				<span class="score-num faf-score">100%</span>
 				<span class="score-label">Zero Drift</span>
 			</div>
 
@@ -117,7 +113,7 @@
 <style>
 	.page {
 		min-height: 100vh;
-		background: #f8f9fa;
+		background: #1a1a1a;
 		padding: 2rem;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 		display: flex;
@@ -128,9 +124,9 @@
 
 	.diagram {
 		width: 900px;
-		background: white;
+		background: #0a0a0a;
 		border-radius: 16px;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+		border: 1px solid #333;
 		display: grid;
 		grid-template-columns: 1fr auto 1fr;
 		padding: 2rem;
@@ -144,26 +140,28 @@
 		align-items: center;
 		padding: 1rem;
 		border-radius: 12px;
+		background: #1a1a1a;
+		border: 1px solid #333;
 	}
 
 	.drift-side {
-		background: #fef2f2;
-		border: 1px solid #fecaca;
+		/* No special color - just dark */
 	}
 
 	.faf-side {
-		background: #f0fdf4;
-		border: 1px solid #bbf7d0;
+		border: 1px solid rgba(34, 197, 94, 0.3);
 	}
 
 	.side-title {
 		font-size: 1.1rem;
 		font-weight: 700;
 		margin-bottom: 1rem;
+		color: #888;
 	}
 
-	.drift-title { color: #dc2626; }
-	.faf-title { color: #16a34a; }
+	.faf-title {
+		color: #22c55e;
+	}
 
 	/* Drift loop */
 	.drift-loop {
@@ -174,22 +172,18 @@
 	}
 
 	.loop-step {
-		background: white;
-		border: 1px solid #fecaca;
+		background: #0a0a0a;
+		border: 1px solid #444;
 		border-radius: 8px;
 		padding: 0.5rem 1rem;
 		text-align: center;
 		width: 180px;
 	}
 
-	.step-icon {
-		font-size: 1.2rem;
-	}
-
 	.step-label {
 		font-weight: 600;
 		font-size: 0.85rem;
-		color: #1a1a1a;
+		color: #f5f5f5;
 	}
 
 	.step-desc {
@@ -198,7 +192,7 @@
 	}
 
 	.loop-arrow {
-		color: #dc2626;
+		color: #666;
 		font-size: 1rem;
 	}
 
@@ -216,8 +210,9 @@
 	}
 
 	.chaos-file {
-		background: #fee2e2;
-		color: #991b1b;
+		background: #0a0a0a;
+		border: 1px solid #444;
+		color: #888;
 		padding: 0.2rem 0.4rem;
 		border-radius: 4px;
 		font-size: 0.6rem;
@@ -225,7 +220,7 @@
 	}
 
 	.chaos-q {
-		color: #dc2626;
+		color: #666;
 		font-weight: bold;
 	}
 
@@ -238,7 +233,8 @@
 	}
 
 	.faf-step {
-		background: white;
+		background: #0a0a0a;
+		border: 1px solid #444;
 		border-radius: 8px;
 		padding: 0.6rem 1rem;
 		text-align: center;
@@ -246,28 +242,29 @@
 		position: relative;
 	}
 
-	.init-step { border: 2px solid #3b82f6; }
-	.auto-step { border: 2px solid #00D4D4; }
-	.go-step { border: 2px solid #22c55e; }
+	.final-step {
+		border: 1px solid rgba(34, 197, 94, 0.5);
+	}
 
 	.step-cmd {
 		font-family: 'SF Mono', monospace;
 		font-weight: 700;
 		font-size: 0.9rem;
+		color: #f5f5f5;
 	}
 
-	.init-step .step-cmd { color: #2563eb; }
-	.auto-step .step-cmd { color: #0891b2; }
-	.go-step .step-cmd { color: #16a34a; }
+	.final-step .step-cmd {
+		color: #22c55e;
+	}
 
 	.step-time {
 		font-size: 0.65rem;
-		color: #888;
+		color: #666;
 	}
 
 	.step-what {
 		font-size: 0.7rem;
-		color: #666;
+		color: #888;
 		margin-top: 0.2rem;
 	}
 
@@ -280,14 +277,19 @@
 		border-radius: 4px;
 		font-size: 0.7rem;
 		font-weight: 700;
+		background: #1a1a1a;
+		border: 1px solid #444;
+		color: #f5f5f5;
 	}
 
-	.init-score { background: #dbeafe; color: #1d4ed8; }
-	.auto-score { background: #ccfbf1; color: #0f766e; }
-	.go-score { background: #dcfce7; color: #15803d; }
+	.final-score {
+		background: rgba(34, 197, 94, 0.1);
+		border: 1px solid rgba(34, 197, 94, 0.5);
+		color: #22c55e;
+	}
 
 	.step-arrow {
-		color: #22c55e;
+		color: #666;
 		font-size: 1.2rem;
 		font-weight: bold;
 	}
@@ -304,23 +306,42 @@
 		border-radius: 4px;
 		font-size: 0.65rem;
 		font-weight: 600;
+	}
+
+	/* Claude = Orange */
+	.ai-chip.claude {
+		background: #f59e0b;
+		color: #0a0a0a;
+	}
+
+	/* Gemini = Blue */
+	.ai-chip.gemini {
+		background: #3b82f6;
 		color: white;
 	}
 
-	.ai-chip.claude { background: #d97706; }
-	.ai-chip.gemini { background: #2563eb; }
-	.ai-chip.grok { background: #059669; }
-	.ai-chip.cursor { background: #7c3aed; }
+	/* Grok = Black/White (no color) */
+	.ai-chip.grok {
+		background: #f5f5f5;
+		color: #0a0a0a;
+	}
+
+	/* Cursor = Black/White (dark variant) */
+	.ai-chip.cursor {
+		background: #0a0a0a;
+		color: #f5f5f5;
+		border: 1px solid #444;
+	}
 
 	.faf-file-icon {
 		margin-top: 0.75rem;
-		background: linear-gradient(135deg, #FF6B35, #ff8c5a);
+		background: #22c55e;
 		padding: 0.4rem 0.8rem;
 		border-radius: 6px;
 	}
 
 	.faf-icon-text {
-		color: white;
+		color: #0a0a0a;
 		font-family: 'SF Mono', monospace;
 		font-weight: 700;
 		font-size: 0.9rem;
@@ -334,27 +355,27 @@
 		padding: 0.5rem 1rem;
 		border-radius: 8px;
 		margin-top: 1rem;
+		background: #0a0a0a;
+		border: 1px solid #444;
 	}
 
 	.drift-badge {
-		background: #fecaca;
+		/* Default dark style */
 	}
 
 	.faf-badge {
-		background: #bbf7d0;
-	}
-
-	.trophy {
-		font-size: 1.5rem;
+		border: 1px solid rgba(34, 197, 94, 0.5);
 	}
 
 	.score-num {
 		font-size: 1.2rem;
 		font-weight: 700;
+		color: #f5f5f5;
 	}
 
-	.drift-badge .score-num { color: #dc2626; }
-	.faf-badge .score-num { color: #16a34a; }
+	.faf-score {
+		color: #22c55e;
+	}
 
 	.score-label {
 		font-size: 0.7rem;
@@ -365,10 +386,12 @@
 		margin-top: 0.75rem;
 		font-size: 0.75rem;
 		font-weight: 600;
+		color: #666;
 	}
 
-	.drift-bottom { color: #dc2626; }
-	.faf-bottom { color: #16a34a; }
+	.faf-bottom {
+		color: #22c55e;
+	}
 
 	/* Divider */
 	.divider {
@@ -382,11 +405,11 @@
 	.divider-line {
 		width: 2px;
 		height: 100px;
-		background: #e5e7eb;
+		background: #333;
 	}
 
 	.divider-text {
-		color: #9ca3af;
+		color: #666;
 		font-size: 0.9rem;
 		font-weight: 600;
 	}
@@ -405,7 +428,7 @@
 	}
 
 	.link a {
-		color: #FF6B35;
+		color: #22c55e;
 		text-decoration: none;
 	}
 

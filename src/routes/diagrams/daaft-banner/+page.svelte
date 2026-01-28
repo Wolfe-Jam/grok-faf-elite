@@ -1,5 +1,6 @@
 <script lang="ts">
 	// Banner: 5:2 aspect ratio (1000x400 for X Articles)
+	// Palette: Black/white base, green for FAF, brand colors for AI logos only
 </script>
 
 <svelte:head>
@@ -33,17 +34,17 @@
 			</div>
 			<!-- Progress arc -->
 			<div class="progress-arc">
-				<div class="arc-step init">
+				<div class="arc-step">
 					<span class="arc-percent">20-40%</span>
 					<span class="arc-cmd">init</span>
 				</div>
 				<div class="arc-arrow">→</div>
-				<div class="arc-step auto">
+				<div class="arc-step">
 					<span class="arc-percent">~85%</span>
 					<span class="arc-cmd">auto</span>
 				</div>
 				<div class="arc-arrow">→</div>
-				<div class="arc-step go">
+				<div class="arc-step final">
 					<span class="arc-percent">100%</span>
 					<span class="arc-cmd">go</span>
 				</div>
@@ -52,12 +53,6 @@
 
 		<!-- Right: AI logos synced -->
 		<div class="sync-side">
-			<div class="sync-arrows">
-				<span class="sync-arrow">→</span>
-				<span class="sync-arrow">→</span>
-				<span class="sync-arrow">→</span>
-				<span class="sync-arrow">→</span>
-			</div>
 			<div class="ai-logos">
 				<div class="ai-logo claude">Claude</div>
 				<div class="ai-logo gemini">Gemini</div>
@@ -92,7 +87,7 @@
 	.banner {
 		width: 1000px;
 		height: 400px;
-		background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+		background: #0a0a0a;
 		border-radius: 12px;
 		display: grid;
 		grid-template-columns: 1fr 1.5fr 1fr;
@@ -117,9 +112,9 @@
 	}
 
 	.md-file {
-		background: rgba(220, 38, 38, 0.2);
-		border: 1px solid rgba(220, 38, 38, 0.5);
-		color: #fca5a5;
+		background: #1a1a1a;
+		border: 1px solid #444;
+		color: #888;
 		padding: 0.3rem 0.6rem;
 		border-radius: 4px;
 		font-size: 0.7rem;
@@ -138,7 +133,7 @@
 	}
 
 	.drift-arrow {
-		color: #dc2626;
+		color: #666;
 		font-size: 1.2rem;
 		font-weight: bold;
 		animation: drift-pulse 1.5s ease-in-out infinite;
@@ -153,7 +148,7 @@
 	}
 
 	.drift-label {
-		color: #dc2626;
+		color: #666;
 		font-size: 0.9rem;
 		font-weight: 600;
 		margin-top: 0.5rem;
@@ -172,7 +167,7 @@
 		position: absolute;
 		width: 120px;
 		height: 120px;
-		background: radial-gradient(circle, rgba(255, 107, 53, 0.3) 0%, transparent 70%);
+		background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
 		border-radius: 50%;
 		top: 50%;
 		left: 50%;
@@ -180,24 +175,24 @@
 	}
 
 	.faf-icon {
-		background: linear-gradient(135deg, #FF6B35 0%, #ff8c5a 100%);
+		background: #22c55e;
 		padding: 1.5rem 2rem;
 		border-radius: 12px;
 		text-align: center;
-		box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+		box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
 		position: relative;
 		z-index: 1;
 	}
 
 	.faf-label {
-		color: white;
+		color: #0a0a0a;
 		font-size: 2rem;
 		font-weight: bold;
 		font-family: 'SF Mono', monospace;
 	}
 
 	.faf-sublabel {
-		color: rgba(255, 255, 255, 0.8);
+		color: rgba(0, 0, 0, 0.7);
 		font-size: 0.8rem;
 		margin-top: 0.25rem;
 	}
@@ -207,7 +202,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		margin-top: 1.5rem;
-		background: rgba(0, 0, 0, 0.5);
+		background: #1a1a1a;
 		padding: 0.75rem 1rem;
 		border-radius: 8px;
 		border: 1px solid #333;
@@ -219,40 +214,33 @@
 		align-items: center;
 		padding: 0.3rem 0.5rem;
 		border-radius: 4px;
+		background: #0a0a0a;
+		border: 1px solid #333;
 	}
 
-	.arc-step.init {
-		background: rgba(59, 130, 246, 0.2);
-		border: 1px solid rgba(59, 130, 246, 0.5);
-	}
-
-	.arc-step.auto {
-		background: rgba(0, 212, 212, 0.2);
-		border: 1px solid rgba(0, 212, 212, 0.5);
-	}
-
-	.arc-step.go {
-		background: rgba(34, 197, 94, 0.2);
+	.arc-step.final {
+		background: rgba(34, 197, 94, 0.1);
 		border: 1px solid rgba(34, 197, 94, 0.5);
 	}
 
 	.arc-percent {
 		font-size: 0.9rem;
 		font-weight: bold;
+		color: #f5f5f5;
 	}
 
-	.arc-step.init .arc-percent { color: #60a5fa; }
-	.arc-step.auto .arc-percent { color: #00D4D4; }
-	.arc-step.go .arc-percent { color: #4ade80; }
+	.arc-step.final .arc-percent {
+		color: #22c55e;
+	}
 
 	.arc-cmd {
 		font-size: 0.65rem;
 		font-family: 'SF Mono', monospace;
-		color: #888;
+		color: #666;
 	}
 
 	.arc-arrow {
-		color: #666;
+		color: #444;
 		font-size: 1rem;
 	}
 
@@ -263,20 +251,6 @@
 		align-items: center;
 		justify-content: center;
 		padding: 1rem;
-	}
-
-	.sync-arrows {
-		display: flex;
-		flex-direction: column;
-		gap: 0.3rem;
-		position: absolute;
-		left: -20px;
-	}
-
-	.sync-arrow {
-		color: #22c55e;
-		font-size: 1rem;
-		font-weight: bold;
 	}
 
 	.ai-logos {
@@ -293,24 +267,29 @@
 		text-align: center;
 	}
 
+	/* Claude = Orange */
 	.ai-logo.claude {
-		background: linear-gradient(135deg, #d97706, #f59e0b);
-		color: white;
+		background: #f59e0b;
+		color: #0a0a0a;
 	}
 
+	/* Gemini = Blue */
 	.ai-logo.gemini {
-		background: linear-gradient(135deg, #2563eb, #3b82f6);
+		background: #3b82f6;
 		color: white;
 	}
 
+	/* Grok = Black/White (no color) */
 	.ai-logo.grok {
-		background: linear-gradient(135deg, #059669, #10b981);
-		color: white;
+		background: #f5f5f5;
+		color: #0a0a0a;
 	}
 
+	/* Cursor = Black/White (dark variant) */
 	.ai-logo.cursor {
-		background: linear-gradient(135deg, #7c3aed, #8b5cf6);
-		color: white;
+		background: #0a0a0a;
+		color: #f5f5f5;
+		border: 1px solid #444;
 	}
 
 	.sync-label {
@@ -330,7 +309,6 @@
 		color: #f5f5f5;
 		font-size: 1.1rem;
 		font-weight: 600;
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 	}
 
 	/* Instructions */
@@ -347,7 +325,7 @@
 	}
 
 	.link a {
-		color: #FF6B35;
+		color: #22c55e;
 		text-decoration: none;
 	}
 
