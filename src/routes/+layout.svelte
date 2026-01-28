@@ -26,7 +26,7 @@
 	<meta property="og:image" content="https://zero-faf-builder-amg.vercel.app/icon-512.png" />
 
 	<!-- Twitter/X -->
-	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:card" content="summary" />
 	<meta name="twitter:title" content="Make Your Repos AI-Ready" />
 	<meta name="twitter:description" content="Score your AI-readiness. Aim for 100% 🏆 Gold Code" />
 	<meta name="twitter:image" content="https://zero-faf-builder-amg.vercel.app/icon-512.png" />
