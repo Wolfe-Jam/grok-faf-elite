@@ -195,34 +195,37 @@
 <!-- New Project Modal -->
 <Modal open={showNewProject} onclose={() => showNewProject = false} title="New FAF Project">
 	<div class="space-y-4">
-		<div>
-			<label for="projectName" class="block text-sm font-medium text-muted-foreground mb-2">
-				Project Name
-			</label>
-			<input
-				id="projectName"
-				type="text"
-				bind:value={projectName}
-				placeholder="my-faf-project"
-				class="w-full px-4 py-2 bg-background border border-muted-foreground/20 rounded-lg
-					focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50
-					text-foreground placeholder-muted-foreground"
-			/>
-		</div>
-		<div>
-			<p class="block text-sm font-medium text-muted-foreground mb-2">
-				Run these commands
-			</p>
-			<pre class="bg-background border border-muted-foreground/20 rounded-lg p-4 text-sm overflow-x-auto"><code class="text-green-400">{getNewProjectCommand()}</code></pre>
-		</div>
+		<!-- Commands first - ready to go -->
+		<pre class="bg-black rounded-lg p-4 text-sm overflow-x-auto font-mono"><code class="text-green-400">{getNewProjectCommand()}</code></pre>
+
 		<button
 			onclick={() => copyToClipboard(getNewProjectCommand(), (v) => copiedNew = v)}
-			class="w-full py-2 px-4 bg-primary text-black font-semibold rounded-lg
+			class="w-full py-3 px-4 bg-primary text-black font-bold rounded-lg
 				hover:bg-primary/90 transition-colors duration-200
 				focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-muted"
 		>
-			{copiedNew ? '✓ Copied!' : 'Copy Commands'}
+			{copiedNew ? '✓ Copied!' : 'Copy & Go'}
 		</button>
+
+		<!-- Edit name - secondary -->
+		<div class="pt-2 border-t border-muted-foreground/20">
+			<div class="flex items-center gap-2">
+				<input
+					id="projectName"
+					type="text"
+					bind:value={projectName}
+					class="flex-1 px-3 py-2 bg-background border border-muted-foreground/20 rounded-lg text-sm
+						focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50
+						text-foreground"
+				/>
+				<button
+					onclick={() => projectName = 'my-faf-project'}
+					class="px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+				>
+					Reset
+				</button>
+			</div>
+		</div>
 	</div>
 </Modal>
 
