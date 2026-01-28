@@ -173,7 +173,7 @@ Check your score: https://grok-faf-elite.vercel.app
 				score = 105;
 				orangeResult = {
 					awarded: true,
-					feedback: `🍊 BIG ORANGE AWARD!\nThe Michelin Star for Repos\n\nAI Review (${points}/11 points):\n${feedback.join('\n')}\n\nYour repo demonstrates excellence. Congratulations!`
+					feedback: `🍊 BIG ORANGE AWARD!\nThe Michelin Star for Repos\n\nPolish applied. Excellence achieved.\nAI is fully optimized to code on this project.\n\nAI Review (${points}/11 points):\n${feedback.join('\n')}`
 				};
 			} else {
 				orangeResult = {
