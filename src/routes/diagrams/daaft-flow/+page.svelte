@@ -11,7 +11,7 @@
 	<div class="diagram">
 		<!-- Left: Drift Loop -->
 		<div class="side drift-side">
-			<h3 class="side-title">Typical AI Reality</h3>
+			<h3 class="side-title">DAAFT Flow</h3>
 
 			<div class="drift-loop">
 				<div class="loop-step">
@@ -61,7 +61,7 @@
 
 		<!-- Right: .faf Path -->
 		<div class="side faf-side">
-			<h3 class="side-title faf-title">.faf Free Path</h3>
+			<h3 class="side-title faf-title">SMART Flow</h3>
 
 			<div class="faf-steps">
 				<div class="faf-step">
