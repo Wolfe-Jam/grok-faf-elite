@@ -99,13 +99,13 @@
 				<div class="ai-chip cursor">Cursor</div>
 			</div>
 
-			<div class="faf-file-icon">
-				<span class="faf-icon-text">.faf</span>
-			</div>
-
 			<div class="score-badge faf-badge">
 				<span class="score-num faf-score">100%</span>
 				<span class="score-label">Zero Drift</span>
+			</div>
+
+			<div class="faf-file-icon">
+				<span class="faf-icon-text">.faf</span>
 			</div>
 
 			<div class="bottom-label faf-bottom">Locked forever</div>
