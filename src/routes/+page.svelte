@@ -82,7 +82,7 @@
 		<div class="bg-muted/30 border border-muted-foreground/20 rounded-xl p-6 text-center">
 			<p class="text-xs text-muted-foreground mb-3">LIVE EXAMPLE</p>
 			<div class="text-5xl mb-2">🏆</div>
-			<div class="text-4xl font-bold text-yellow-400 mb-1">100%</div>
+			<div class="text-4xl font-bold text-green-500 mb-1">100%</div>
 			<div class="text-sm text-muted-foreground mb-1">Gold Code - AI Fully Optimized</div>
 			<a
 				href="https://github.com/Wolfe-Jam/grok-faf-elite"
@@ -94,7 +94,7 @@
 			</a>
 			<!-- Progress bar -->
 			<div class="w-full bg-muted-foreground/20 rounded-full h-2 mt-4 overflow-hidden">
-				<div class="h-full rounded-full bg-gradient-to-r from-yellow-500 to-yellow-400" style="width: 100%"></div>
+				<div class="h-full rounded-full bg-green-500" style="width: 100%"></div>
 			</div>
 		</div>
 	</div>
