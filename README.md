@@ -1,5 +1,9 @@
 # Grok-FAF-Elite
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Vercel](https://img.shields.io/badge/Vercel-deployed-black)](https://grok-faf-elite.vercel.app)
+[![FAF](https://img.shields.io/badge/FAF-100%25-orange)](https://faf.one)
+
 Zero faff from day zero — Grok-ready in one click.
 
 F1-Inspired SvelteKit 5 + Tailwind 4 for elite devs.
@@ -47,3 +51,9 @@ npm run check
 
 - [grok-faf-mcp on npm](https://www.npmjs.com/package/grok-faf-mcp)
 - [MCP Server URL](https://grok-faf-mcp.vercel.app/sse)
+- [FAF Format](https://faf.one)
+- [GitHub](https://github.com/Wolfe-Jam/grok-faf-elite)
+
+## License
+
+MIT - Free forever. Juice UP your repos!

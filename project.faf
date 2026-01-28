@@ -46,6 +46,18 @@ human_context:
   where: Browser, Vercel Edge
   when: Production v0.1.0
   how: SvelteKit 5, Svelte 5 runes, TypeScript strict
+persona:
+  voice: Fast, direct, zero-faff
+  tone: Elite developer energy
+  traits:
+    - F1-inspired speed
+    - Championship grade quality
+    - One-click simplicity
+links:
+  github: https://github.com/Wolfe-Jam/grok-faf-elite
+  npm: https://www.npmjs.com/package/grok-faf-mcp
+  live: https://grok-faf-elite.vercel.app
+  faf: https://faf.one
 stack:
   frontend: Svelte
   css_framework: Tailwind CSS
