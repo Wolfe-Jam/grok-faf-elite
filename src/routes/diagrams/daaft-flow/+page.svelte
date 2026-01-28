@@ -320,17 +320,17 @@
 		color: white;
 	}
 
-	/* Grok = Black/White (no color) */
+	/* Grok = White text on black */
 	.ai-chip.grok {
-		background: #f5f5f5;
-		color: #0a0a0a;
-	}
-
-	/* Cursor = Black/White (dark variant) */
-	.ai-chip.cursor {
 		background: #0a0a0a;
 		color: #f5f5f5;
 		border: 1px solid #444;
+	}
+
+	/* Cursor = Black text on white */
+	.ai-chip.cursor {
+		background: #f5f5f5;
+		color: #0a0a0a;
 	}
 
 	.faf-file-icon {
