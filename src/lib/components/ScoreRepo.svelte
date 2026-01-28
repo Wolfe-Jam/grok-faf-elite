@@ -241,7 +241,7 @@ Check your score: https://grok-faf-elite.vercel.app
 		{#if score < 100}
 			<div class="p-4 rounded-lg bg-primary/10 border border-primary/20">
 				<p class="text-sm font-semibold text-primary mb-2">🚀 Looking to add some points?</p>
-				<p class="text-xs text-muted-foreground mb-3">Get to 100% and become the next Big 🍊</p>
+				<p class="text-xs text-muted-foreground mb-3">Get to 100% 🏆 or even the Big 🍊 105%</p>
 				<pre class="bg-background rounded p-2 text-xs text-green-400 overflow-x-auto">npm install -g faf-cli
 faf init && faf auto</pre>
 				<p class="text-xs text-muted-foreground mt-2">
