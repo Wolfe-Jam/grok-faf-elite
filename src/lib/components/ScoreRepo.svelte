@@ -145,22 +145,24 @@ Check your score: https://grok-faf-elite.vercel.app
 			let points = 0;
 			const feedback: string[] = [];
 
-			// 1. project.faf quality (0-3 points)
-			if (fafContent.length > 500) { points++; feedback.push('✅ Rich project.faf content'); }
+			// Main files first (3 points)
+			if (fafContent.length > 500) { points++; feedback.push('✅ Excellent project.faf'); }
+			if (claudeContent.length > 300) { points++; feedback.push('✅ Comprehensive CLAUDE.md'); }
+			if (readmeContent.length > 500) { points++; feedback.push('✅ Detailed README'); }
+
+			// project.faf details (2 points)
 			if (/persona:|voice:|tone:/m.test(fafContent)) { points++; feedback.push('✅ Has personality/voice defined'); }
 			if (/links:|npm:|github:/m.test(fafContent)) { points++; feedback.push('✅ Includes useful links'); }
 
-			// 2. CLAUDE.md quality (0-3 points)
-			if (claudeContent.length > 300) { points++; feedback.push('✅ Comprehensive CLAUDE.md'); }
+			// CLAUDE.md details (2 points)
 			if (/##.*Architecture|##.*Structure/mi.test(claudeContent)) { points++; feedback.push('✅ Documents architecture'); }
 			if (/##.*Command|##.*Usage/mi.test(claudeContent)) { points++; feedback.push('✅ Has usage instructions'); }
 
-			// 3. README quality (0-3 points)
-			if (readmeContent.length > 500) { points++; feedback.push('✅ Detailed README'); }
+			// README details (2 points)
 			if (/```[\s\S]*```/m.test(readmeContent)) { points++; feedback.push('✅ Includes code examples'); }
 			if (/\[.*\]\(.*\)/m.test(readmeContent)) { points++; feedback.push('✅ Has helpful links'); }
 
-			// 4. Bonus points (0-2 points)
+			// Bonus (2 points)
 			if (/badge|shield/mi.test(readmeContent)) { points++; feedback.push('✅ Uses badges'); }
 			if (/license|MIT|Apache/mi.test(fafContent + readmeContent)) { points++; feedback.push('✅ Open source licensed'); }
 

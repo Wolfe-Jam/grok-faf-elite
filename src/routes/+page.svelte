@@ -72,8 +72,8 @@
 		<h1 class="text-4xl md:text-5xl font-bold text-foreground mb-3">
 			Make Your Repos AI-Ready
 		</h1>
-		<p class="text-lg text-muted-foreground max-w-md mx-auto">
-			Score your AI-readiness. Aim for 100% 🏆 or Big 🍊 105%
+		<p class="text-lg text-muted-foreground">
+			Score your AI-readiness — aim for Big 🍊
 		</p>
 	</div>
 
