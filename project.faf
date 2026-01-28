@@ -1,42 +1,80 @@
 name: grok-faf-elite
 version: 0.1.0
-description: Zero faff from day zero — Grok-ready in one click. F1-Inspired Elite Edition for elite devs.
+description: Zero faff from day zero — Grok-ready in one click. F1-Inspired
+  Elite Edition for elite devs.
 ai_readiness: 95%
-
 tech_stack:
   framework: SvelteKit 5
   language: TypeScript (strict)
   styling: Tailwind CSS 4
   deployment: Vercel
-
 architecture:
   pattern: Component-based SPA
   state: Svelte 5 runes ($state, $props, $effect)
   routing: SvelteKit file-based routing
-
 features:
   - New project creation from template
   - GitHub repository FAF integration
   - Direct MCP server URL access
   - Copy-to-clipboard commands
   - Native dialog modals for accessibility
-
 components:
   BigOrange: Animated logo with hover effects
   ActionButton: Reusable button with icon snippets
   Modal: Native dialog-based accessible modal
-
 performance_targets:
   bundle_size: <20 kB gzipped
   build_time: <5s
   first_paint: <100ms
-
 integrations:
   - grok-faf-mcp (npm package)
   - MCP server at https://grok-faf-mcp.vercel.app/sse
-
 commands:
   dev: npm run dev
   build: npm run build
   check: npm run check
   preview: npm run preview
+project:
+  name: grok-faf-elite
+  goal: Web UI for one-click Grok FAF setup - zero friction MCP integration
+  type: web-app
+  main_language: typescript
+human_context:
+  who: Grok/xAI developers wanting FAF without CLI
+  what: One-click FAF setup for Grok - no terminal required
+  why: Make FAF accessible to non-CLI users
+  where: Browser, Vercel Edge
+  when: Production v0.1.0
+  how: SvelteKit 5, Svelte 5 runes, TypeScript strict
+stack:
+  frontend: Svelte
+  css_framework: Tailwind CSS
+  build: Vite
+  hosting: Vercel
+  database: none
+  backend: none
+  packageManager: npm/yarn/pnpm
+  targetUser: developers
+  coreProblem: understanding project
+  missionPurpose: project documentation
+  mainLanguage: JavaScript/TypeScript
+  cicd: Playwright
+  framework: SvelteKit
+  buildTool: Vite
+  server: Node.js
+generated: 2026-01-28T00:38:13.491Z
+stack_signature: typescript-sveltekit-nodejs
+detected_frameworks:
+  - npm
+  - Node.js
+  - Claude Code
+  - JavaScript
+  - TypeScript
+  - Playwright
+  - SvelteKit
+  - Vite
+  - Svelte
+turbo_cat_intelligence: 330
+stats:
+  last_auto_time: 0.3
+  times_run: 1
