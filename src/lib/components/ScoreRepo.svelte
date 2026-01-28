@@ -3,12 +3,17 @@
 	let loading = $state(false);
 	let score = $state<number | null>(null);
 	let repoName = $state('');
+	let repoOwner = $state('');
 	let error = $state('');
 	let shared = $state(false);
 
-	// Tier definitions - Big Orange (105%) is AI-awarded Michelin Star for excellence
+	// Big Orange application state
+	let applyingForOrange = $state(false);
+	let orangeResult = $state<{ awarded: boolean; feedback: string } | null>(null);
+
+	// Tier definitions - Big 🍊 Award (105%) is the Michelin Star for Repos
 	function getTier(s: number): { emoji: string; name: string; color: string; note?: string } {
-		if (s >= 105) return { emoji: '🍊', name: 'Big Orange', color: 'text-orange-500', note: 'Michelin Star - AI Excellence Award' };
+		if (s >= 105) return { emoji: '🍊', name: 'Big Orange', color: 'text-orange-500', note: 'The Michelin Star for Repos' };
 		if (s >= 100) return { emoji: '🏆', name: 'Trophy', color: 'text-yellow-400', note: 'Gold Code - Perfect Score!' };
 		if (s >= 99) return { emoji: '🥇', name: 'Gold', color: 'text-yellow-300' };
 		if (s >= 95) return { emoji: '🥈', name: 'Silver', color: 'text-gray-300' };
@@ -35,6 +40,7 @@
 
 			const owner = pathParts[0];
 			const repo = pathParts[1];
+			repoOwner = owner;
 			repoName = repo;
 
 			// Fetch raw project.faf from GitHub
@@ -109,8 +115,78 @@ Check your score: https://grok-faf-elite.vercel.app
 		score = null;
 		repoUrl = '';
 		repoName = '';
+		repoOwner = '';
 		error = '';
 		shared = false;
+		orangeResult = null;
+	}
+
+	async function applyForBigOrange() {
+		if (score !== 100) return;
+
+		applyingForOrange = true;
+		orangeResult = null;
+
+		try {
+			// Fetch all files for AI review
+			const baseUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main`;
+
+			const [fafRes, claudeRes, readmeRes] = await Promise.allSettled([
+				fetch(`${baseUrl}/project.faf`),
+				fetch(`${baseUrl}/CLAUDE.md`),
+				fetch(`${baseUrl}/README.md`)
+			]);
+
+			const fafContent = fafRes.status === 'fulfilled' && fafRes.value.ok ? await fafRes.value.text() : '';
+			const claudeContent = claudeRes.status === 'fulfilled' && claudeRes.value.ok ? await claudeRes.value.text() : '';
+			const readmeContent = readmeRes.status === 'fulfilled' && readmeRes.value.ok ? await readmeRes.value.text() : '';
+
+			// AI Evaluation Criteria
+			let points = 0;
+			const feedback: string[] = [];
+
+			// 1. project.faf quality (0-3 points)
+			if (fafContent.length > 500) { points++; feedback.push('✅ Rich project.faf content'); }
+			if (/persona:|voice:|tone:/m.test(fafContent)) { points++; feedback.push('✅ Has personality/voice defined'); }
+			if (/links:|npm:|github:/m.test(fafContent)) { points++; feedback.push('✅ Includes useful links'); }
+
+			// 2. CLAUDE.md quality (0-3 points)
+			if (claudeContent.length > 300) { points++; feedback.push('✅ Comprehensive CLAUDE.md'); }
+			if (/##.*Architecture|##.*Structure/mi.test(claudeContent)) { points++; feedback.push('✅ Documents architecture'); }
+			if (/##.*Command|##.*Usage/mi.test(claudeContent)) { points++; feedback.push('✅ Has usage instructions'); }
+
+			// 3. README quality (0-3 points)
+			if (readmeContent.length > 500) { points++; feedback.push('✅ Detailed README'); }
+			if (/```[\s\S]*```/m.test(readmeContent)) { points++; feedback.push('✅ Includes code examples'); }
+			if (/\[.*\]\(.*\)/m.test(readmeContent)) { points++; feedback.push('✅ Has helpful links'); }
+
+			// 4. Bonus points (0-2 points)
+			if (/badge|shield/mi.test(readmeContent)) { points++; feedback.push('✅ Uses badges'); }
+			if (/license|MIT|Apache/mi.test(fafContent + readmeContent)) { points++; feedback.push('✅ Open source licensed'); }
+
+			// Decision: Need 8+ points for Big Orange (out of 11 possible)
+			const awarded = points >= 8;
+
+			if (awarded) {
+				score = 105;
+				orangeResult = {
+					awarded: true,
+					feedback: `🍊 BIG ORANGE AWARD!\nThe Michelin Star for Repos\n\nAI Review (${points}/11 points):\n${feedback.join('\n')}\n\nYour repo demonstrates excellence. Congratulations!`
+				};
+			} else {
+				orangeResult = {
+					awarded: false,
+					feedback: `Not quite yet (${points}/11 points, need 8+):\n\n${feedback.join('\n')}\n\n💡 Tips to earn Big Orange:\n- Add more detail to project.faf\n- Include architecture in CLAUDE.md\n- Add code examples to README\n- Consider adding badges`
+				};
+			}
+		} catch (err) {
+			orangeResult = {
+				awarded: false,
+				feedback: `Error during review: ${err instanceof Error ? err.message : 'Unknown error'}`
+			};
+		} finally {
+			applyingForOrange = false;
+		}
 	}
 </script>
 
@@ -164,10 +240,43 @@ Check your score: https://grok-faf-elite.vercel.app
 		<!-- Progress bar -->
 		<div class="w-full bg-muted-foreground/20 rounded-full h-3 overflow-hidden">
 			<div
-				class="h-full rounded-full transition-all duration-500 {score >= 100 ? 'bg-gradient-to-r from-orange-500 to-yellow-400' : score >= 70 ? 'bg-green-500' : 'bg-red-500'}"
+				class="h-full rounded-full transition-all duration-500 {score >= 105 ? 'bg-gradient-to-r from-orange-500 to-orange-400' : score >= 100 ? 'bg-gradient-to-r from-yellow-500 to-yellow-400' : score >= 70 ? 'bg-green-500' : 'bg-red-500'}"
 				style="width: {Math.min(score, 105)}%"
 			></div>
 		</div>
+
+		<!-- Big Orange Application (only at 100%) -->
+		{#if score === 100 && !orangeResult}
+			<div class="pt-4 border-t border-muted-foreground/20">
+				<button
+					onclick={applyForBigOrange}
+					disabled={applyingForOrange}
+					class="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-400 text-white font-bold rounded-lg
+						hover:from-orange-600 hover:to-orange-500 transition-all duration-200
+						focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 focus:ring-offset-muted
+						disabled:opacity-50 disabled:cursor-not-allowed
+						flex items-center justify-center gap-2 text-lg"
+				>
+					{#if applyingForOrange}
+						<span class="animate-spin">🍊</span> AI Reviewing...
+					{:else}
+						🍊 Juice Your Repo!
+					{/if}
+				</button>
+				<p class="text-xs text-muted-foreground text-center mt-2">
+					Apply for the Big 🍊 Award - The Michelin Star for Repos
+				</p>
+			</div>
+		{/if}
+
+		<!-- Orange Result -->
+		{#if orangeResult}
+			<div class="pt-4 border-t border-muted-foreground/20">
+				<div class="p-4 rounded-lg {orangeResult.awarded ? 'bg-orange-500/10 border border-orange-500/30' : 'bg-muted-foreground/10 border border-muted-foreground/20'}">
+					<pre class="text-sm whitespace-pre-wrap {orangeResult.awarded ? 'text-orange-400' : 'text-muted-foreground'}">{orangeResult.feedback}</pre>
+				</div>
+			</div>
+		{/if}
 
 		<div class="flex gap-3 pt-4">
 			<button
