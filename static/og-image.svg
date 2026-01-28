@@ -1,0 +1,29 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black background -->
+  <rect width="1200" height="630" fill="#000000"/>
+
+  <!-- Orange circle -->
+  <circle cx="600" cy="280" r="180" fill="#F97316"/>
+
+  <!-- Leaf -->
+  <ellipse cx="720" cy="140" rx="50" ry="30" fill="#22C55E" transform="rotate(45 720 140)"/>
+
+  <!-- Text: Juice Up Your Repo! -->
+  <text x="600" y="530"
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="56"
+        font-weight="bold"
+        fill="#FFFFFF"
+        text-anchor="middle">
+    Juice Up Your Repo!
+  </text>
+
+  <!-- Subtext -->
+  <text x="600" y="590"
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="28"
+        fill="#9CA3AF"
+        text-anchor="middle">
+    Score your AI-readiness
+  </text>
+</svg>

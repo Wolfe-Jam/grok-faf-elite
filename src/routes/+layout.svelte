@@ -23,13 +23,13 @@
 	<meta property="og:url" content="https://zero-faf-builder-amg.vercel.app" />
 	<meta property="og:title" content="Make Your Repos AI-Ready" />
 	<meta property="og:description" content="Score your AI-readiness. Aim for 100% 🏆 Gold Code — AI Fully Optimized" />
-	<meta property="og:image" content="https://zero-faf-builder-amg.vercel.app/icon-512.png" />
+	<meta property="og:image" content="https://zero-faf-builder-amg.vercel.app/og-image.png" />
 
 	<!-- Twitter/X -->
-	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="Make Your Repos AI-Ready" />
 	<meta name="twitter:description" content="Score your AI-readiness. Aim for 100% 🏆 Gold Code" />
-	<meta name="twitter:image" content="https://zero-faf-builder-amg.vercel.app/icon-512.png" />
+	<meta name="twitter:image" content="https://zero-faf-builder-amg.vercel.app/og-image.png" />
 </svelte:head>
 
 {@render children()}
