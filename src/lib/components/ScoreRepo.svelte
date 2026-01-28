@@ -260,7 +260,7 @@ Check your score: https://grok-faf-elite.vercel.app
 					{#if applyingForOrange}
 						<span class="animate-spin">🍊</span> AI Reviewing...
 					{:else}
-						🍊 Juice Your Repo!
+						🍊 Juice UP Your Repo!
 					{/if}
 				</button>
 				<p class="text-xs text-muted-foreground text-center mt-2">
