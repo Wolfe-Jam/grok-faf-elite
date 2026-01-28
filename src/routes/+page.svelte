@@ -79,6 +79,19 @@
 
 	<!-- Action Cards -->
 	<div class="w-full max-w-xl space-y-4">
+		<!-- Score is the hook - top of the list -->
+		<ActionButton
+			onclick={() => showScore = true}
+			label="Score My Repo"
+			description="Check your FAF AI-readiness score - aim for Big 🍊"
+		>
+			{#snippet icon()}
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+				</svg>
+			{/snippet}
+		</ActionButton>
+
 		<ActionButton
 			onclick={() => showNewProject = true}
 			label="New Project"
@@ -112,18 +125,6 @@
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
 					<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-				</svg>
-			{/snippet}
-		</ActionButton>
-
-		<ActionButton
-			onclick={() => showScore = true}
-			label="Score My Repo"
-			description="Check your FAF AI-readiness score"
-		>
-			{#snippet icon()}
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
 				</svg>
 			{/snippet}
 		</ActionButton>
