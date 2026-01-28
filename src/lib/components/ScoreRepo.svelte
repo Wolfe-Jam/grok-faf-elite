@@ -210,9 +210,23 @@ Check your score: https://grok-faf-elite.vercel.app
 		</div>
 
 		{#if error}
-			<div class="p-3 rounded-lg text-sm bg-red-500/10 text-red-400">
-				{error}
-			</div>
+			{#if error.includes('No project.faf')}
+				<!-- No FAF = opportunity! -->
+				<div class="p-4 rounded-lg bg-primary/10 border border-primary/20">
+					<p class="text-sm font-semibold text-primary mb-2">🍊 No FAF yet - let's fix that!</p>
+					<p class="text-xs text-muted-foreground mb-3">Add AI-readiness to this repo in seconds:</p>
+					<pre class="bg-background rounded p-2 text-xs text-green-400 overflow-x-auto">npm install -g faf-cli
+cd your-repo
+faf init && faf auto</pre>
+					<p class="text-xs text-muted-foreground mt-3">
+						Then come back and score it! Aim for 100% 🏆 or Big 🍊 105%
+					</p>
+				</div>
+			{:else}
+				<div class="p-3 rounded-lg text-sm bg-red-500/10 text-red-400">
+					{error}
+				</div>
+			{/if}
 		{/if}
 
 		<button
