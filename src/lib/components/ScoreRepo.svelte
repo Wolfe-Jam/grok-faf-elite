@@ -217,28 +217,21 @@ Check your score: https://grok-faf-elite.vercel.app
 					<p class="text-sm font-semibold text-primary mb-2">🍊 No FAF yet - let's fix that!</p>
 					<p class="text-xs text-muted-foreground mb-3">Add AI-readiness to this repo:</p>
 
-					<div class="flex gap-2 mt-3">
-						<button
-							onclick={() => {
-								navigator.clipboard.writeText('npm install -g faf-cli && faf init && faf auto');
-								copiedCommands = true;
-								setTimeout(() => copiedCommands = false, 2000);
-							}}
-							class="flex-1 py-2 px-3 bg-primary text-black text-sm font-semibold rounded-lg
-								hover:bg-primary/90 transition-colors duration-200"
-						>
-							{copiedCommands ? '✓ Copied!' : '📋 Copy Commands'}
-						</button>
-						<a
-							href="https://faf.one"
-							target="_blank"
-							rel="noopener"
-							class="flex-1 py-2 px-3 bg-muted text-foreground text-sm font-semibold rounded-lg
-								hover:bg-muted/80 transition-colors duration-200 text-center"
-						>
-							📖 Learn More
-						</a>
-					</div>
+					<pre class="bg-black rounded p-3 text-xs text-green-400 overflow-x-auto mb-3 font-mono">npm install -g faf-cli
+faf init
+faf auto</pre>
+
+					<button
+						onclick={() => {
+							navigator.clipboard.writeText('npm install -g faf-cli && faf init && faf auto');
+							copiedCommands = true;
+							setTimeout(() => copiedCommands = false, 2000);
+						}}
+						class="w-full py-2 px-3 bg-primary text-black text-sm font-semibold rounded-lg
+							hover:bg-primary/90 transition-colors duration-200"
+					>
+						{copiedCommands ? '✓ Copied!' : '📋 Copy Commands'}
+					</button>
 
 					<p class="text-xs text-muted-foreground mt-3 text-center">
 						Then come back and score it! Aim for 100% 🏆 or Big 🍊 105%
