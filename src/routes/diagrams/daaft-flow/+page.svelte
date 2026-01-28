@@ -45,8 +45,8 @@
 			</div>
 
 			<div class="score-badge drift-badge">
-				<span class="score-num">???</span>
-				<span class="score-label">Never the same twice</span>
+				<span class="score-num">DRIFT%</span>
+				<span class="score-label">What's yours?</span>
 			</div>
 
 			<div class="bottom-label">Drift compounds every session</div>
