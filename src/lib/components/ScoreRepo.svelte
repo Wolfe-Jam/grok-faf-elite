@@ -102,7 +102,7 @@
 
 ${score >= 100 ? 'Gold Code achieved!' : 'On the path to Gold Code!'}
 
-Check your score: https://grok-faf-elite.vercel.app
+Check your score: https://zero-faf-builder-amg.vercel.app
 
 #FAF #GoldCode #AIReadiness`
 		);
