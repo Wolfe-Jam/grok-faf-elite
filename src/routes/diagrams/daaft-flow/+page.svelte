@@ -64,25 +64,31 @@
 			<h3 class="side-title faf-title">SMART Flow</h3>
 
 			<div class="faf-steps">
-				<div class="faf-step">
-					<div class="step-cmd">faf init</div>
-					<div class="step-time">&lt;100ms</div>
-					<div class="step-what">Core tech definition</div>
-					<div class="step-score">20-40%</div>
+				<div class="faf-row">
+					<div class="faf-step">
+						<div class="step-cmd">faf init</div>
+						<div class="step-time">&lt;100ms</div>
+						<div class="step-what">Core tech definition</div>
+					</div>
+					<div class="score-circle">20-40%</div>
 				</div>
 				<div class="step-arrow">↓</div>
-				<div class="faf-step">
-					<div class="step-cmd">faf auto</div>
-					<div class="step-time">seconds</div>
-					<div class="step-what">150+ frameworks, 200+ formats</div>
-					<div class="step-score">~85%</div>
+				<div class="faf-row">
+					<div class="faf-step">
+						<div class="step-cmd">faf auto</div>
+						<div class="step-time">seconds</div>
+						<div class="step-what">150+ frameworks, 200+ formats</div>
+					</div>
+					<div class="score-circle">~85%</div>
 				</div>
 				<div class="step-arrow">↓</div>
-				<div class="faf-step final-step">
-					<div class="step-cmd">faf go</div>
-					<div class="step-time">minutes</div>
-					<div class="step-what">Human context + 6 W's</div>
-					<div class="step-score final-score">100%</div>
+				<div class="faf-row">
+					<div class="faf-step final-step">
+						<div class="step-cmd">faf go</div>
+						<div class="step-time">minutes</div>
+						<div class="step-what">Human context + 6 W's</div>
+					</div>
+					<div class="score-circle final-circle">100%</div>
 				</div>
 			</div>
 
@@ -232,14 +238,19 @@
 		gap: 0.5rem;
 	}
 
+	.faf-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
 	.faf-step {
 		background: #0a0a0a;
 		border: 1px solid #444;
 		border-radius: 8px;
 		padding: 0.6rem 1rem;
 		text-align: center;
-		width: 200px;
-		position: relative;
+		width: 180px;
 	}
 
 	.final-step {
@@ -268,23 +279,23 @@
 		margin-top: 0.2rem;
 	}
 
-	.step-score {
-		position: absolute;
-		right: -10px;
-		top: 50%;
-		transform: translateY(-50%);
-		padding: 0.2rem 0.4rem;
-		border-radius: 4px;
+	.score-circle {
+		width: 52px;
+		height: 52px;
+		border-radius: 50%;
+		background: #1a1a1a;
+		border: 2px solid #444;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		font-size: 0.7rem;
 		font-weight: 700;
-		background: #1a1a1a;
-		border: 1px solid #444;
 		color: #f5f5f5;
 	}
 
-	.final-score {
+	.final-circle {
 		background: rgba(34, 197, 94, 0.1);
-		border: 1px solid rgba(34, 197, 94, 0.5);
+		border: 2px solid #22c55e;
 		color: #22c55e;
 	}
 
