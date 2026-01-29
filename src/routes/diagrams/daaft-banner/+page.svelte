@@ -64,7 +64,8 @@
 
 		<!-- Bottom overlay text -->
 		<div class="overlay-text">
-			From 20-40% Guesswork to 100% Zero-Drift — Free for Devs
+			<div class="tagline-top">You don't have 5 package.json files. Why 5 .md files for context?</div>
+			<div class="tagline-bottom">project.faf — the package.json for AI. Free forever.</div>
 		</div>
 	</div>
 
@@ -321,13 +322,23 @@
 	/* Overlay text */
 	.overlay-text {
 		position: absolute;
-		bottom: 1rem;
+		bottom: 0.75rem;
 		left: 0;
 		right: 0;
 		text-align: center;
+	}
+
+	.tagline-top {
 		color: #f5f5f5;
-		font-size: 1.1rem;
+		font-size: 1rem;
 		font-weight: 600;
+	}
+
+	.tagline-bottom {
+		color: #22c55e;
+		font-size: 0.9rem;
+		font-weight: 600;
+		margin-top: 0.25rem;
 	}
 
 	/* Instructions */
