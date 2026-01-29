@@ -258,8 +258,9 @@
 	}
 
 	.arc-arrow {
-		color: #444;
-		font-size: 1rem;
+		color: #aaa;
+		font-size: 1.2rem;
+		font-weight: bold;
 	}
 
 	/* Right side - Sync */
