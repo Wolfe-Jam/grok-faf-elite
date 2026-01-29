@@ -12,10 +12,10 @@
 		<!-- Left: Drift chaos -->
 		<div class="drift-side">
 			<div class="drift-files">
-				<div class="md-file drift-1">README.md</div>
-				<div class="md-file drift-2">CLAUDE.md</div>
-				<div class="md-file drift-3">architecture.md</div>
-				<div class="md-file drift-4">requirements.md</div>
+				<div class="md-file md-light drift-1">README.md</div>
+				<div class="md-file md-outline drift-2">CLAUDE.md</div>
+				<div class="md-file md-mid drift-3">architecture.md</div>
+				<div class="md-file md-outline drift-4">requirements.md</div>
 			</div>
 			<div class="drift-arrows">
 				<span class="drift-arrow">?</span>
@@ -112,13 +112,31 @@
 	}
 
 	.md-file {
-		background: #1a1a1a;
-		border: 1px solid #444;
-		color: #888;
 		padding: 0.3rem 0.6rem;
 		border-radius: 4px;
 		font-size: 0.7rem;
 		font-family: 'SF Mono', monospace;
+	}
+
+	/* Light variant - brighter background */
+	.md-file.md-light {
+		background: #2a2a2a;
+		border: 1px solid #555;
+		color: #ccc;
+	}
+
+	/* Outline variant - white border */
+	.md-file.md-outline {
+		background: #0a0a0a;
+		border: 1px solid #f5f5f5;
+		color: #f5f5f5;
+	}
+
+	/* Mid variant - medium gray */
+	.md-file.md-mid {
+		background: #1a1a1a;
+		border: 1px solid #666;
+		color: #aaa;
 	}
 
 	.drift-1 { transform: rotate(-3deg) translateX(-5px); }
