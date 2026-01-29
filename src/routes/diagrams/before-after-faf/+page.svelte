@@ -36,7 +36,11 @@
 				<div class="summary-title">No Foundation</div>
 				<div class="summary-text">Components floating independently. No persistent format. Context reinvented per session.</div>
 			</div>
-			<div class="question-text">AI starts from scratch here every time. Do you know where it starts..? <span class="whisper">[AI doesn't know either]</span></div>
+			<div class="question-text">
+				<div>AI starts from scratch here every time.</div>
+				<div>Do you know where it starts..?</div>
+				<div class="whisper">[AI doesn't know either]</div>
+			</div>
 		</div>
 
 		<!-- Center Divider -->
@@ -213,16 +217,16 @@
 	.question-text {
 		margin-top: 1rem;
 		font-size: 0.8rem;
-		color: #666;
+		color: #f5f5f5;
 		font-style: italic;
 		text-align: center;
+		line-height: 1.6;
 	}
 
 	.whisper {
-		font-size: 0.65rem;
-		color: #555;
-		display: block;
-		margin-top: 0.25rem;
+		font-size: 0.7rem;
+		color: #aaa;
+		margin-top: 0.5rem;
 	}
 
 	/* Foundation box */
