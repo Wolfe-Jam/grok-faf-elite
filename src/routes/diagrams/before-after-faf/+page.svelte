@@ -217,7 +217,7 @@
 	.question-text {
 		margin-top: 1rem;
 		font-size: 0.8rem;
-		color: #f5f5f5;
+		color: #f8a0a0;
 		font-style: italic;
 		text-align: center;
 		line-height: 1.6;
@@ -225,7 +225,7 @@
 
 	.whisper {
 		font-size: 0.7rem;
-		color: #aaa;
+		color: #d88;
 		margin-top: 0.5rem;
 	}
 
