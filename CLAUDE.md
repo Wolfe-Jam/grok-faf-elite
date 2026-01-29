@@ -56,6 +56,14 @@ npm run preview  # Preview production build
 - grok-faf-mcp (npm: 75+ downloads)
 - MCP Server: https://grok-faf-mcp.vercel.app/sse
 
+## Hidden Pages (URL-only, no nav links)
+- `/assets` - Visual assets dashboard (diagrams, GIFs, screenshots index)
+- `/diagrams` - Diagram index
+- `/diagrams/daaft-banner` - 5:2 X Article banner
+- `/diagrams/daaft-flow` - DAAFT vs SMART flow comparison
+
+**Full asset index:** `/Users/wolfejam/FAF-GOLD/PLANET-FAF/docs/VISUAL-ASSETS-INDEX.md`
+
 ---
 **STATUS: BI-SYNC ACTIVE** - Synchronized with project.faf
 ---
