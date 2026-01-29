@@ -8,7 +8,12 @@
 		{
 			slug: 'daaft-flow',
 			title: 'Daaft Flow Diagram',
-			description: 'Before/After comparison - Typical AI vs .faf path'
+			description: 'Before/After comparison - DAAFT vs SMART flow'
+		},
+		{
+			slug: 'before-after-faf',
+			title: 'Before/After .faf',
+			description: 'Components floating vs connected foundation'
 		}
 	];
 </script>
