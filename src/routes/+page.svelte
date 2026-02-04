@@ -15,6 +15,7 @@
 	let showDirectUrl = $state(false);
 	let showBiSync = $state(false);
 	let showScore = $state(false);
+	let showHelp = $state(false);
 
 	// Form inputs
 	let projectName = $state('my-faf-project');
@@ -63,7 +64,23 @@
 	}
 </script>
 
-<main class="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+<main class="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative">
+	<!-- Info Button (top right) -->
+	<button
+		onclick={() => showHelp = true}
+		class="fixed top-6 right-6 w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/30
+			flex items-center justify-center transition-all duration-200
+			focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background
+			z-50"
+		aria-label="Help & Information"
+		type="button"
+	>
+		<svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+			<circle cx="12" cy="12" r="10" />
+			<path d="M12 16v-4M12 8h.01" />
+		</svg>
+	</button>
+
 	<!-- Hero Section -->
 	<div class="text-center mb-8">
 		<div class="flex justify-center mb-6">
@@ -300,4 +317,86 @@
 <!-- Score Repo Modal -->
 <Modal open={showScore} onclose={() => showScore = false} title="Score My Repo">
 	<ScoreRepo />
+</Modal>
+
+<!-- Help Modal -->
+<Modal open={showHelp} onclose={() => showHelp = false} title="How This Works">
+	<div class="space-y-6 text-sm">
+		<!-- What is this? -->
+		<div>
+			<h3 class="font-bold text-primary mb-2">What is "Get dotFaffed"?</h3>
+			<p class="text-muted-foreground">
+				Adding AI context to your projects so Grok (and other AIs) can understand your codebase instantly.
+				No more re-explaining your project every conversation.
+			</p>
+		</div>
+
+		<!-- Why? -->
+		<div>
+			<h3 class="font-bold text-primary mb-2">Why do I need this?</h3>
+			<ul class="list-disc list-inside space-y-1 text-muted-foreground">
+				<li>Grok reads your project.faf file and knows everything about your repo</li>
+				<li>Context persists forever - no drift, no re-explaining</li>
+				<li>Works with Claude, Cursor, Gemini, and other AI tools</li>
+				<li>Your AI-readiness score shows how well AIs can understand your code</li>
+			</ul>
+		</div>
+
+		<!-- How to use -->
+		<div>
+			<h3 class="font-bold text-primary mb-2">How to use this site:</h3>
+
+			<div class="space-y-3 ml-4">
+				<!-- Score -->
+				<div>
+					<p class="font-semibold text-foreground">🏆 Score Your Repo</p>
+					<p class="text-muted-foreground text-xs mt-1">
+						Enter any GitHub repo URL to see its AI-readiness score (0-100%).
+						Aim for 85%+ (Bronze tier) for production-ready AI context.
+					</p>
+				</div>
+
+				<!-- Share -->
+				<div>
+					<p class="font-semibold text-foreground">𝕏 Share Your Score</p>
+					<p class="text-muted-foreground text-xs mt-1">
+						Post your AI-readiness score to X (Twitter) and show off your optimized codebase.
+					</p>
+				</div>
+
+				<!-- New Project -->
+				<div>
+					<p class="font-semibold text-foreground">➕ New Project</p>
+					<p class="text-muted-foreground text-xs mt-1">
+						Start fresh with a FAF-ready project template. Comes with project.faf built-in.
+					</p>
+				</div>
+
+				<!-- Add to GitHub -->
+				<div>
+					<p class="font-semibold text-foreground">📁 Add to GitHub Repo</p>
+					<p class="text-muted-foreground text-xs mt-1">
+						<strong>Why?</strong> Your existing repo has 0% AI-readiness. Add FAF to jump to 85%+ instantly.
+						Commands clone, add FAF, commit, and push - done in 30 seconds.
+					</p>
+				</div>
+
+				<!-- Direct URL -->
+				<div>
+					<p class="font-semibold text-foreground">🔗 Direct MCP URL</p>
+					<p class="text-muted-foreground text-xs mt-1">
+						Get the grok-faf-mcp server URL to connect Grok directly to FAF tools.
+						Add to Grok's MCP settings for instant FAF awareness.
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Bottom tagline -->
+		<div class="pt-4 border-t border-muted-foreground/20">
+			<p class="text-xs text-muted-foreground italic text-center">
+				Zero faff from day zero — context-on-demand, FAST⚡️AF
+			</p>
+		</div>
+	</div>
 </Modal>
