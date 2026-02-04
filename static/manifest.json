@@ -1,7 +1,7 @@
 {
 	"name": "Grok-FAF-Elite",
 	"short_name": "FAF Elite",
-	"description": "Zero faff from day zero — Grok-ready in one click",
+	"description": "Instant AI context for your Repos",
 	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#000000",

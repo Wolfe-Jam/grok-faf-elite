@@ -395,7 +395,7 @@
 		<!-- Bottom tagline -->
 		<div class="pt-4 border-t border-muted-foreground/20">
 			<p class="text-xs text-muted-foreground italic text-center">
-				Zero faff from day zero — context-on-demand, FAST⚡️AF
+				Instant AI context for your Repos — FAST⚡️AF
 			</p>
 		</div>
 	</div>

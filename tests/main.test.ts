@@ -10,7 +10,7 @@ test.describe('Grok-FAF-Elite', () => {
 		await page.goto('/');
 		await expect(page.getByRole('img', { name: 'Big Orange Logo' })).toBeVisible();
 		await expect(page.getByRole('heading', { level: 1 })).toContainText('Grok-FAF-Elite');
-		await expect(page.getByText('Zero faff from day zero')).toBeVisible();
+		await expect(page.getByText('Instant AI context for your Repos')).toBeVisible();
 	});
 
 	test('displays all three action buttons', async ({ page }) => {

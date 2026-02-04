@@ -4,7 +4,7 @@
 [![Vercel](https://img.shields.io/badge/Vercel-deployed-black)](https://grok-faf-elite.vercel.app)
 [![FAF](https://img.shields.io/badge/FAF-100%25-orange)](https://faf.one)
 
-Zero faff from day zero — Grok-ready in one click.
+Instant AI context for your Repos.
 
 F1-Inspired SvelteKit 5 + Tailwind 4 for elite devs.
 

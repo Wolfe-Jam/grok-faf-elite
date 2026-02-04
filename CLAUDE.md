@@ -2,7 +2,7 @@
 
 ## Project Identity
 - **Name**: grok-faf-elite
-- **Purpose**: Zero faff from day zero — Grok-ready in one click
+- **Purpose**: Instant AI context for your Repos
 - **Edition**: F1-Inspired Elite Edition for elite devs
 - **AI-Readiness**: 95%
 
