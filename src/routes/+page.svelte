@@ -90,7 +90,7 @@
 			Make Your Repos AI-Ready
 		</h1>
 		<p class="text-lg text-muted-foreground">
-			Score your AI-readiness — aim for 100% 🏆
+			Get dotFaffed — context-on-demand, 1-click FAST⚡️AF
 		</p>
 	</div>
 
@@ -203,6 +203,9 @@
 		<p class="mt-4 text-xs italic text-muted-foreground/70">
 			"It's so logical if it didn't exist, AI would have built it itself" — Claude
 		</p>
+	<p class="mt-6 text-sm text-green-500">
+		Built for Grok 💚 Dedicated to <a href="https://x.com/elonmusk" target="_blank" rel="noopener" class="hover:underline">@elonmusk</a> and <a href="https://x.com/xai" target="_blank" rel="noopener" class="hover:underline">@xAI</a>
+	</p>
 		<p class="mt-6">
 			<a href="https://faf.one" target="_blank" rel="noopener" class="text-primary hover:underline">faf.one</a>
 		</p>
