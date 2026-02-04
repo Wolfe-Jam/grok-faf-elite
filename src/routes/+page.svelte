@@ -376,8 +376,7 @@
 				<div>
 					<p class="font-semibold text-foreground">📁 Add to GitHub Repo</p>
 					<p class="text-muted-foreground text-xs mt-1">
-						<strong>Why?</strong> Your existing repo has 0% AI-readiness. Add FAF to jump to 85%+ instantly.
-						Commands clone, add FAF, commit, and push - done in 30 seconds.
+						<strong>0% doesn't mean you have a bad Repo. It means AI knows nothing about it.</strong> It has to "figure it out" from scratch every time. FAF tells it what it is in 5ms.
 					</p>
 				</div>
 
