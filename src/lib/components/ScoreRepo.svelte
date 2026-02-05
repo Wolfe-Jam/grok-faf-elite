@@ -12,8 +12,17 @@
 	// Props
 	interface Props {
 		initialUrl?: string;
+		onScoreComplete?: (data: {
+			score: number;
+			repoName: string;
+			repoOwner: string;
+			genTime: number;
+			scoreTime: number;
+			missingFields: string[];
+			fafContent: string;
+		}) => void;
 	}
-	let { initialUrl = 'https://github.com/Wolfe-Jam/test-faf-demo' }: Props = $props();
+	let { initialUrl = 'https://github.com/Wolfe-Jam/test-faf-demo', onScoreComplete }: Props = $props();
 
 	// State
 	let loading = $state(false);
@@ -25,6 +34,7 @@
 	let scoreTime = $state(0);
 	let missingFields = $state<string[]>([]);
 	let error = $state('');
+	let showDownloadTip = $state(false);
 
 	// Tier system
 	function getTier(s: number): { emoji: string; name: string; color: string; note?: string } {
@@ -111,6 +121,19 @@
 			scoreTime = result.scoreTime;
 			missingFields = result.missingFields;
 
+			// Notify parent of score completion
+			if (onScoreComplete) {
+				onScoreComplete({
+					score: result.score,
+					repoName,
+					repoOwner,
+					genTime: result.genTime,
+					scoreTime: result.scoreTime,
+					missingFields: result.missingFields,
+					fafContent: result.fafContent
+				});
+			}
+
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to generate project.faf';
 		} finally {
@@ -192,12 +215,12 @@ Check your score: https://builder.faf.one
 		<!-- Result Display -->
 		<div class="text-center py-6">
 			<div class="text-6xl mb-4">{tier?.emoji}</div>
+			<div class="text-xl font-bold text-foreground mb-3">{repoOwner}/{repoName}</div>
 			<div class="text-5xl font-bold {tier?.color} mb-2">{score}%</div>
 			<div class="text-lg text-muted-foreground">{tier?.name}</div>
 			{#if tier?.note}
 				<div class="text-xs text-primary mt-1">{tier.note}</div>
 			{/if}
-			<div class="text-sm text-foreground mt-2">{repoName}</div>
 		</div>
 
 		<!-- Performance Stats -->
@@ -249,18 +272,37 @@ Check your score: https://builder.faf.one
 			</button>
 
 			<!-- Secondary: Download -->
-			<button
-				onclick={downloadFile}
-				class="w-full py-3 px-4 bg-[#1a1a1a] text-white font-semibold rounded-lg border border-white/10
-					hover:bg-[#252525] transition-colors duration-200
-					focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-background
-					cursor-pointer"
-			>
-				💾 Download project.faf
-			</button>
-			<p class="text-xs text-muted-foreground text-center">
-				💡 Save in your repo root (where README is), then <code>git add && git commit</code>
-			</p>
+			<div class="space-y-2">
+				<div class="flex items-center gap-2">
+					<button
+						onclick={downloadFile}
+						class="flex-1 py-3 px-4 bg-[#1a1a1a] text-white font-semibold rounded-lg border border-white/10
+							hover:bg-[#252525] transition-colors duration-200
+							focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-background
+							cursor-pointer"
+					>
+						💾 Download project.faf
+					</button>
+					<button
+						onclick={() => showDownloadTip = !showDownloadTip}
+						class="w-10 h-10 flex items-center justify-center rounded-lg border border-white/10
+							hover:bg-white/5 transition-colors duration-200 cursor-pointer
+							focus:outline-none focus:ring-2 focus:ring-primary/50"
+						title="Save location help"
+					>
+						💡
+					</button>
+				</div>
+				{#if showDownloadTip}
+					<div class="text-xs text-foreground bg-black border border-primary/30 rounded-lg p-3 animate-in fade-in duration-200">
+						<p class="font-semibold mb-1 text-primary">📍 Save location:</p>
+						<p class="text-muted-foreground">Save <code class="text-primary">project.faf</code> in your repo root folder (where README.md is located)</p>
+						<p class="text-muted-foreground mt-2 text-[10px]">
+							Tip: Enable "Ask where to save" in browser settings to choose location
+						</p>
+					</div>
+				{/if}
+			</div>
 
 			<!-- Share on X -->
 			<button
