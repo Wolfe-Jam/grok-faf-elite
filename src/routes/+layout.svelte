@@ -1,10 +1,20 @@
 <script lang="ts">
 	import '../app.css';
 	import { onMount } from 'svelte';
+	import { initWasm } from '$lib/wasm-loader';
 
 	let { children } = $props();
 
-	onMount(() => {
+	onMount(async () => {
+		// Load WASM modules upfront (Rust 300KB + Zig 2.7KB)
+		try {
+			await initWasm();
+			console.log('✅ DOUBLE-WHAMMY loaded: Rust + Zig WASM ready');
+		} catch (err) {
+			console.error('❌ WASM init failed:', err);
+		}
+
+		// Service worker
 		if ('serviceWorker' in navigator) {
 			navigator.serviceWorker.register('/service-worker.js');
 		}

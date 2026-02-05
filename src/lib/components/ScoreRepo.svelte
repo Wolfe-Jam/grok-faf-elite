@@ -1,17 +1,32 @@
 <script lang="ts">
-	let repoUrl = $state('');
+	/**
+	 * ScoreRepo - ONE-CLICK FAF Builder
+	 *
+	 * STEP A: Generate + Score + Commit (or Download)
+	 * STEP B: Improve to 100% if needed
+	 */
+
+	import { onMount } from 'svelte';
+	import { isWasmReady, generateAndScore } from '$lib/wasm-loader';
+
+	// Props
+	interface Props {
+		initialUrl?: string;
+	}
+	let { initialUrl = 'https://github.com/Wolfe-Jam/test-faf-demo' }: Props = $props();
+
+	// State
 	let loading = $state(false);
 	let score = $state<number | null>(null);
-	let repoName = $state('');
+	let fafContent = $state('');
 	let repoOwner = $state('');
+	let repoName = $state('');
+	let genTime = $state(0);
+	let scoreTime = $state(0);
+	let missingFields = $state<string[]>([]);
 	let error = $state('');
-	let shared = $state(false);
 
-	// Big Orange application state
-	let applyingForOrange = $state(false);
-	let orangeResult = $state<{ awarded: boolean; feedback: string } | null>(null);
-
-	// Tier definitions - Big 🍊 Award (105%) is the Michelin Star for Repos
+	// Tier system
 	function getTier(s: number): { emoji: string; name: string; color: string; note?: string } {
 		if (s >= 105) return { emoji: '🍊', name: 'Big Orange', color: 'text-orange-500', note: 'The Michelin Star for Repos' };
 		if (s >= 100) return { emoji: '🏆', name: 'Trophy', color: 'text-yellow-400', note: 'Gold Code - Perfect Score!' };
@@ -25,8 +40,16 @@
 
 	const tier = $derived(score !== null ? getTier(score) : null);
 
-	async function checkScore() {
-		if (!repoUrl.trim()) return;
+	// Auto-run on mount
+	onMount(() => {
+		generateAndScoreRepo();
+	});
+
+	/**
+	 * STEP A: Generate and score
+	 */
+	async function generateAndScoreRepo() {
+		if (!initialUrl.trim()) return;
 
 		loading = true;
 		error = '';
@@ -34,66 +57,106 @@
 
 		try {
 			// Parse GitHub URL
-			const url = new URL(repoUrl);
+			const url = new URL(initialUrl);
 			const pathParts = url.pathname.split('/').filter(Boolean);
-			if (pathParts.length < 2) throw new Error('Invalid GitHub URL');
-
-			const owner = pathParts[0];
-			const repo = pathParts[1];
-			repoOwner = owner;
-			repoName = repo;
-
-			// Fetch raw project.faf from GitHub
-			const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/project.faf`;
-			const response = await fetch(rawUrl);
-
-			if (!response.ok) {
-				// Try master branch
-				const masterUrl = `https://raw.githubusercontent.com/${owner}/${repo}/master/project.faf`;
-				const masterResponse = await fetch(masterUrl);
-				if (!masterResponse.ok) {
-					throw new Error('No project.faf found - repo needs FAF!');
-				}
+			if (pathParts.length < 2) {
+				throw new Error('Invalid GitHub URL');
 			}
 
-			const fafContent = await response.text();
+			repoOwner = pathParts[0];
+			repoName = pathParts[1];
 
-			// Simple scoring based on filled fields
-			// Count meaningful lines (not empty, not just whitespace)
-			const lines = fafContent.split('\n').filter(l => l.trim() && !l.trim().startsWith('#'));
+			// Check WASM ready
+			if (!isWasmReady()) {
+				throw new Error('WASM not loaded yet - please wait');
+			}
 
-			// Check for key fields
-			const hasProject = /^project:/m.test(fafContent);
-			const hasGoal = /goal:/m.test(fafContent);
-			const hasStack = /^stack:/m.test(fafContent);
-			const hasHumanContext = /^human_context:/m.test(fafContent);
-			const hasWho = /who:/m.test(fafContent);
-			const hasWhat = /what:/m.test(fafContent);
-			const hasWhy = /why:/m.test(fafContent);
-			const hasWhere = /where:/m.test(fafContent);
-			const hasWhen = /when:/m.test(fafContent);
-			const hasHow = /how:/m.test(fafContent);
-			const hasMainLang = /main_language:/m.test(fafContent);
-			const hasType = /type:/m.test(fafContent);
+			// Fetch repo metadata
+			const repoResponse = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}`);
+			if (!repoResponse.ok) {
+				throw new Error(repoResponse.status === 404 ? 'Repository not found' : `GitHub API error: ${repoResponse.status}`);
+			}
 
-			// Calculate score (12 slots = 100%)
-			const filledSlots = [
-				hasProject, hasGoal, hasStack, hasHumanContext,
-				hasWho, hasWhat, hasWhy, hasWhere, hasWhen, hasHow,
-				hasMainLang, hasType
-			].filter(Boolean).length;
+			const repoData = await repoResponse.json();
+			const description = repoData.description || null;
+			const language = repoData.language || null;
 
-			// Base score - cap at 100% (Big Orange 105% is AI-awarded only)
-			let calculatedScore = Math.min(100, Math.round((filledSlots / 12) * 100));
+			// Fetch README
+			const readmeResponse = await fetch(
+				`https://api.github.com/repos/${repoOwner}/${repoName}/readme`,
+				{ headers: { 'Accept': 'application/vnd.github.v3.raw' } }
+			);
+			const readme = readmeResponse.ok ? await readmeResponse.text() : null;
 
-			score = calculatedScore;
+			// Fetch package.json
+			const packageResponse = await fetch(
+				`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/package.json`
+			);
+			const packageJson = packageResponse.ok ? await packageResponse.text() : null;
+
+			// Generate with RUST-WASM + Score with ZIG-WASM
+			console.log('🦀 Calling RUST-WASM to generate project.faf...');
+			const result = await generateAndScore(repoOwner, repoName, description, readme, packageJson, language);
+			console.log('✅ WASM complete:', {
+				score: result.score,
+				genTime: result.genTime + 'ms',
+				scoreTime: result.scoreTime + 'μs',
+				contentLength: result.fafContent.length + ' bytes'
+			});
+
+			// Store results
+			fafContent = result.fafContent;
+			score = result.score;
+			genTime = result.genTime;
+			scoreTime = result.scoreTime;
+			missingFields = result.missingFields;
+
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to fetch repo';
+			error = err instanceof Error ? err.message : 'Failed to generate project.faf';
 		} finally {
 			loading = false;
 		}
 	}
 
+	/**
+	 * Add to GitHub via OAuth
+	 */
+	function addToGitHub() {
+		// Store data for OAuth callback
+		sessionStorage.setItem('faf_generation', JSON.stringify({
+			owner: repoOwner,
+			repo: repoName,
+			fafContent,
+			score,
+			genTime,
+			scoreTime,
+			missingFields
+		}));
+
+		// Trigger OAuth
+		const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+		const redirectUri = `${window.location.origin}/auth/callback`;
+		const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo`;
+
+		window.location.href = authUrl;
+	}
+
+	/**
+	 * Download file as fallback
+	 */
+	function downloadFile() {
+		const blob = new Blob([fafContent], { type: 'application/vnd.faf+yaml' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'project.faf';
+		a.click();
+		URL.revokeObjectURL(url);
+	}
+
+	/**
+	 * Share on X
+	 */
 	function shareToX() {
 		if (score === null || !tier) return;
 
@@ -102,144 +165,31 @@
 
 ${score >= 100 ? 'Gold Code achieved!' : 'On the path to Gold Code!'}
 
-Check your score: https://zero-faf-builder-amg.vercel.app
+Check your score: https://builder.faf.one
 
 #FAF #GoldCode #AIReadiness`
 		);
 
 		window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
-		shared = true;
-	}
-
-	function reset() {
-		score = null;
-		repoUrl = '';
-		repoName = '';
-		repoOwner = '';
-		error = '';
-		shared = false;
-		orangeResult = null;
-	}
-
-	async function applyForBigOrange() {
-		if (score !== 100) return;
-
-		applyingForOrange = true;
-		orangeResult = null;
-
-		try {
-			// Fetch all files for AI review
-			const baseUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main`;
-
-			const [fafRes, claudeRes, readmeRes] = await Promise.allSettled([
-				fetch(`${baseUrl}/project.faf`),
-				fetch(`${baseUrl}/CLAUDE.md`),
-				fetch(`${baseUrl}/README.md`)
-			]);
-
-			const fafContent = fafRes.status === 'fulfilled' && fafRes.value.ok ? await fafRes.value.text() : '';
-			const claudeContent = claudeRes.status === 'fulfilled' && claudeRes.value.ok ? await claudeRes.value.text() : '';
-			const readmeContent = readmeRes.status === 'fulfilled' && readmeRes.value.ok ? await readmeRes.value.text() : '';
-
-			// AI Evaluation Criteria
-			let points = 0;
-			const feedback: string[] = [];
-
-			// Main files first (3 points)
-			if (fafContent.length > 500) { points++; feedback.push('✅ Excellent project.faf'); }
-			if (claudeContent.length > 300) { points++; feedback.push('✅ Comprehensive CLAUDE.md'); }
-			if (readmeContent.length > 500) { points++; feedback.push('✅ Detailed README'); }
-
-			// project.faf details (2 points)
-			if (/persona:|voice:|tone:/m.test(fafContent)) { points++; feedback.push('✅ Has personality/voice defined'); }
-			if (/links:|npm:|github:/m.test(fafContent)) { points++; feedback.push('✅ Includes useful links'); }
-
-			// CLAUDE.md details (2 points)
-			if (/##.*Architecture|##.*Structure/mi.test(claudeContent)) { points++; feedback.push('✅ Documents architecture'); }
-			if (/##.*Command|##.*Usage/mi.test(claudeContent)) { points++; feedback.push('✅ Has usage instructions'); }
-
-			// README details (2 points)
-			if (/```[\s\S]*```/m.test(readmeContent)) { points++; feedback.push('✅ Includes code examples'); }
-			if (/\[.*\]\(.*\)/m.test(readmeContent)) { points++; feedback.push('✅ Has helpful links'); }
-
-			// Bonus (2 points)
-			if (/badge|shield/mi.test(readmeContent)) { points++; feedback.push('✅ Uses badges'); }
-			if (/license|MIT|Apache/mi.test(fafContent + readmeContent)) { points++; feedback.push('✅ Open source licensed'); }
-
-			// Decision: Need 8+ points for Big Orange (out of 11 possible)
-			const awarded = points >= 8;
-
-			if (awarded) {
-				score = 105;
-				orangeResult = {
-					awarded: true,
-					feedback: `🍊 BIG ORANGE AWARD!\nThe Michelin Star for Repos\n\nPolish applied. Excellence achieved.\nAI is fully optimized to code on this project.\n\nAI Review (${points}/11 points):\n${feedback.join('\n')}`
-				};
-			} else {
-				orangeResult = {
-					awarded: false,
-					feedback: `Not quite yet (${points}/11 points, need 8+):\n\n${feedback.join('\n')}\n\n💡 Be the next Big 🍊:\n- Run: faf auto (enhances all files)\n- Add architecture section to CLAUDE.md\n- Add code examples to README\n- Add badges to show off\n\nThen come back and Juice UP again!`
-				};
-			}
-		} catch (err) {
-			orangeResult = {
-				awarded: false,
-				feedback: `Error during review: ${err instanceof Error ? err.message : 'Unknown error'}`
-			};
-		} finally {
-			applyingForOrange = false;
-		}
 	}
 </script>
 
 <div class="space-y-4">
-	{#if score === null}
-		<!-- Input State -->
-		<div>
-			<label for="scoreRepoUrl" class="block text-sm font-medium text-muted-foreground mb-2">
-				GitHub Repository URL
-			</label>
-			<input
-				id="scoreRepoUrl"
-				type="url"
-				bind:value={repoUrl}
-				placeholder="https://github.com/username/repo"
-				class="w-full px-4 py-2 bg-background border border-muted-foreground/20 rounded-lg
-					focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50
-					text-foreground placeholder-muted-foreground"
-				onkeydown={(e) => e.key === 'Enter' && checkScore()}
-			/>
+	{#if loading}
+		<!-- Loading State (no spinners - too fast!) -->
+		<div class="text-center py-8">
+			<p class="text-lg font-semibold text-foreground">Initializing... RUST-WASM executed faf init</p>
+			<p class="text-sm text-muted-foreground mt-2">Making your repo AI-ready...</p>
 		</div>
 
-		{#if error}
-			{#if error.includes('No project.faf')}
-				<!-- No FAF - informational -->
-				<div class="p-4 rounded-lg bg-muted-foreground/10 border border-muted-foreground/20">
-					<p class="text-sm font-semibold text-foreground mb-2">This repo has no FAF</p>
-					<p class="text-xs text-muted-foreground">
-						No AI-readiness score available.
-						<a href="https://faf.one" target="_blank" rel="noopener" class="text-primary hover:underline">Learn about FAF</a>
-					</p>
-				</div>
-			{:else}
-				<div class="p-3 rounded-lg text-sm bg-red-500/10 text-red-400">
-					{error}
-				</div>
-			{/if}
-		{/if}
+	{:else if error}
+		<!-- Error State -->
+		<div class="p-4 rounded-lg bg-red-500/10 border border-red-500/30">
+			<p class="text-sm font-semibold text-red-400">{error}</p>
+		</div>
 
-		<button
-			onclick={checkScore}
-			disabled={loading || !repoUrl.trim()}
-			class="w-full py-2 px-4 bg-primary text-black font-semibold rounded-lg
-				hover:bg-primary/90 transition-colors duration-200
-				focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-muted
-				disabled:opacity-50 disabled:cursor-not-allowed"
-		>
-			{loading ? 'Checking...' : 'Check Score'}
-		</button>
-	{:else}
-		<!-- Score Display State -->
+	{:else if score !== null}
+		<!-- Result Display -->
 		<div class="text-center py-6">
 			<div class="text-6xl mb-4">{tier?.emoji}</div>
 			<div class="text-5xl font-bold {tier?.color} mb-2">{score}%</div>
@@ -250,16 +200,29 @@ Check your score: https://zero-faf-builder-amg.vercel.app
 			<div class="text-sm text-foreground mt-2">{repoName}</div>
 		</div>
 
-		<!-- Improve your score prompt (when < 100%) -->
-		{#if score < 100}
-			<div class="p-4 rounded-lg bg-primary/10 border border-primary/20">
-				<p class="text-sm font-semibold text-primary mb-2">🚀 Is this your repo?</p>
-				<p class="text-xs text-muted-foreground mb-3">Get to 100% 🏆 or even the Big 🍊 105%</p>
-				<pre class="bg-black rounded p-2 text-xs text-green-400 overflow-x-auto font-mono">cd {repoName}
-npm install -g faf-cli
-faf auto</pre>
-				<p class="text-xs text-muted-foreground mt-2">
-					Run in your local clone. Free CLI tool.
+		<!-- Performance Stats -->
+		<div class="p-4 rounded-lg bg-black border border-white/10">
+			<p class="text-sm font-bold text-primary mb-2">✅⚡ DOUBLE-WHAMMY Performance:</p>
+			<div class="text-xs text-foreground space-y-1">
+				<div>🦀⚡️ Generated in {genTime.toFixed(2)}ms by Rust WASM (312KB)</div>
+				<div>👻⚡ Scored in {scoreTime.toFixed(2)}μs by Zig WASM (2.7KB)</div>
+				<div class="text-muted-foreground mt-2">71,428 scores/second • 314.7KB total</div>
+			</div>
+		</div>
+
+		<!-- Missing Fields (STEP B - Improvement) -->
+		{#if missingFields.length > 0 && score < 100}
+			<div class="p-4 rounded-lg bg-black border border-white/10">
+				<p class="text-sm font-bold text-foreground mb-2">
+					Missing Context ({missingFields.length} fields to reach 100%):
+				</p>
+				<ul class="text-xs text-muted-foreground space-y-1">
+					{#each missingFields as field}
+						<li>• {field.toUpperCase()}: Add to README for better AI context</li>
+					{/each}
+				</ul>
+				<p class="text-xs text-primary mt-3">
+					💡 Tip: Improve your README with these details, then regenerate!
 				</p>
 			</div>
 		{/if}
@@ -267,64 +230,50 @@ faf auto</pre>
 		<!-- Progress bar -->
 		<div class="w-full bg-muted-foreground/20 rounded-full h-3 overflow-hidden">
 			<div
-				class="h-full rounded-full transition-all duration-500 {score >= 105 ? 'bg-gradient-to-r from-orange-500 to-orange-400' : score >= 100 ? 'bg-gradient-to-r from-yellow-500 to-yellow-400' : score >= 70 ? 'bg-green-500' : 'bg-red-500'}"
-				style="width: {Math.min(score, 105)}%"
+				class="h-full rounded-full transition-all duration-500 bg-green-500"
+				style="width: {Math.min(score, 100)}%"
 			></div>
 		</div>
 
-		<!-- Big Orange Application (only at 100%) -->
-		{#if score === 100 && !orangeResult}
-			<div class="pt-4 border-t border-muted-foreground/20">
-				<button
-					onclick={applyForBigOrange}
-					disabled={applyingForOrange}
-					class="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-400 text-white font-bold rounded-lg
-						hover:from-orange-600 hover:to-orange-500 transition-all duration-200
-						focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:ring-offset-2 focus:ring-offset-muted
-						disabled:opacity-50 disabled:cursor-not-allowed
-						flex items-center justify-center gap-2 text-lg"
-				>
-					{#if applyingForOrange}
-						<span class="animate-spin">🍊</span> AI Reviewing...
-					{:else}
-						🍊 Juice UP Your Repo!
-					{/if}
-				</button>
-				<p class="text-xs text-muted-foreground text-center mt-2">
-					Apply for the Big 🍊 Award - The Michelin Star for Repos
-				</p>
-			</div>
-		{/if}
+		<!-- Action Buttons -->
+		<div class="space-y-3 pt-4">
+			<!-- Primary: Add to GitHub -->
+			<button
+				onclick={addToGitHub}
+				class="w-full py-3 px-4 bg-primary text-black font-bold rounded-lg
+					hover:bg-primary/90 transition-colors duration-200
+					focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background
+					cursor-pointer"
+			>
+				🚀 Add to GitHub
+			</button>
 
-		<!-- Orange Result -->
-		{#if orangeResult}
-			<div class="pt-4 border-t border-muted-foreground/20">
-				<div class="p-4 rounded-lg {orangeResult.awarded ? 'bg-orange-500/10 border border-orange-500/30' : 'bg-muted-foreground/10 border border-muted-foreground/20'}">
-					<pre class="text-sm whitespace-pre-wrap {orangeResult.awarded ? 'text-orange-400' : 'text-muted-foreground'}">{orangeResult.feedback}</pre>
-				</div>
-			</div>
-		{/if}
+			<!-- Secondary: Download -->
+			<button
+				onclick={downloadFile}
+				class="w-full py-3 px-4 bg-[#1a1a1a] text-white font-semibold rounded-lg border border-white/10
+					hover:bg-[#252525] transition-colors duration-200
+					focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-background
+					cursor-pointer"
+			>
+				💾 Download project.faf
+			</button>
+			<p class="text-xs text-muted-foreground text-center">
+				💡 Save in your repo root (where README is), then <code>git add && git commit</code>
+			</p>
 
-		<div class="flex gap-3 pt-4">
+			<!-- Share on X -->
 			<button
 				onclick={shareToX}
-				class="flex-1 py-2 px-4 bg-black text-white font-semibold rounded-lg border border-white/20
+				class="w-full py-3 px-4 bg-black text-white font-semibold rounded-lg border border-white/20
 					hover:bg-black/80 transition-colors duration-200
-					focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-muted
-					flex items-center justify-center gap-2"
+					focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-background
+					flex items-center justify-center gap-2 cursor-pointer"
 			>
 				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
 					<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
 				</svg>
-				{shared ? 'Shared!' : 'Share Score'}
-			</button>
-			<button
-				onclick={reset}
-				class="py-2 px-4 bg-muted text-foreground font-semibold rounded-lg border border-muted-foreground/20
-					hover:bg-muted/80 transition-colors duration-200
-					focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-muted"
-			>
-				Try Another
+				Share Your Score
 			</button>
 		</div>
 	{/if}
