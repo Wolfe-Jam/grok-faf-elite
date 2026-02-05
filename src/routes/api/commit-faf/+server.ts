@@ -21,12 +21,13 @@ interface CommitRequest {
 	genTime: number;
 	scoreTime: number;
 	missingFields: string[];
+	readmeUpdates?: Record<string, string>;
 }
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const body: CommitRequest = await request.json();
-		const { code, owner, repo, fafContent, score, genTime, scoreTime, missingFields } = body;
+		const { code, owner, repo, fafContent, score, genTime, scoreTime, missingFields, readmeUpdates } = body;
 
 		// Validation
 		if (!code || !owner || !repo || !fafContent) {
@@ -149,6 +150,95 @@ export const POST: RequestHandler = async ({ request }) => {
 		const commitData = await commitResponse.json();
 		const commitUrl = commitData.content?.html_url || `https://github.com/${owner}/${repo}/blob/main/project.faf`;
 
+		// Step 4: Update README.md if user provided missing field content
+		let readmeUpdated = false;
+		if (readmeUpdates && Object.keys(readmeUpdates).length > 0) {
+			try {
+				// Fetch current README
+				const readmeResponse = await fetch(
+					`https://api.github.com/repos/${owner}/${repo}/contents/README.md`,
+					{
+						headers: {
+							'Authorization': `Bearer ${accessToken}`,
+							'Accept': 'application/vnd.github.v3+json',
+							'User-Agent': 'FAF-Builder/1.0'
+						}
+					}
+				);
+
+				if (readmeResponse.ok) {
+					const readmeData = await readmeResponse.json();
+					const currentReadme = Buffer.from(readmeData.content, 'base64').toString('utf-8');
+					const readmeSha = readmeData.sha;
+
+					// Build new sections
+					let updatedReadme = currentReadme;
+					const sections: string[] = [];
+
+					// Add WHO section if provided
+					if (readmeUpdates.who) {
+						sections.push(`\n\n## Team\n\n${readmeUpdates.who}`);
+					}
+
+					// Add WHY section if provided
+					if (readmeUpdates.why) {
+						sections.push(`\n\n## Purpose\n\n${readmeUpdates.why}`);
+					}
+
+					// Add WHERE section if provided
+					if (readmeUpdates.where) {
+						sections.push(`\n\n## Environment\n\n${readmeUpdates.where}`);
+					}
+
+					// Add WHEN section if provided
+					if (readmeUpdates.when) {
+						sections.push(`\n\n## Status\n\n${readmeUpdates.when}`);
+					}
+
+					// Add HOW section if provided (Installation/Usage)
+					if (readmeUpdates.how) {
+						sections.push(`\n\n${readmeUpdates.how}`);
+					}
+
+					// Append all new sections to README
+					if (sections.length > 0) {
+						updatedReadme = currentReadme + sections.join('');
+
+						// Commit updated README
+						const updateReadmeResponse = await fetch(
+							`https://api.github.com/repos/${owner}/${repo}/contents/README.md`,
+							{
+								method: 'PUT',
+								headers: {
+									'Authorization': `Bearer ${accessToken}`,
+									'Content-Type': 'application/json',
+									'Accept': 'application/vnd.github.v3+json',
+									'User-Agent': 'FAF-Builder/1.0'
+								},
+								body: JSON.stringify({
+									message: 'Update README with AI context',
+									content: Buffer.from(updatedReadme).toString('base64'),
+									sha: readmeSha,
+									committer: {
+										name: 'FAF Builder',
+										email: 'builder@faf.one'
+									}
+								})
+							}
+						);
+
+						if (updateReadmeResponse.ok) {
+							readmeUpdated = true;
+						}
+					}
+				}
+			} catch (readmeError) {
+				// README update failed, but project.faf was committed successfully
+				// Don't fail the entire request
+				console.error('README update failed:', readmeError);
+			}
+		}
+
 		// Success response with all stats for UI display
 		return json({
 			success: true,
@@ -160,6 +250,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				scoreTime,
 				missingFields,
 				commitUrl,
+				readmeUpdated,
 				timestamp: new Date().toISOString()
 			}
 		});

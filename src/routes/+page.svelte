@@ -40,6 +40,9 @@
 	let currentFafContent = $state<string>('');
 	let isPanelExpanded = $state(false);
 	let showDownloadTip = $state(false);
+	let showMissingFieldsTip = $state(false);
+	let showReadmeForm = $state(false);
+	let readmeUpdates = $state<Record<string, string>>({});
 
 	// Load recent URLs from localStorage on mount
 	import { onMount } from 'svelte';
@@ -100,6 +103,19 @@ Check your score: https://builder.faf.one
 #FAF #GoldCode #AIReadiness`
 		);
 		window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
+	}
+
+	// Get placeholder text for README form fields
+	function getPlaceholder(field: string): string {
+		const placeholders: Record<string, string> = {
+			who: 'Built by @username | Maintained by CompanyName team | Contributors welcome',
+			what: 'A lightning-fast [tool type] that [key benefit]. Works with [tech stack]. Supports [features].',
+			why: 'This project solves [problem] by [solution]. Built because existing tools didn\'t [key feature]. Designed for [use case].',
+			where: 'Runs on Node.js 18+ | Browser compatible | Deployed at [url] | Works in production/staging/local',
+			when: 'Active development since 2024 | v1.0 stable | Roadmap: [upcoming features] | Last updated: [date]',
+			how: '## Installation\nnpm install your-package\n\n## Usage\nimport { Component } from \'./lib\'\n\n## Quick Start\nnpm run dev'
+		};
+		return placeholders[field] || '';
 	}
 
 	// Clipboard feedback
@@ -190,18 +206,145 @@ Check your score: https://builder.faf.one
 
 							<!-- Missing Fields (if any) -->
 							{#if currentMissingFields.length > 0 && currentScore < 100}
-								<div class="p-4 rounded-lg bg-black border border-white/10">
-									<p class="text-sm font-bold text-foreground mb-2">
-										Missing Context ({currentMissingFields.length} fields to reach 100%):
+								<div class="space-y-2">
+									<div class="p-4 rounded-lg bg-black border border-white/10">
+										<div class="flex items-start justify-between mb-2">
+											<p class="text-sm font-bold text-foreground">
+												Missing Context ({currentMissingFields.length} fields to reach 100%):
+											</p>
+											<button
+												onclick={() => showMissingFieldsTip = !showMissingFieldsTip}
+												class="ml-2 flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg border border-white/10
+													hover:bg-white/5 transition-colors duration-200 cursor-pointer
+													focus:outline-none focus:ring-2 focus:ring-primary/50"
+												title="Show examples"
+											>
+												💡
+											</button>
+										</div>
+										<ul class="text-xs text-muted-foreground space-y-1">
+											{#each currentMissingFields as field}
+												<li>• {field.toUpperCase()}: Add to README for better AI context</li>
+											{/each}
+										</ul>
+									</div>
+
+									<!-- Example Snackbar (All 6 W's) -->
+									{#if showMissingFieldsTip}
+										<div transition:slide={{ duration: 300 }} class="text-xs text-foreground bg-black border border-primary/30 rounded-lg p-4">
+											<p class="font-semibold mb-3 text-primary">💡 The 6 W's - Examples of what AI loves:</p>
+											<div class="space-y-3 text-muted-foreground">
+												<!-- WHO -->
+												<div>
+													<p class="font-semibold text-foreground mb-1">WHO (Team/Author):</p>
+													<div class="bg-muted/20 rounded p-2 text-[10px]">
+														"Built by @username | Maintained by CompanyName team | Contributors welcome"
+													</div>
+												</div>
+
+												<!-- WHAT -->
+												<div>
+													<p class="font-semibold text-foreground mb-1">WHAT (Description):</p>
+													<div class="bg-muted/20 rounded p-2 text-[10px]">
+														"A lightning-fast [tool type] that [key benefit]. Works with [tech stack]. Supports [features]."
+													</div>
+												</div>
+
+												<!-- WHY -->
+												<div>
+													<p class="font-semibold text-foreground mb-1">WHY (Purpose):</p>
+													<div class="bg-muted/20 rounded p-2 text-[10px]">
+														"This project solves [problem] by [solution]. Built because existing tools didn't [key feature]. Designed for [use case]."
+													</div>
+												</div>
+
+												<!-- WHERE -->
+												<div>
+													<p class="font-semibold text-foreground mb-1">WHERE (Environment):</p>
+													<div class="bg-muted/20 rounded p-2 text-[10px]">
+														"Runs on Node.js 18+ | Browser compatible | Deployed at [url] | Works in production/staging/local"
+													</div>
+												</div>
+
+												<!-- WHEN -->
+												<div>
+													<p class="font-semibold text-foreground mb-1">WHEN (Timeline/Status):</p>
+													<div class="bg-muted/20 rounded p-2 text-[10px]">
+														"Active development since 2024 | v1.0 stable | Roadmap: [upcoming features] | Last updated: [date]"
+													</div>
+												</div>
+
+												<!-- HOW -->
+												<div>
+													<p class="font-semibold text-foreground mb-1">HOW (Installation & Usage):</p>
+													<div class="bg-muted/20 rounded p-2 font-mono text-[10px]">
+														## Getting Started<br/>
+														npm install your-package<br/>
+														npm run dev<br/><br/>
+														## Usage<br/>
+														import &#123; Component &#125; from './lib'
+													</div>
+												</div>
+											</div>
+											<p class="text-[10px] text-muted-foreground mt-3">
+												Add these sections to your README, then regenerate for 100% Gold Code! 🏆
+											</p>
+										</div>
+									{/if}
+								</div>
+							{/if}
+
+							<!-- README Improvement Form (if missing fields) -->
+							{#if currentMissingFields.length > 0 && currentScore < 100}
+								<div class="p-4 rounded-lg bg-black border border-primary/30">
+									<div class="flex items-center justify-between mb-3">
+										<p class="text-sm font-bold text-primary">📝 Auto-Improve README to 100%</p>
+										<button
+											onclick={() => showReadmeForm = !showReadmeForm}
+											class="text-xs text-primary hover:underline cursor-pointer"
+										>
+											{showReadmeForm ? '▲ Hide Form' : '▼ Show Form'}
+										</button>
+									</div>
+									<p class="text-xs text-muted-foreground mb-3">
+										Fill in missing sections below. We'll update your README automatically when you commit.
 									</p>
-									<ul class="text-xs text-muted-foreground space-y-1">
-										{#each currentMissingFields as field}
-											<li>• {field.toUpperCase()}: Add to README for better AI context</li>
-										{/each}
-									</ul>
-									<p class="text-xs text-primary mt-3">
-										💡 Tip: Improve your README with these details, then regenerate!
-									</p>
+
+									{#if showReadmeForm}
+										<div transition:slide={{ duration: 300 }} class="space-y-3">
+											{#each currentMissingFields as field}
+												<div>
+													<label for="readme-{field}" class="block text-xs font-semibold text-foreground mb-1">
+														{field.toUpperCase()}:
+														<span class="text-muted-foreground font-normal">
+															{#if field === 'who'}
+																(Team/Author)
+															{:else if field === 'what'}
+																(Project Description)
+															{:else if field === 'why'}
+																(Purpose/Mission)
+															{:else if field === 'where'}
+																(Environment)
+															{:else if field === 'when'}
+																(Timeline/Status)
+															{:else if field === 'how'}
+																(Installation/Usage)
+															{/if}
+														</span>
+													</label>
+													<textarea
+														id="readme-{field}"
+														bind:value={readmeUpdates[field]}
+														placeholder={getPlaceholder(field)}
+														class="w-full p-2 bg-muted/20 border border-white/10 rounded text-xs text-foreground
+															focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30
+															font-mono resize-none"
+														rows={field === 'how' ? 6 : 3}
+													></textarea>
+												</div>
+											{/each}
+										</div>
+									{/if}
 								</div>
 							{/if}
 
@@ -218,7 +361,8 @@ Check your score: https://builder.faf.one
 											score: currentScore,
 											genTime: currentGenTime,
 											scoreTime: currentScoreTime,
-											missingFields: currentMissingFields
+											missingFields: currentMissingFields,
+											readmeUpdates: readmeUpdates
 										}));
 										// Redirect to OAuth
 										const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;

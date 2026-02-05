@@ -21,6 +21,7 @@
 		commitUrl: string;
 		owner: string;
 		repo: string;
+		readmeUpdated?: boolean;
 	} | null>(null);
 
 	function getTierEmoji(s: number): string {
@@ -60,7 +61,7 @@
 			}
 
 			const generationData = JSON.parse(storedData);
-			const { owner, repo, fafContent, score, genTime, scoreTime, missingFields } = generationData;
+			const { owner, repo, fafContent, score, genTime, scoreTime, missingFields, readmeUpdates } = generationData;
 
 			// Commit to GitHub using the pre-generated .faf
 			const response = await fetch('/api/commit-faf', {
@@ -74,7 +75,8 @@
 					score,
 					genTime,
 					scoreTime,
-					missingFields
+					missingFields,
+					readmeUpdates
 				})
 			});
 
@@ -89,9 +91,10 @@
 					missingFields: commitResult.data.missingFields,
 					commitUrl: commitResult.data.commitUrl,
 					owner: commitResult.data.owner,
-					repo: commitResult.data.repo
+					repo: commitResult.data.repo,
+					readmeUpdated: commitResult.data.readmeUpdated
 				};
-				status = '✅ project.faf committed!';
+				status = commitResult.data.readmeUpdated ? '✅ project.faf & README.md committed!' : '✅ project.faf committed!';
 
 				// Clear sessionStorage
 				sessionStorage.removeItem('faf_generation');
@@ -147,11 +150,16 @@ Check your score: https://builder.faf.one
 				<div class="text-center">
 					<div class="text-6xl mb-4">{getTierEmoji(result.score)}</div>
 					<h1 class="text-3xl font-bold text-foreground mb-2">
-						✅ project.faf committed!
+						{result.readmeUpdated ? '✅ project.faf & README.md committed!' : '✅ project.faf committed!'}
 					</h1>
 					<p class="text-xl text-primary font-semibold">
 						{result.score}% {getTierName(result.score)}
 					</p>
+					{#if result.readmeUpdated}
+						<p class="text-sm text-muted-foreground mt-2">
+							README updated with missing context sections
+						</p>
+					{/if}
 				</div>
 
 				<!-- Performance Stats (DOUBLE-WHAMMY) -->
