@@ -148,7 +148,7 @@ Check your score: https://builder.faf.one
 <main class="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative">
 	<!-- Score Display Panel - Expandable with smooth animations -->
 	<div class="w-full max-w-md mb-8">
-		<div class="bg-muted/30 border-2 border-white/10 rounded-xl overflow-hidden">
+		<div class="bg-muted/30 border-2 border-white/10 rounded-xl overflow-hidden min-h-[320px]">
 			{#if currentScore !== null}
 				<!-- Compact Header (Always Visible) -->
 				<button
