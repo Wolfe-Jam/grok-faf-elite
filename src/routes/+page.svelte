@@ -43,6 +43,8 @@
 	let showMissingFieldsTip = $state(false);
 	let showReadmeForm = $state(false);
 	let readmeUpdates = $state<Record<string, string>>({});
+	let howCheckboxes = $state<string[]>([]);
+	let howOtherText = $state('');
 
 	// Load recent URLs from localStorage on mount
 	import { onMount } from 'svelte';
@@ -113,7 +115,7 @@ Check your score: https://builder.faf.one
 			why: 'This project solves [problem] by [solution]. Built because existing tools didn\'t [key feature]. Designed for [use case].',
 			where: 'Runs on Node.js 18+ | Browser compatible | Deployed at [url] | Works in production/staging/local',
 			when: 'Active development since 2024 | v1.0 stable | Roadmap: [upcoming features] | Last updated: [date]',
-			how: '## Installation\nnpm install your-package\n\n## Usage\nimport { Component } from \'./lib\'\n\n## Quick Start\nnpm run dev'
+			how: 'Mobile app | Website | CLI tool | REST API | Chrome extension'
 		};
 		return placeholders[field] || '';
 	}
@@ -231,13 +233,20 @@ Check your score: https://builder.faf.one
 
 									<!-- Example Snackbar (All 6 W's) -->
 									{#if showMissingFieldsTip}
-										<div transition:slide={{ duration: 300 }} class="text-xs text-foreground bg-black border border-primary/30 rounded-lg p-4">
+										<div transition:slide={{ duration: 300 }} class="relative text-xs text-foreground bg-black border border-primary/30 rounded-lg p-4 select-text">
+											<button
+												onclick={() => showMissingFieldsTip = false}
+												class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+												title="Close"
+											>
+												✕
+											</button>
 											<p class="font-semibold mb-3 text-primary">💡 The 6 W's - Examples of what AI loves:</p>
-											<div class="space-y-3 text-muted-foreground">
+											<div class="space-y-3 text-muted-foreground select-text">
 												<!-- WHO -->
 												<div>
 													<p class="font-semibold text-foreground mb-1">WHO (Team/Author):</p>
-													<div class="bg-muted/20 rounded p-2 text-[10px]">
+													<div class="bg-muted/20 rounded p-2 text-[10px] select-text">
 														"Built by @username | Maintained by CompanyName team | Contributors welcome"
 													</div>
 												</div>
@@ -245,7 +254,7 @@ Check your score: https://builder.faf.one
 												<!-- WHAT -->
 												<div>
 													<p class="font-semibold text-foreground mb-1">WHAT (Description):</p>
-													<div class="bg-muted/20 rounded p-2 text-[10px]">
+													<div class="bg-muted/20 rounded p-2 text-[10px] select-text">
 														"A lightning-fast [tool type] that [key benefit]. Works with [tech stack]. Supports [features]."
 													</div>
 												</div>
@@ -253,7 +262,7 @@ Check your score: https://builder.faf.one
 												<!-- WHY -->
 												<div>
 													<p class="font-semibold text-foreground mb-1">WHY (Purpose):</p>
-													<div class="bg-muted/20 rounded p-2 text-[10px]">
+													<div class="bg-muted/20 rounded p-2 text-[10px] select-text">
 														"This project solves [problem] by [solution]. Built because existing tools didn't [key feature]. Designed for [use case]."
 													</div>
 												</div>
@@ -261,7 +270,7 @@ Check your score: https://builder.faf.one
 												<!-- WHERE -->
 												<div>
 													<p class="font-semibold text-foreground mb-1">WHERE (Environment):</p>
-													<div class="bg-muted/20 rounded p-2 text-[10px]">
+													<div class="bg-muted/20 rounded p-2 text-[10px] select-text">
 														"Runs on Node.js 18+ | Browser compatible | Deployed at [url] | Works in production/staging/local"
 													</div>
 												</div>
@@ -269,20 +278,16 @@ Check your score: https://builder.faf.one
 												<!-- WHEN -->
 												<div>
 													<p class="font-semibold text-foreground mb-1">WHEN (Timeline/Status):</p>
-													<div class="bg-muted/20 rounded p-2 text-[10px]">
+													<div class="bg-muted/20 rounded p-2 text-[10px] select-text">
 														"Active development since 2024 | v1.0 stable | Roadmap: [upcoming features] | Last updated: [date]"
 													</div>
 												</div>
 
 												<!-- HOW -->
 												<div>
-													<p class="font-semibold text-foreground mb-1">HOW (Installation & Usage):</p>
-													<div class="bg-muted/20 rounded p-2 font-mono text-[10px]">
-														## Getting Started<br/>
-														npm install your-package<br/>
-														npm run dev<br/><br/>
-														## Usage<br/>
-														import &#123; Component &#125; from './lib'
+													<p class="font-semibold text-foreground mb-1">HOW (App Type):</p>
+													<div class="bg-muted/20 rounded p-2 text-[10px] select-text">
+														"Mobile app | Website | CLI tool | REST API | Chrome extension | Desktop app"
 													</div>
 												</div>
 											</div>
@@ -297,24 +302,54 @@ Check your score: https://builder.faf.one
 							<!-- README Improvement Form (if missing fields) -->
 							{#if currentMissingFields.length > 0 && currentScore < 100}
 								<div class="p-4 rounded-lg bg-black border border-primary/30">
-									<div class="flex items-center justify-between mb-3">
-										<p class="text-sm font-bold text-primary">📝 Auto-Improve README to 100%</p>
-										<button
-											onclick={() => showReadmeForm = !showReadmeForm}
-											class="text-xs text-primary hover:underline cursor-pointer"
-										>
-											{showReadmeForm ? '▲ Hide Form' : '▼ Show Form'}
-										</button>
-									</div>
-									<p class="text-xs text-muted-foreground mb-3">
-										Fill in missing sections below. We'll update your README automatically when you commit.
-									</p>
+									{#if !showReadmeForm}
+										<!-- Use Case Question -->
+										<p class="text-sm font-bold text-foreground mb-3 text-center">
+											Do we have your USE-CASE covered?
+										</p>
+										<div class="flex gap-3 mb-3">
+											<button
+												onclick={() => {
+													// User says YES - just commit as-is (form stays hidden)
+													showReadmeForm = false;
+												}}
+												class="flex-1 py-2 px-4 bg-green-500/20 border border-green-500 text-green-400 font-semibold rounded-lg
+													hover:bg-green-500/30 transition-colors duration-200 cursor-pointer"
+											>
+												✅ YES
+											</button>
+											<button
+												onclick={() => showReadmeForm = true}
+												class="flex-1 py-2 px-4 bg-primary/20 border border-primary text-primary font-semibold rounded-lg
+													hover:bg-primary/30 transition-colors duration-200 cursor-pointer"
+											>
+												📝 NO, tell us!
+											</button>
+										</div>
+										<p class="text-xs text-muted-foreground text-center">
+											Missing: {currentMissingFields.map(f => f.toUpperCase()).join(', ')}
+										</p>
+									{:else}
+										<!-- Form Header -->
+										<div class="flex items-center justify-between mb-3">
+											<p class="text-sm font-bold text-primary">📝 Auto-Improve README to 100%</p>
+											<button
+												onclick={() => showReadmeForm = false}
+												class="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+											>
+												✕ Cancel
+											</button>
+										</div>
+										<p class="text-xs text-muted-foreground mb-3">
+											Fill in missing sections below. We'll update your README automatically when you commit.
+										</p>
+									{/if}
 
 									{#if showReadmeForm}
 										<div transition:slide={{ duration: 300 }} class="space-y-3">
 											{#each currentMissingFields as field}
 												<div>
-													<label for="readme-{field}" class="block text-xs font-semibold text-foreground mb-1">
+													<label class="block text-xs font-semibold text-foreground mb-1">
 														{field.toUpperCase()}:
 														<span class="text-muted-foreground font-normal">
 															{#if field === 'who'}
@@ -328,19 +363,80 @@ Check your score: https://builder.faf.one
 															{:else if field === 'when'}
 																(Timeline/Status)
 															{:else if field === 'how'}
-																(Installation/Usage)
+																(App Type)
 															{/if}
 														</span>
 													</label>
-													<textarea
-														id="readme-{field}"
-														bind:value={readmeUpdates[field]}
-														placeholder={getPlaceholder(field)}
-														class="w-full p-2 bg-muted/20 border border-white/10 rounded text-xs text-foreground
-															focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30
-															font-mono resize-none"
-														rows={field === 'how' ? 6 : 3}
-													></textarea>
+
+													{#if field === 'how'}
+														<!-- Checkboxes for HOW -->
+														<div class="space-y-2">
+															{#each ['Mobile app', 'Website', 'CLI tool', 'REST API', 'Chrome extension', 'Desktop app'] as appType}
+																<label class="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+																	<input
+																		type="checkbox"
+																		value={appType}
+																		checked={howCheckboxes.includes(appType)}
+																		onchange={(e) => {
+																			if (e.currentTarget.checked) {
+																				howCheckboxes = [...howCheckboxes, appType];
+																			} else {
+																				howCheckboxes = howCheckboxes.filter(t => t !== appType);
+																			}
+																			const allTypes = [...howCheckboxes];
+																			if (howOtherText) allTypes.push(howOtherText);
+																			readmeUpdates[field] = allTypes.join(' | ');
+																		}}
+																		class="w-4 h-4 rounded border-white/10 bg-muted/20 text-primary
+																			focus:ring-2 focus:ring-primary/50 cursor-pointer"
+																	/>
+																	{appType}
+																</label>
+															{/each}
+
+															<!-- Other option with text input -->
+															<div class="flex items-start gap-2">
+																<input
+																	type="checkbox"
+																	checked={howOtherText !== ''}
+																	onchange={(e) => {
+																		if (!e.currentTarget.checked) {
+																			howOtherText = '';
+																			readmeUpdates[field] = howCheckboxes.join(' | ');
+																		}
+																	}}
+																	class="mt-1 w-4 h-4 rounded border-white/10 bg-muted/20 text-primary
+																		focus:ring-2 focus:ring-primary/50 cursor-pointer"
+																/>
+																<div class="flex-1">
+																	<label class="text-xs text-foreground">Other:</label>
+																	<input
+																		type="text"
+																		bind:value={howOtherText}
+																		oninput={() => {
+																			const allTypes = [...howCheckboxes];
+																			if (howOtherText) allTypes.push(howOtherText);
+																			readmeUpdates[field] = allTypes.join(' | ');
+																		}}
+																		placeholder="Your app type"
+																		class="w-full mt-1 p-2 bg-muted/20 border border-white/10 rounded text-xs text-foreground
+																			focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30"
+																	/>
+																</div>
+															</div>
+														</div>
+													{:else}
+														<!-- Textarea for other fields -->
+														<textarea
+															id="readme-{field}"
+															bind:value={readmeUpdates[field]}
+															placeholder={getPlaceholder(field)}
+															class="w-full p-2 bg-muted/20 border border-white/10 rounded text-xs text-foreground
+																focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30
+																font-mono resize-none"
+															rows={2}
+														></textarea>
+													{/if}
 												</div>
 											{/each}
 										</div>
@@ -446,7 +542,7 @@ Check your score: https://builder.faf.one
 			{:else}
 				<!-- Default 100% Example -->
 				<div class="p-6 text-center">
-					<p class="text-xs text-muted-foreground mb-3">LIVE EXAMPLE</p>
+					<p class="text-sm font-bold text-white mb-3">1-Click> CONTEXT!</p>
 					<div class="text-5xl mb-2">🏆</div>
 					<div class="text-4xl font-bold text-green-500 mb-1">100%</div>
 					<div class="text-sm text-muted-foreground mb-1">Gold Code - AI Fully Optimized</div>
