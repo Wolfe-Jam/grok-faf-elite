@@ -182,8 +182,21 @@ Check your score: https://builder.faf.one
 		// Watch form data changes
 		const formHasData = Object.keys(readmeUpdates).length > 0 || howCheckboxes.length > 0 || howOtherText.trim().length > 0;
 
+		// Debug: Always log what we're watching
+		console.log('👀 $effect triggered:', {
+			hasCurrentFaf: !!currentFafContent,
+			fafLength: currentFafContent?.length || 0,
+			formHasData,
+			readmeUpdatesKeys: Object.keys(readmeUpdates),
+			howCheckboxes,
+			howOtherText
+		});
+
 		// Only score if we have initial .faf content and form data
-		if (!currentFafContent || !formHasData) return;
+		if (!currentFafContent || !formHasData) {
+			console.log('⏸️ Skipping score - missing data');
+			return;
+		}
 
 		console.log('🔄 Real-time scoring triggered:', {
 			readmeUpdates,
@@ -193,10 +206,22 @@ Check your score: https://builder.faf.one
 		});
 
 		try {
+			// Check if WASM is ready
+			if (!isWasmReady()) {
+				console.warn('⏳ WASM not ready yet, skipping real-time score');
+				return;
+			}
+
 			// Update slots in .faf
 			const updatedFaf = updateFafSlots(currentFafContent, {
 				...readmeUpdates,
 				how: howCheckboxes.join(' | ') + (howOtherText ? ` | ${howOtherText}` : '')
+			});
+
+			console.log('📝 Updated .faf slots:', {
+				before: currentFafContent.substring(0, 200),
+				after: updatedFaf.substring(0, 200),
+				changed: currentFafContent !== updatedFaf
 			});
 
 			// Score with Zig WASM (14μs)
@@ -205,9 +230,11 @@ Check your score: https://builder.faf.one
 			const duration = performance.now() - startTime;
 
 			console.log('⚡ Real-time score:', {
-				score: result.score,
+				oldScore: currentScore,
+				newScore: result.score,
 				time: `${duration.toFixed(2)}ms`,
-				zigTime: `${result.time.toFixed(2)}μs`
+				zigTime: `${result.time.toFixed(2)}μs`,
+				improved: result.score > currentScore
 			});
 
 			// Update current score (live feedback!)
@@ -216,6 +243,10 @@ Check your score: https://builder.faf.one
 
 		} catch (error) {
 			console.error('❌ Real-time scoring error:', error);
+			console.error('Error details:', {
+				message: error instanceof Error ? error.message : String(error),
+				stack: error instanceof Error ? error.stack : undefined
+			});
 		}
 	});
 
