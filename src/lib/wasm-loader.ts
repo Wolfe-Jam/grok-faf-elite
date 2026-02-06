@@ -145,6 +145,8 @@ export async function generateAndScore(
 	const endGen = performance.now();
 	const genTime = endGen - startGen;
 
+	console.log('🚀 ABOUT TO CALL API /api/score');
+
 	// Score with server-side faf-cli (matches production tool!)
 	const scoreStart = performance.now();
 	const scoreResponse = await fetch('/api/score', {
