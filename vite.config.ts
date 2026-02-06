@@ -3,10 +3,5 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
-	build: {
-		rollupOptions: {
-			external: ['/faf_wasm_sdk.js']
-		}
-	}
+	plugins: [tailwindcss(), sveltekit()]
 });

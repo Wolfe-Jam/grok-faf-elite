@@ -33,11 +33,17 @@ export async function initWasm(): Promise<void> {
 	}
 
 	try {
-		// Load Rust WASM - dynamically import the ES6 module from static/
-		const wasmModule = await import(/* @vite-ignore */ '/faf_wasm_sdk.js');
+		// Wait for WASM module to be loaded from <script> tag in app.html
+		// @ts-ignore - globally loaded module
+		while (!window.wasm_bindgen) {
+			await new Promise(resolve => setTimeout(resolve, 50));
+		}
+
+		// @ts-ignore - globally loaded WASM module
+		const wasmModule = window.wasm_bindgen;
 
 		// Initialize the WASM with the .wasm file path
-		await wasmModule.default('/faf_wasm_sdk_bg.wasm');
+		await wasmModule('/faf_wasm_sdk_bg.wasm');
 		rustWasmModule = wasmModule;
 		rustWasmReady = true;
 
