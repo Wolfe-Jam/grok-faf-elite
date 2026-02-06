@@ -108,8 +108,11 @@
 				if (formData.where) sections.push(`\n\n## Environment\n\n${formData.where}`);
 				if (formData.when) sections.push(`\n\n## Timeline\n\n${formData.when}`);
 				if (formData.how) sections.push(`\n\n## How\n\n${formData.how}`);
-				readme += sections.join('');
+				const enhancement = sections.join('');
+				readme += enhancement;
 				console.log('📝 Enhanced README with form data:', Object.keys(formData));
+				console.log('📝 Added to README:', enhancement);
+				console.log('📖 Final README length:', readme.length);
 			}
 
 			// Fetch package.json

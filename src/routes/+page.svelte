@@ -6,7 +6,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import BiSyncPost from '$lib/components/BiSyncPost.svelte';
 	import ScoreRepo from '$lib/components/ScoreRepo.svelte';
-	import { isWasmReady } from '$lib/wasm-loader';
+	import { isWasmReady, scoreFaf } from '$lib/wasm-loader';
 
 	// Environment configuration
 	const mcpServerUrl = 'https://grok-faf-mcp.vercel.app/sse';
@@ -129,6 +129,95 @@ Check your score: https://builder.faf.one
 		};
 		return placeholders[field] || '';
 	}
+
+	// Update .faf slots based on form data
+	function updateFafSlots(fafYaml: string, formData: Record<string, string>): string {
+		let updated = fafYaml;
+
+		// Update WHO slot
+		if (formData.who) {
+			updated = updated.replace(/(who:\s*)(.*)/, `$1${formData.who}`);
+		}
+
+		// Update WHAT slot
+		if (formData.what) {
+			updated = updated.replace(/(what:\s*)(.*)/, `$1${formData.what}`);
+		}
+
+		// Update WHY slot
+		if (formData.why) {
+			updated = updated.replace(/(why:\s*)(.*)/, `$1${formData.why}`);
+		}
+
+		// Update WHERE slot
+		if (formData.where) {
+			updated = updated.replace(/(where:\s*)(.*)/, `$1${formData.where}`);
+		}
+
+		// Update WHEN slot
+		if (formData.when) {
+			updated = updated.replace(/(when:\s*)(.*)/, `$1${formData.when}`);
+		}
+
+		// Update HOW slot (combine checkboxes and other text)
+		if (formData.how || howCheckboxes.length > 0) {
+			const howParts: string[] = [];
+			if (howCheckboxes.length > 0) {
+				howParts.push(howCheckboxes.join(' | '));
+			}
+			if (howOtherText.trim()) {
+				howParts.push(howOtherText.trim());
+			}
+			if (howParts.length > 0) {
+				const howValue = howParts.join(' | ');
+				updated = updated.replace(/(how:\s*)(.*)/, `$1${howValue}`);
+			}
+		}
+
+		return updated;
+	}
+
+	// Real-time scoring effect - triggers on form changes
+	$effect(() => {
+		// Watch form data changes
+		const formHasData = Object.keys(readmeUpdates).length > 0 || howCheckboxes.length > 0 || howOtherText.trim().length > 0;
+
+		// Only score if we have initial .faf content and form data
+		if (!currentFafContent || !formHasData) return;
+
+		console.log('🔄 Real-time scoring triggered:', {
+			readmeUpdates,
+			howCheckboxes,
+			howOtherText,
+			hasInitialFaf: currentFafContent.length > 0
+		});
+
+		try {
+			// Update slots in .faf
+			const updatedFaf = updateFafSlots(currentFafContent, {
+				...readmeUpdates,
+				how: howCheckboxes.join(' | ') + (howOtherText ? ` | ${howOtherText}` : '')
+			});
+
+			// Score with Zig WASM (14μs)
+			const startTime = performance.now();
+			const result = scoreFaf(updatedFaf);
+			const duration = performance.now() - startTime;
+
+			console.log('⚡ Real-time score:', {
+				score: result.score,
+				time: `${duration.toFixed(2)}ms`,
+				zigTime: `${result.time.toFixed(2)}μs`
+			});
+
+			// Update current score (live feedback!)
+			currentScore = result.score;
+			currentFafContent = updatedFaf; // Store updated .faf
+
+		} catch (error) {
+			console.error('❌ Real-time scoring error:', error);
+		}
+	});
 
 	// Clipboard feedback
 	let copiedNew = $state(false);
