@@ -297,7 +297,7 @@ Check your score: https://builder.faf.one
 												<div>
 													<p class="font-semibold text-foreground mb-1">HOW (App Type):</p>
 													<div class="bg-muted/20 rounded p-2 text-[10px] select-text">
-														"Mobile app | Website | CLI tool | REST API | Chrome extension | Desktop app"
+														"Website | Desktop app | Mobile app | CLI tool | Chrome extension | MCP server | REST API"
 													</div>
 												</div>
 											</div>
@@ -381,7 +381,7 @@ Check your score: https://builder.faf.one
 													{#if field === 'how'}
 														<!-- Checkboxes for HOW -->
 														<div class="space-y-2">
-															{#each ['Mobile app', 'Website', 'CLI tool', 'REST API', 'Chrome extension', 'Desktop app'] as appType}
+															{#each ['Website', 'Desktop app', 'Mobile app', 'CLI tool', 'Chrome extension', 'MCP server', 'REST API'] as appType}
 																<label class="flex items-center gap-2 text-xs text-foreground cursor-pointer">
 																	<input
 																		type="checkbox"
