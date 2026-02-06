@@ -179,16 +179,19 @@ Check your score: https://builder.faf.one
 
 	// Real-time scoring effect - triggers on form changes
 	$effect(() => {
-		// Watch form data changes
-		const formHasData = Object.keys(readmeUpdates).length > 0 || howCheckboxes.length > 0 || howOtherText.trim().length > 0;
+		// Watch form data changes - need to read VALUES to trigger on changes
+		const formValues = JSON.stringify(readmeUpdates); // Forces watching all values
+		const hasCheckboxes = howCheckboxes.length > 0;
+		const hasOtherText = howOtherText.trim().length > 0;
+		const formHasData = Object.keys(readmeUpdates).length > 0 || hasCheckboxes || hasOtherText;
 
 		// Debug: Always log what we're watching
 		console.log('👀 $effect triggered:', {
 			hasCurrentFaf: !!currentFafContent,
 			fafLength: currentFafContent?.length || 0,
 			formHasData,
-			readmeUpdatesKeys: Object.keys(readmeUpdates),
-			howCheckboxes,
+			readmeUpdates: { ...readmeUpdates }, // De-proxy for logging
+			howCheckboxes: [...howCheckboxes],
 			howOtherText
 		});
 
