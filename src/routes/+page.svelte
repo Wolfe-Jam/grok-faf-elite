@@ -49,6 +49,9 @@
 	// Reactive check for form data (Svelte 5 needs $derived for deep object reactivity)
 	let hasFormData = $derived(Object.keys(readmeUpdates).length > 0);
 
+	// Button should be black when form is open OR has data
+	let shouldRecalculate = $derived(showReadmeForm || hasFormData);
+
 	// Load recent URLs from localStorage on mount
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -697,7 +700,7 @@ Check your score: https://builder.faf.one
 				}
 
 				// If form data exists and we're recalculating, regenerate with form data
-				if (showScore && hasFormData) {
+				if (showScore && shouldRecalculate) {
 					console.log('🔄 Recalculating with form data...');
 					try {
 						// Fetch original README
@@ -751,11 +754,11 @@ Check your score: https://builder.faf.one
 			}}
 			class="w-full py-4 px-6 font-bold text-lg rounded-xl transition-colors duration-200
 				focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background cursor-pointer
-				{showScore && hasFormData
+				{showScore && shouldRecalculate
 					? 'bg-black text-white hover:bg-black/80 focus:ring-white/50'
 					: 'bg-primary text-black hover:bg-primary/90 focus:ring-primary/50'}"
 		>
-			{showScore && hasFormData ? '🔄 Recalculate Score' : 'Score Your Repo'}
+			{showScore && shouldRecalculate ? '🔄 Recalculate Score' : 'Score Your Repo'}
 		</button>
 	</div>
 
