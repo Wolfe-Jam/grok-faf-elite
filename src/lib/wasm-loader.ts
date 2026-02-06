@@ -34,17 +34,22 @@ export async function initWasm(): Promise<void> {
 
 	try {
 		// Wait for WASM module to be loaded from <script> tag in app.html
-		// @ts-ignore - globally loaded module
-		while (!window.wasm_bindgen) {
+		let attempts = 0;
+		// @ts-ignore - globally loaded from app.html
+		while (!window.__FAF_WASM_INIT__ && attempts < 100) {
 			await new Promise(resolve => setTimeout(resolve, 50));
+			attempts++;
 		}
 
-		// @ts-ignore - globally loaded WASM module
-		const wasmModule = window.wasm_bindgen;
+		// @ts-ignore - globally loaded from app.html
+		if (!window.__FAF_WASM_INIT__) {
+			throw new Error('WASM module failed to load after 5s');
+		}
 
-		// Initialize the WASM with the .wasm file path
-		await wasmModule('/faf_wasm_sdk_bg.wasm');
-		rustWasmModule = wasmModule;
+		// @ts-ignore - globally loaded WASM init and module
+		await window.__FAF_WASM_INIT__('/faf_wasm_sdk_bg.wasm');
+		// @ts-ignore
+		rustWasmModule = window.__FAF_WASM_MODULE__;
 		rustWasmReady = true;
 
 		// Load Zig WASM
