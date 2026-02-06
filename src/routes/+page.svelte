@@ -459,60 +459,13 @@ Check your score: https://builder.faf.one
 								<!-- Recalculate Score (NEW - only shows when form open or has data) -->
 								{#if shouldRecalculate}
 									<button
-										onclick={async () => {
-											console.log('🔄 Recalculating with form data...');
-											// De-proxy the form data for inspection
-											const formData = { ...readmeUpdates };
-											console.log('📝 Form data:', formData);
-											try {
-												// Fetch original README
-												const readmeResponse = await fetch(
-													`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/README.md`
-												);
-												let enhancedReadme = readmeResponse.ok ? await readmeResponse.text() : '';
-												console.log('📖 Original README length:', enhancedReadme.length);
-
-												// Append form data sections (use de-proxied data)
-												const sections: string[] = [];
-												if (formData.who) sections.push(`\n\n## Team\n\n${formData.who}`);
-												if (formData.what) sections.push(`\n\n## What\n\n${formData.what}`);
-												if (formData.why) sections.push(`\n\n## Purpose\n\n${formData.why}`);
-												if (formData.where) sections.push(`\n\n## Environment\n\n${formData.where}`);
-												if (formData.when) sections.push(`\n\n## Timeline\n\n${formData.when}`);
-												if (formData.how) sections.push(`\n\n## How\n\n${formData.how}`);
-												enhancedReadme += sections.join('');
-												console.log('📖 Enhanced README length:', enhancedReadme.length);
-												console.log('📝 Added sections:', sections.length);
-
-												// Fetch package.json
-												const packageResponse = await fetch(
-													`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/package.json`
-												);
-												const packageJson = packageResponse.ok ? await packageResponse.text() : null;
-
-												// Fresh generation
-												const { generateAndScore } = await import('$lib/wasm-loader');
-												const result = await generateAndScore(
-													currentRepoOwner,
-													currentRepoName,
-													null,
-													enhancedReadme,
-													packageJson
-												);
-
-												// Update display
-												const oldScore = currentScore;
-												currentFafContent = result.fafContent;
-												currentScore = result.score;
-												currentGenTime = result.genTime;
-												currentScoreTime = result.scoreTime;
-												currentMissingFields = result.missingFields;
-
-												console.log('✅ Recalculated score:', oldScore + '% → ' + currentScore + '%');
-												console.log('📊 Missing fields now:', result.missingFields);
-											} catch (err) {
-												console.error('⚠️ Recalculation failed:', err);
-											}
+										onclick={() => {
+											console.log('🔄 Re-running score from scratch...');
+											// Simple: Just re-trigger the scoring flow
+											showScore = false;
+											setTimeout(() => {
+												showScore = true;
+											}, 10);
 										}}
 										class="w-full py-3 px-6 bg-black text-white font-bold rounded-xl
 											hover:bg-black/80 transition-colors duration-200
