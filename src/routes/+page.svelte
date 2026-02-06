@@ -177,81 +177,81 @@ Check your score: https://builder.faf.one
 		return updated;
 	}
 
-	// Real-time scoring effect - triggers on form changes
-	$effect(() => {
-		// Watch form data changes - need to read VALUES to trigger on changes
-		const formValues = JSON.stringify(readmeUpdates); // Forces watching all values
-		const hasCheckboxes = howCheckboxes.length > 0;
-		const hasOtherText = howOtherText.trim().length > 0;
-		const formHasData = Object.keys(readmeUpdates).length > 0 || hasCheckboxes || hasOtherText;
-
-		// Debug: Always log what we're watching
-		console.log('👀 $effect triggered:', {
-			hasCurrentFaf: !!currentFafContent,
-			fafLength: currentFafContent?.length || 0,
-			formHasData,
-			readmeUpdates: { ...readmeUpdates }, // De-proxy for logging
-			howCheckboxes: [...howCheckboxes],
-			howOtherText
-		});
-
-		// Only score if we have initial .faf content and form data
-		if (!currentFafContent || !formHasData) {
-			console.log('⏸️ Skipping score - missing data');
-			return;
-		}
-
-		console.log('🔄 Real-time scoring triggered:', {
-			readmeUpdates,
-			howCheckboxes,
-			howOtherText,
-			hasInitialFaf: currentFafContent.length > 0
-		});
-
-		try {
-			// Check if WASM is ready
-			if (!isWasmReady()) {
-				console.warn('⏳ WASM not ready yet, skipping real-time score');
-				return;
-			}
-
-			// Update slots in .faf
-			const updatedFaf = updateFafSlots(currentFafContent, {
-				...readmeUpdates,
-				how: howCheckboxes.join(' | ') + (howOtherText ? ` | ${howOtherText}` : '')
-			});
-
-			console.log('📝 Updated .faf slots:', {
-				before: currentFafContent.substring(0, 200),
-				after: updatedFaf.substring(0, 200),
-				changed: currentFafContent !== updatedFaf
-			});
-
-			// Score with server-side faf-cli (matches production!)
-			const startTime = performance.now();
-			const result = await scoreFaf(updatedFaf);
-			const duration = performance.now() - startTime;
-
-			console.log('⚡ Real-time score:', {
-				oldScore: currentScore,
-				newScore: result.score,
-				time: `${duration.toFixed(2)}ms`,
-				apiTime: `${result.time.toFixed(2)}μs`,
-				improved: result.score > currentScore
-			});
-
-			// Update current score (live feedback!)
-			currentScore = result.score;
-			currentFafContent = updatedFaf; // Store updated .faf
-
-		} catch (error) {
-			console.error('❌ Real-time scoring error:', error);
-			console.error('Error details:', {
-				message: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
-			});
-		}
-	});
+// DISABLED: 	// Real-time scoring effect - triggers on form changes
+// DISABLED: 	$effect(() => {
+// DISABLED: 		// Watch form data changes - need to read VALUES to trigger on changes
+// DISABLED: 		const formValues = JSON.stringify(readmeUpdates); // Forces watching all values
+// DISABLED: 		const hasCheckboxes = howCheckboxes.length > 0;
+// DISABLED: 		const hasOtherText = howOtherText.trim().length > 0;
+// DISABLED: 		const formHasData = Object.keys(readmeUpdates).length > 0 || hasCheckboxes || hasOtherText;
+// DISABLED: 
+// DISABLED: 		// Debug: Always log what we're watching
+// DISABLED: 		console.log('👀 $effect triggered:', {
+// DISABLED: 			hasCurrentFaf: !!currentFafContent,
+// DISABLED: 			fafLength: currentFafContent?.length || 0,
+// DISABLED: 			formHasData,
+// DISABLED: 			readmeUpdates: { ...readmeUpdates }, // De-proxy for logging
+// DISABLED: 			howCheckboxes: [...howCheckboxes],
+// DISABLED: 			howOtherText
+// DISABLED: 		});
+// DISABLED: 
+// DISABLED: 		// Only score if we have initial .faf content and form data
+// DISABLED: 		if (!currentFafContent || !formHasData) {
+// DISABLED: 			console.log('⏸️ Skipping score - missing data');
+// DISABLED: 			return;
+// DISABLED: 		}
+// DISABLED: 
+// DISABLED: 		console.log('🔄 Real-time scoring triggered:', {
+// DISABLED: 			readmeUpdates,
+// DISABLED: 			howCheckboxes,
+// DISABLED: 			howOtherText,
+// DISABLED: 			hasInitialFaf: currentFafContent.length > 0
+// DISABLED: 		});
+// DISABLED: 
+// DISABLED: 		try {
+// DISABLED: 			// Check if WASM is ready
+// DISABLED: 			if (!isWasmReady()) {
+// DISABLED: 				console.warn('⏳ WASM not ready yet, skipping real-time score');
+// DISABLED: 				return;
+// DISABLED: 			}
+// DISABLED: 
+// DISABLED: 			// Update slots in .faf
+// DISABLED: 			const updatedFaf = updateFafSlots(currentFafContent, {
+// DISABLED: 				...readmeUpdates,
+// DISABLED: 				how: howCheckboxes.join(' | ') + (howOtherText ? ` | ${howOtherText}` : '')
+// DISABLED: 			});
+// DISABLED: 
+// DISABLED: 			console.log('📝 Updated .faf slots:', {
+// DISABLED: 				before: currentFafContent.substring(0, 200),
+// DISABLED: 				after: updatedFaf.substring(0, 200),
+// DISABLED: 				changed: currentFafContent !== updatedFaf
+// DISABLED: 			});
+// DISABLED: 
+// DISABLED: 			// Score with server-side faf-cli (matches production!)
+// DISABLED: 			const startTime = performance.now();
+// DISABLED: 			const result = await scoreFaf(updatedFaf);
+// DISABLED: 			const duration = performance.now() - startTime;
+// DISABLED: 
+// DISABLED: 			console.log('⚡ Real-time score:', {
+// DISABLED: 				oldScore: currentScore,
+// DISABLED: 				newScore: result.score,
+// DISABLED: 				time: `${duration.toFixed(2)}ms`,
+// DISABLED: 				apiTime: `${result.time.toFixed(2)}μs`,
+// DISABLED: 				improved: result.score > currentScore
+// DISABLED: 			});
+// DISABLED: 
+// DISABLED: 			// Update current score (live feedback!)
+// DISABLED: 			currentScore = result.score;
+// DISABLED: 			currentFafContent = updatedFaf; // Store updated .faf
+// DISABLED: 
+// DISABLED: 		} catch (error) {
+// DISABLED: 			console.error('❌ Real-time scoring error:', error);
+// DISABLED: 			console.error('Error details:', {
+// DISABLED: 				message: error instanceof Error ? error.message : String(error),
+// DISABLED: 				stack: error instanceof Error ? error.stack : undefined
+// DISABLED: 			});
+// DISABLED: 		}
+// DISABLED: 	});
 
 	// Clipboard feedback
 	let copiedNew = $state(false);
