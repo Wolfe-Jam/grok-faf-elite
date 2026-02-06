@@ -50,7 +50,11 @@
 	let hasFormData = $derived(Object.keys(readmeUpdates).length > 0);
 
 	// Button should be black when form is open OR has data
-	let shouldRecalculate = $derived(showReadmeForm || hasFormData);
+	let shouldRecalculate = $derived.by(() => {
+		const result = showReadmeForm || hasFormData;
+		console.log('🔍 shouldRecalculate:', { showReadmeForm, hasFormData, result, showScore });
+		return result;
+	});
 
 	// Load recent URLs from localStorage on mount
 	import { onMount } from 'svelte';
