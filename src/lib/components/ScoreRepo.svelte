@@ -12,6 +12,7 @@
 	// Props
 	interface Props {
 		initialUrl?: string;
+		formData?: Record<string, string>;  // Form data for README enhancement (recalculation)
 		onScoreComplete?: (data: {
 			score: number;
 			repoName: string;
@@ -22,7 +23,7 @@
 			fafContent: string;
 		}) => void;
 	}
-	let { initialUrl = 'https://github.com/Wolfe-Jam/test-faf-demo', onScoreComplete }: Props = $props();
+	let { initialUrl = 'https://github.com/Wolfe-Jam/test-faf-demo', formData, onScoreComplete }: Props = $props();
 
 	// State
 	let loading = $state(false);
@@ -96,7 +97,20 @@
 				`https://api.github.com/repos/${repoOwner}/${repoName}/readme`,
 				{ headers: { 'Accept': 'application/vnd.github.v3.raw' } }
 			);
-			const readme = readmeResponse.ok ? await readmeResponse.text() : null;
+			let readme = readmeResponse.ok ? await readmeResponse.text() : null;
+
+			// Enhance README with form data if provided (for recalculation)
+			if (formData && readme) {
+				const sections: string[] = [];
+				if (formData.who) sections.push(`\n\n## Team\n\n${formData.who}`);
+				if (formData.what) sections.push(`\n\n## What\n\n${formData.what}`);
+				if (formData.why) sections.push(`\n\n## Purpose\n\n${formData.why}`);
+				if (formData.where) sections.push(`\n\n## Environment\n\n${formData.where}`);
+				if (formData.when) sections.push(`\n\n## Timeline\n\n${formData.when}`);
+				if (formData.how) sections.push(`\n\n## How\n\n${formData.how}`);
+				readme += sections.join('');
+				console.log('📝 Enhanced README with form data:', Object.keys(formData));
+			}
 
 			// Fetch package.json
 			const packageResponse = await fetch(

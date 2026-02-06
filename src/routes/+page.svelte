@@ -927,7 +927,7 @@ Check your score: https://builder.faf.one
 {#if showScore}
 	<div class="hidden">
 		{#key scoreRepoUrl}
-			<ScoreRepo initialUrl={scoreRepoUrl} onScoreComplete={(data) => {
+			<ScoreRepo initialUrl={scoreRepoUrl} formData={{ ...readmeUpdates }} onScoreComplete={(data) => {
 				currentScore = data.score;
 				currentRepoName = data.repoName;
 				currentRepoOwner = data.repoOwner;
