@@ -227,16 +227,16 @@ Check your score: https://builder.faf.one
 				changed: currentFafContent !== updatedFaf
 			});
 
-			// Score with Zig WASM (14μs)
+			// Score with server-side faf-cli (matches production!)
 			const startTime = performance.now();
-			const result = scoreFaf(updatedFaf);
+			const result = await scoreFaf(updatedFaf);
 			const duration = performance.now() - startTime;
 
 			console.log('⚡ Real-time score:', {
 				oldScore: currentScore,
 				newScore: result.score,
 				time: `${duration.toFixed(2)}ms`,
-				zigTime: `${result.time.toFixed(2)}μs`,
+				apiTime: `${result.time.toFixed(2)}μs`,
 				improved: result.score > currentScore
 			});
 

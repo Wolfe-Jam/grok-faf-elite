@@ -144,13 +144,45 @@ export async function generateAndScore(
 
 	const endGen = performance.now();
 	const genTime = endGen - startGen;
-	const { score, time: scoreTime } = scoreWithZig(fafContent);
+
+	// Score with server-side faf-cli (matches production tool!)
+	const scoreStart = performance.now();
+	const scoreResponse = await fetch('/api/score', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ fafContent })
+	});
+
+	if (!scoreResponse.ok) {
+		throw new Error(`Scoring failed: ${scoreResponse.status}`);
+	}
+
+	const scoreData = await scoreResponse.json();
+	const scoreTime = (performance.now() - scoreStart) * 1000; // Convert to μs for consistency
+
+	const score = scoreData.score;
 	const missingFields = analyzeMissingFields(fafContent);
+
+	console.log('✅ Server-side faf-cli score:', score);
 
 	return { fafContent, score, genTime, scoreTime, missingFields };
 }
 
-export function scoreFaf(fafContent: string): { score: number; time: number } {
-	if (!zigWasmReady) throw new Error('Zig WASM not initialized');
-	return scoreWithZig(fafContent);
+export async function scoreFaf(fafContent: string): Promise<{ score: number; time: number }> {
+	const startTime = performance.now();
+
+	const response = await fetch('/api/score', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ fafContent })
+	});
+
+	if (!response.ok) {
+		throw new Error(`Scoring failed: ${response.status}`);
+	}
+
+	const data = await response.json();
+	const time = (performance.now() - startTime) * 1000; // Convert to μs
+
+	return { score: data.score, time };
 }
