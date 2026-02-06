@@ -461,12 +461,14 @@ Check your score: https://builder.faf.one
 									<button
 										onclick={async () => {
 											console.log('🔄 Recalculating with form data...');
+											console.log('📝 Form data:', readmeUpdates);
 											try {
 												// Fetch original README
 												const readmeResponse = await fetch(
 													`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/README.md`
 												);
 												let enhancedReadme = readmeResponse.ok ? await readmeResponse.text() : '';
+												console.log('📖 Original README length:', enhancedReadme.length);
 
 												// Append form data sections
 												const sections: string[] = [];
@@ -477,6 +479,8 @@ Check your score: https://builder.faf.one
 												if (readmeUpdates.when) sections.push(`\n\n## Timeline\n\n${readmeUpdates.when}`);
 												if (readmeUpdates.how) sections.push(`\n\n## How\n\n${readmeUpdates.how}`);
 												enhancedReadme += sections.join('');
+												console.log('📖 Enhanced README length:', enhancedReadme.length);
+												console.log('📝 Added sections:', sections.length);
 
 												// Fetch package.json
 												const packageResponse = await fetch(
@@ -495,13 +499,15 @@ Check your score: https://builder.faf.one
 												);
 
 												// Update display
+												const oldScore = currentScore;
 												currentFafContent = result.fafContent;
 												currentScore = result.score;
 												currentGenTime = result.genTime;
 												currentScoreTime = result.scoreTime;
 												currentMissingFields = result.missingFields;
 
-												console.log('✅ Recalculated score:', currentScore + '%');
+												console.log('✅ Recalculated score:', oldScore + '% → ' + currentScore + '%');
+												console.log('📊 Missing fields now:', result.missingFields);
 											} catch (err) {
 												console.error('⚠️ Recalculation failed:', err);
 											}
