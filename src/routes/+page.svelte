@@ -456,6 +456,64 @@ Check your score: https://builder.faf.one
 
 							<!-- Action Buttons -->
 							<div class="space-y-3">
+								<!-- Recalculate Score (NEW - only shows when form open or has data) -->
+								{#if shouldRecalculate}
+									<button
+										onclick={async () => {
+											console.log('🔄 Recalculating with form data...');
+											try {
+												// Fetch original README
+												const readmeResponse = await fetch(
+													`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/README.md`
+												);
+												let enhancedReadme = readmeResponse.ok ? await readmeResponse.text() : '';
+
+												// Append form data sections
+												const sections: string[] = [];
+												if (readmeUpdates.who) sections.push(`\n\n## Team\n\n${readmeUpdates.who}`);
+												if (readmeUpdates.what) sections.push(`\n\n## What\n\n${readmeUpdates.what}`);
+												if (readmeUpdates.why) sections.push(`\n\n## Purpose\n\n${readmeUpdates.why}`);
+												if (readmeUpdates.where) sections.push(`\n\n## Environment\n\n${readmeUpdates.where}`);
+												if (readmeUpdates.when) sections.push(`\n\n## Timeline\n\n${readmeUpdates.when}`);
+												if (readmeUpdates.how) sections.push(`\n\n## How\n\n${readmeUpdates.how}`);
+												enhancedReadme += sections.join('');
+
+												// Fetch package.json
+												const packageResponse = await fetch(
+													`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/package.json`
+												);
+												const packageJson = packageResponse.ok ? await packageResponse.text() : null;
+
+												// Fresh generation
+												const { generateAndScore } = await import('$lib/wasm-loader');
+												const result = await generateAndScore(
+													currentRepoOwner,
+													currentRepoName,
+													null,
+													enhancedReadme,
+													packageJson
+												);
+
+												// Update display
+												currentFafContent = result.fafContent;
+												currentScore = result.score;
+												currentGenTime = result.genTime;
+												currentScoreTime = result.scoreTime;
+												currentMissingFields = result.missingFields;
+
+												console.log('✅ Recalculated score:', currentScore + '%');
+											} catch (err) {
+												console.error('⚠️ Recalculation failed:', err);
+											}
+										}}
+										class="w-full py-3 px-6 bg-black text-white font-bold rounded-xl
+											hover:bg-black/80 transition-colors duration-200
+											focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer"
+									>
+										🔄 Recalculate Score
+									</button>
+								{/if}
+
 								<!-- Add to GitHub -->
 								<button
 									onclick={async () => {
@@ -694,7 +752,7 @@ Check your score: https://builder.faf.one
 		</div>
 	</div>
 
-	<!-- Primary CTA -->
+	<!-- Primary CTA (Always Orange - Initial Scoring Only) -->
 	<div class="w-full max-w-md mb-4">
 		<button
 			onclick={async () => {
@@ -703,66 +761,15 @@ Check your score: https://builder.faf.one
 					return;
 				}
 
-				// If form data exists and we're recalculating, regenerate with form data
-				if (showScore && shouldRecalculate) {
-					console.log('🔄 Recalculating with form data...');
-					try {
-						// Fetch original README
-						const readmeResponse = await fetch(
-							`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/README.md`
-						);
-						let enhancedReadme = readmeResponse.ok ? await readmeResponse.text() : '';
-
-						// Append form data sections
-						const sections: string[] = [];
-						if (readmeUpdates.who) sections.push(`\n\n## Team\n\n${readmeUpdates.who}`);
-						if (readmeUpdates.what) sections.push(`\n\n## What\n\n${readmeUpdates.what}`);
-						if (readmeUpdates.why) sections.push(`\n\n## Purpose\n\n${readmeUpdates.why}`);
-						if (readmeUpdates.where) sections.push(`\n\n## Environment\n\n${readmeUpdates.where}`);
-						if (readmeUpdates.when) sections.push(`\n\n## Timeline\n\n${readmeUpdates.when}`);
-						if (readmeUpdates.how) sections.push(`\n\n## How\n\n${readmeUpdates.how}`);
-						enhancedReadme += sections.join('');
-
-						// Fetch package.json
-						const packageResponse = await fetch(
-							`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/package.json`
-						);
-						const packageJson = packageResponse.ok ? await packageResponse.text() : null;
-
-						// Fresh generation
-						const { generateAndScore } = await import('$lib/wasm-loader');
-						const result = await generateAndScore(
-							currentRepoOwner,
-							currentRepoName,
-							null,
-							enhancedReadme,
-							packageJson
-						);
-
-						// Update display
-						currentFafContent = result.fafContent;
-						currentScore = result.score;
-						currentGenTime = result.genTime;
-						currentScoreTime = result.scoreTime;
-						currentMissingFields = result.missingFields;
-
-						console.log('✅ Recalculated score:', currentScore + '%');
-					} catch (err) {
-						console.error('⚠️ Recalculation failed:', err);
-					}
-				} else {
-					// Normal first-time scoring
-					saveToRecent(scoreRepoUrl);
-					showScore = true;
-				}
+				// Save to recent and trigger scoring
+				saveToRecent(scoreRepoUrl);
+				showScore = true;
 			}}
 			class="w-full py-4 px-6 font-bold text-lg rounded-xl transition-colors duration-200
 				focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background cursor-pointer
-				{showScore && shouldRecalculate
-					? 'bg-black text-white hover:bg-black/80 focus:ring-white/50'
-					: 'bg-primary text-black hover:bg-primary/90 focus:ring-primary/50'}"
+				bg-primary text-black hover:bg-primary/90 focus:ring-primary/50"
 		>
-			{showScore && shouldRecalculate ? '🔄 Recalculate Score' : 'Score Your Repo'}
+			Score Your Repo
 		</button>
 	</div>
 
