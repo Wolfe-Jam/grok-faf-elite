@@ -1,15 +1,16 @@
 /**
  * WASM Loader - DOUBLE-WHAMMY Architecture
  *
- * Rust WASM (300KB): Generate project.faf
+ * Rust WASM (312KB): Generate project.faf
  * Zig WASM (2.7KB): Score project.faf (14μs, 71K scores/sec)
+ *
+ * Both loaded from static/ directory (no npm dependencies)
  */
-
-import init, { generate_faf, generate_faf_minimal } from 'faf-wasm-sdk';
 
 let rustWasmReady = false;
 let zigWasmReady = false;
 let zigWasmExports: any = null;
+let rustWasmModule: any = null;
 
 export interface GenerationResult {
 	fafContent: string;
@@ -21,11 +22,31 @@ export interface GenerationResult {
 
 /**
  * Initialize both Rust and Zig WASM modules
+ * Loads from static/ directory (no npm dependencies)
  */
 export async function initWasm(): Promise<void> {
 	try {
-		// Load Rust WASM using package's init with custom path
-		await init('/faf_wasm_sdk_bg.wasm');
+		// Load Rust WASM - dynamically import the JS glue code from static/
+		const script = document.createElement('script');
+		script.src = '/faf_wasm_sdk.js';
+		script.type = 'module';
+
+		await new Promise<void>((resolve, reject) => {
+			script.onload = () => resolve();
+			script.onerror = () => reject(new Error('Failed to load Rust WASM JS'));
+			document.head.appendChild(script);
+		});
+
+		// Access the module from window (wasm-pack exports to global scope when loaded as script)
+		// @ts-ignore - dynamically loaded module
+		const wasmModule = window.wasm_bindgen;
+		if (!wasmModule) {
+			throw new Error('Rust WASM module not found after script load');
+		}
+
+		// Initialize the WASM with the .wasm file path
+		await wasmModule('/faf_wasm_sdk_bg.wasm');
+		rustWasmModule = wasmModule;
 		rustWasmReady = true;
 
 		// Load Zig WASM
@@ -42,7 +63,7 @@ export async function initWasm(): Promise<void> {
 		zigWasmExports = zigModule.instance.exports;
 		zigWasmReady = true;
 
-		console.log('✅ DOUBLE-WHAMMY loaded: Rust + Zig WASM ready');
+		console.log('✅ DOUBLE-WHAMMY loaded: Rust (312KB) + Zig (2.7KB) WASM ready');
 	} catch (err) {
 		console.error('❌ WASM init failed:', err);
 		throw err;
@@ -90,7 +111,7 @@ export async function generateAndScore(
 	packageJson: string | null,
 	language: string | null = null
 ): Promise<GenerationResult> {
-	if (!rustWasmReady || !zigWasmReady) {
+	if (!rustWasmReady || !zigWasmReady || !rustWasmModule) {
 		throw new Error('WASM not initialized - call initWasm() first');
 	}
 
@@ -99,7 +120,7 @@ export async function generateAndScore(
 
 	try {
 		if (readme || packageJson) {
-			fafContent = generate_faf(
+			fafContent = rustWasmModule.generate_faf(
 				repo,
 				owner,
 				description || undefined,
@@ -107,7 +128,7 @@ export async function generateAndScore(
 				packageJson || undefined
 			);
 		} else {
-			fafContent = generate_faf_minimal(
+			fafContent = rustWasmModule.generate_faf_minimal(
 				repo,
 				owner,
 				description || undefined,
