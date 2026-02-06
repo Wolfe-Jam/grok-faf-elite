@@ -448,7 +448,56 @@ Check your score: https://builder.faf.one
 							<div class="space-y-3">
 								<!-- Add to GitHub -->
 								<button
-									onclick={() => {
+									onclick={async () => {
+										// If user filled form, regenerate with enhanced README for accurate score
+										if (Object.keys(readmeUpdates).length > 0) {
+											console.log('🔄 Regenerating with form data for fresh score...');
+											try {
+												// Fetch original README
+												const readmeResponse = await fetch(
+													`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/README.md`
+												);
+												let enhancedReadme = readmeResponse.ok ? await readmeResponse.text() : '';
+
+												// Append form data as new sections
+												const sections: string[] = [];
+												if (readmeUpdates.who) sections.push(`\n\n## Team\n\n${readmeUpdates.who}`);
+												if (readmeUpdates.what) sections.push(`\n\n## What\n\n${readmeUpdates.what}`);
+												if (readmeUpdates.why) sections.push(`\n\n## Purpose\n\n${readmeUpdates.why}`);
+												if (readmeUpdates.where) sections.push(`\n\n## Environment\n\n${readmeUpdates.where}`);
+												if (readmeUpdates.when) sections.push(`\n\n## Timeline\n\n${readmeUpdates.when}`);
+												if (readmeUpdates.how) sections.push(`\n\n## How\n\n${readmeUpdates.how}`);
+												enhancedReadme += sections.join('');
+
+												// Fetch package.json
+												const packageResponse = await fetch(
+													`https://raw.githubusercontent.com/${currentRepoOwner}/${currentRepoName}/main/package.json`
+												);
+												const packageJson = packageResponse.ok ? await packageResponse.text() : null;
+
+												// Fresh generation with enhanced README
+												const { generateAndScore } = await import('$lib/wasm-loader');
+												const result = await generateAndScore(
+													currentRepoOwner,
+													currentRepoName,
+													null,
+													enhancedReadme,
+													packageJson
+												);
+
+												// Update with fresh results
+												currentFafContent = result.fafContent;
+												currentScore = result.score;
+												currentGenTime = result.genTime;
+												currentScoreTime = result.scoreTime;
+												currentMissingFields = result.missingFields;
+
+												console.log('✅ Fresh score:', currentScore + '%');
+											} catch (err) {
+												console.error('⚠️ Regeneration failed, using original:', err);
+											}
+										}
+
 										// Store for OAuth callback
 										sessionStorage.setItem('faf_generation', JSON.stringify({
 											owner: currentRepoOwner,
