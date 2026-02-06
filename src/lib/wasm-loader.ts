@@ -23,29 +23,21 @@ export interface GenerationResult {
 /**
  * Initialize both Rust and Zig WASM modules
  * Loads from static/ directory (no npm dependencies)
+ * Browser-only (skipped during SSR)
  */
 export async function initWasm(): Promise<void> {
+	// Skip during SSR
+	if (typeof window === 'undefined') {
+		console.log('⏭️  Skipping WASM init during SSR');
+		return;
+	}
+
 	try {
-		// Load Rust WASM - dynamically import the JS glue code from static/
-		const script = document.createElement('script');
-		script.src = '/faf_wasm_sdk.js';
-		script.type = 'module';
-
-		await new Promise<void>((resolve, reject) => {
-			script.onload = () => resolve();
-			script.onerror = () => reject(new Error('Failed to load Rust WASM JS'));
-			document.head.appendChild(script);
-		});
-
-		// Access the module from window (wasm-pack exports to global scope when loaded as script)
-		// @ts-ignore - dynamically loaded module
-		const wasmModule = window.wasm_bindgen;
-		if (!wasmModule) {
-			throw new Error('Rust WASM module not found after script load');
-		}
+		// Load Rust WASM - dynamically import the ES6 module from static/
+		const wasmModule = await import(/* @vite-ignore */ '/faf_wasm_sdk.js');
 
 		// Initialize the WASM with the .wasm file path
-		await wasmModule('/faf_wasm_sdk_bg.wasm');
+		await wasmModule.default('/faf_wasm_sdk_bg.wasm');
 		rustWasmModule = wasmModule;
 		rustWasmReady = true;
 
