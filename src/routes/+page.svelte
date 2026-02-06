@@ -461,7 +461,9 @@ Check your score: https://builder.faf.one
 									<button
 										onclick={async () => {
 											console.log('🔄 Recalculating with form data...');
-											console.log('📝 Form data:', readmeUpdates);
+											// De-proxy the form data for inspection
+											const formData = { ...readmeUpdates };
+											console.log('📝 Form data:', formData);
 											try {
 												// Fetch original README
 												const readmeResponse = await fetch(
@@ -470,14 +472,14 @@ Check your score: https://builder.faf.one
 												let enhancedReadme = readmeResponse.ok ? await readmeResponse.text() : '';
 												console.log('📖 Original README length:', enhancedReadme.length);
 
-												// Append form data sections
+												// Append form data sections (use de-proxied data)
 												const sections: string[] = [];
-												if (readmeUpdates.who) sections.push(`\n\n## Team\n\n${readmeUpdates.who}`);
-												if (readmeUpdates.what) sections.push(`\n\n## What\n\n${readmeUpdates.what}`);
-												if (readmeUpdates.why) sections.push(`\n\n## Purpose\n\n${readmeUpdates.why}`);
-												if (readmeUpdates.where) sections.push(`\n\n## Environment\n\n${readmeUpdates.where}`);
-												if (readmeUpdates.when) sections.push(`\n\n## Timeline\n\n${readmeUpdates.when}`);
-												if (readmeUpdates.how) sections.push(`\n\n## How\n\n${readmeUpdates.how}`);
+												if (formData.who) sections.push(`\n\n## Team\n\n${formData.who}`);
+												if (formData.what) sections.push(`\n\n## What\n\n${formData.what}`);
+												if (formData.why) sections.push(`\n\n## Purpose\n\n${formData.why}`);
+												if (formData.where) sections.push(`\n\n## Environment\n\n${formData.where}`);
+												if (formData.when) sections.push(`\n\n## Timeline\n\n${formData.when}`);
+												if (formData.how) sections.push(`\n\n## How\n\n${formData.how}`);
 												enhancedReadme += sections.join('');
 												console.log('📖 Enhanced README length:', enhancedReadme.length);
 												console.log('📝 Added sections:', sections.length);
