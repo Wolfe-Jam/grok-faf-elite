@@ -46,6 +46,9 @@
 	let howCheckboxes = $state<string[]>([]);
 	let howOtherText = $state('');
 
+	// Reactive check for form data (Svelte 5 needs $derived for deep object reactivity)
+	let hasFormData = $derived(Object.keys(readmeUpdates).length > 0);
+
 	// Load recent URLs from localStorage on mount
 	import { onMount } from 'svelte';
 	onMount(() => {
@@ -450,7 +453,7 @@ Check your score: https://builder.faf.one
 								<button
 									onclick={async () => {
 										// If user filled form, regenerate with enhanced README for accurate score
-										if (Object.keys(readmeUpdates).length > 0) {
+										if (hasFormData) {
 											console.log('🔄 Regenerating with form data for fresh score...');
 											try {
 												// Fetch original README
@@ -694,7 +697,7 @@ Check your score: https://builder.faf.one
 				}
 
 				// If form data exists and we're recalculating, regenerate with form data
-				if (showScore && Object.keys(readmeUpdates).length > 0) {
+				if (showScore && hasFormData) {
 					console.log('🔄 Recalculating with form data...');
 					try {
 						// Fetch original README
@@ -748,11 +751,11 @@ Check your score: https://builder.faf.one
 			}}
 			class="w-full py-4 px-6 font-bold text-lg rounded-xl transition-colors duration-200
 				focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background cursor-pointer
-				{showScore && Object.keys(readmeUpdates).length > 0
+				{showScore && hasFormData
 					? 'bg-black text-white hover:bg-black/80 focus:ring-white/50'
 					: 'bg-primary text-black hover:bg-primary/90 focus:ring-primary/50'}"
 		>
-			{showScore && Object.keys(readmeUpdates).length > 0 ? '🔄 Recalculate Score' : 'Score Your Repo'}
+			{showScore && hasFormData ? '🔄 Recalculate Score' : 'Score Your Repo'}
 		</button>
 	</div>
 
