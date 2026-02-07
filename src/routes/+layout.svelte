@@ -46,7 +46,7 @@
 <div class="fixed top-4 left-4 z-50">
 	<a href="https://github.com/Wolfe-Jam/grok-faf-elite/releases"
 	   class="inline-flex items-center gap-2 px-3 py-1.5 bg-black/80 backdrop-blur-sm border border-white/10 rounded-lg text-white/70 hover:text-white hover:border-white/30 transition-colors text-sm font-mono">
-		<span class="text-xs">v0.5</span>
+		<span class="text-xs">v0.6</span>
 	</a>
 </div>
 

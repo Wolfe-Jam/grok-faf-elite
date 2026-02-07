@@ -1,7 +1,7 @@
 {
 	"name": "grok-faf-elite",
 	"private": true,
-	"version": "0.0.1",
+	"version": "0.6.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -14,7 +14,7 @@
 		"test:ui": "playwright test --ui"
 	},
 	"dependencies": {
-		"faf-wasm-sdk": "^1.0.1",
+		"faf-wasm-sdk": "^1.2.0",
 		"yaml": "^2.8.2"
 	},
 	"devDependencies": {
