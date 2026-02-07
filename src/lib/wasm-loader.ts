@@ -128,7 +128,8 @@ export async function generateAndScore(
 				owner,
 				description || undefined,
 				readme || undefined,
-				packageJson || undefined
+				packageJson || undefined,
+				language || undefined  // NEW: Pass language parameter
 			);
 		} else {
 			fafContent = rustWasmModule.generate_faf_minimal(
