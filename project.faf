@@ -1,22 +1,24 @@
 name: grok-faf-elite
-version: 0.1.0
-description: Zero faff from day zero — Grok-ready in one click. F1-Inspired
-  Elite Edition for elite devs.
-ai_readiness: 95%
+version: 0.7.0
+description: Instant AI context for your repos. One-click FAF builder with Rust WASM generation + Zig WASM scoring. F1-Inspired Elite Edition.
+ai_readiness: 98%
 tech_stack:
   framework: SvelteKit 5
   language: TypeScript (strict)
   styling: Tailwind CSS 4
   deployment: Vercel
+  wasm: Rust (211KB generator) + Zig (2.7KB scorer)
 architecture:
   pattern: Component-based SPA
   state: Svelte 5 runes ($state, $props, $effect)
   routing: SvelteKit file-based routing
 features:
-  - New project creation from template
-  - GitHub repository FAF integration
-  - Direct MCP server URL access
-  - Copy-to-clipboard commands
+  - One-click .faf generation for any GitHub repo
+  - Rust WASM generator (211KB, ~3ms generation)
+  - Zig WASM scorer (2.7KB, ~14μs scoring, 71K scores/sec)
+  - OAuth GitHub integration for commits
+  - Real-time scoring (0-100% AI-readiness)
+  - Download or commit directly to repo
   - Native dialog modals for accessibility
 components:
   BigOrange: Animated logo with hover effects
@@ -36,16 +38,16 @@ commands:
   preview: npm run preview
 project:
   name: grok-faf-elite
-  goal: Web UI for one-click Grok FAF setup - zero friction MCP integration
+  goal: Universal FAF builder - Generate perfect AI context for any repo in one click using championship-grade WASM toolchain
   type: web-app
   main_language: typescript
 human_context:
-  who: Grok/xAI developers wanting FAF without CLI
-  what: One-click FAF setup for Grok - no terminal required
-  why: Make FAF accessible to non-CLI users
-  where: Browser, Vercel Edge
-  when: Production v0.1.0
-  how: SvelteKit 5, Svelte 5 runes, TypeScript strict
+  who: Developers wanting perfect AI context without CLI friction
+  what: One-click .faf builder - Paste GitHub URL, get perfect AI context
+  why: Eliminate AI context setup tax - from hours to seconds
+  where: Browser (builder.faf.one), Vercel Edge deployment
+  when: Production v0.7.0 - WASM-powered generation + scoring
+  how: Rust WASM (generation) + Zig WASM (scoring) + SvelteKit 5
 persona:
   voice: Fast, direct, zero-faff
   tone: Elite developer energy
