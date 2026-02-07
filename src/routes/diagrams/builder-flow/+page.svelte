@@ -119,24 +119,39 @@
 
 		<div class="flow-arrow">→</div>
 
-		<!-- Step 6: Output -->
+		<!-- Step 6: Commit to GitHub -->
 		<div class="flow-step">
 			<div class="step-number">6</div>
-			<div class="step-box output-box">
-				<div class="step-icon">✅</div>
-				<div class="step-title">Output</div>
-				<div class="step-desc">User choice</div>
-				<div class="output-options">
-					<div class="output-btn download-btn">
-						<span class="btn-icon">⬇️</span>
-						<span class="btn-text">Download</span>
+			<div class="step-box github-box">
+				<div class="step-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+						<path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+					</svg>
+				</div>
+				<div class="step-title">Commit to Repo</div>
+				<div class="step-desc">OAuth → git commit</div>
+				<div class="commit-display">
+					<div class="commit-file">
+						<span class="file-icon">✅</span>
+						<span class="file-name">project.faf</span>
 					</div>
-					<div class="output-btn commit-btn">
-						<span class="btn-icon">📝</span>
-						<span class="btn-text">Commit (OAuth)</span>
-					</div>
+					<div class="commit-msg">Initialize project.faf</div>
 				</div>
 			</div>
+		</div>
+	</div>
+
+	<!-- Alternative: Download -->
+	<div class="download-option">
+		<div class="option-divider">
+			<div class="divider-line"></div>
+			<span class="divider-text">or</span>
+			<div class="divider-line"></div>
+		</div>
+		<div class="download-btn-large">
+			<span class="btn-icon">⬇️</span>
+			<span class="btn-text">Download project.faf</span>
+			<span class="btn-desc">Commit manually later</span>
 		</div>
 	</div>
 
@@ -283,10 +298,6 @@
 		border-color: #00D4D4;
 	}
 
-	.output-box {
-		border-color: #4ade80;
-	}
-
 	.step-icon {
 		font-size: 2rem;
 	}
@@ -430,48 +441,104 @@
 		border-radius: 4px;
 	}
 
-	/* Output Options */
-	.output-options {
+	/* Commit Display */
+	.commit-display {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: 0.5rem;
 		width: 100%;
-		margin-top: 0.25rem;
+		margin-top: 0.5rem;
 	}
 
-	.output-btn {
+	.commit-file {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
 		background: #1a1a1a;
-		border: 1px solid #444;
-		padding: 0.4rem 0.6rem;
+		padding: 0.5rem 0.75rem;
 		border-radius: 6px;
+		border: 1px solid #4ade80;
+	}
+
+	.file-icon {
+		font-size: 1rem;
+	}
+
+	.file-name {
+		font-family: 'SF Mono', monospace;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: #4ade80;
+	}
+
+	.commit-msg {
+		font-size: 0.65rem;
+		color: #999;
+		font-style: italic;
+	}
+
+	/* Download Option (below diagram) */
+	.download-option {
+		margin-top: 2rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.option-divider {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		width: 300px;
+	}
+
+	.divider-line {
+		flex: 1;
+		height: 1px;
+		background: #333;
+	}
+
+	.divider-text {
+		color: #666;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+
+	.download-btn-large {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.25rem;
+		background: #1a1a1a;
+		border: 2px solid #00D4D4;
+		padding: 1rem 2rem;
+		border-radius: 12px;
 		cursor: pointer;
 		transition: all 0.2s;
 	}
 
-	.output-btn:hover {
+	.download-btn-large:hover {
 		border-color: #FF6B35;
-		transform: translateY(-1px);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
 	}
 
-	.download-btn {
-		border-color: #00D4D4;
+	.download-btn-large .btn-icon {
+		font-size: 1.5rem;
 	}
 
-	.commit-btn {
-		border-color: #4ade80;
-	}
-
-	.btn-icon {
-		font-size: 1rem;
-	}
-
-	.btn-text {
-		font-size: 0.7rem;
-		font-weight: 600;
+	.download-btn-large .btn-text {
+		font-family: 'SF Mono', monospace;
+		font-size: 0.9rem;
+		font-weight: 700;
 		color: #f5f5f5;
+	}
+
+	.download-btn-large .btn-desc {
+		font-size: 0.7rem;
+		color: #999;
 	}
 
 	/* Flow Arrow */
