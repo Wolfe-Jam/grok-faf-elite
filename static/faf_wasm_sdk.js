@@ -99,6 +99,17 @@ function passStringToWasm0(arg, malloc, realloc) {
     WASM_VECTOR_LEN = offset;
     return ptr;
 }
+/**
+ * Standalone validate function
+ * @param {string} yaml_content
+ * @returns {boolean}
+ */
+export function validate_faf(yaml_content) {
+    const ptr0 = passStringToWasm0(yaml_content, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.faf_validate(ptr0, len0);
+    return ret !== 0;
+}
 
 function takeFromExternrefTable0(idx) {
     const value = wasm.__wbindgen_externrefs.get(idx);
@@ -131,18 +142,6 @@ export function score_faf(yaml_content) {
     }
 }
 
-/**
- * Standalone validate function
- * @param {string} yaml_content
- * @returns {boolean}
- */
-export function validate_faf(yaml_content) {
-    const ptr0 = passStringToWasm0(yaml_content, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.faf_validate(ptr0, len0);
-    return ret !== 0;
-}
-
 let cachedFloat32ArrayMemory0 = null;
 
 function getFloat32ArrayMemory0() {
@@ -160,6 +159,18 @@ function passArrayF32ToWasm0(arg, malloc) {
 }
 /**
  * @param {Float32Array} weights
+ * @param {number} base
+ * @returns {number}
+ */
+export function score_weights(weights, base) {
+    const ptr0 = passArrayF32ToWasm0(weights, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.score_weights(ptr0, len0, base);
+    return ret;
+}
+
+/**
+ * @param {Float32Array} weights
  * @param {Float32Array} values
  * @returns {number}
  */
@@ -172,60 +183,9 @@ export function score_weights_fast(weights, values) {
     return ret;
 }
 
-/**
- * @param {Float32Array} weights
- * @param {number} base
- * @returns {number}
- */
-export function score_weights(weights, base) {
-    const ptr0 = passArrayF32ToWasm0(weights, wasm.__wbindgen_malloc);
-    const len0 = WASM_VECTOR_LEN;
-    const ret = wasm.score_weights(ptr0, len0, base);
-    return ret;
-}
-
 function isLikeNone(x) {
     return x === undefined || x === null;
 }
-/**
- * Generate project.faf content (builder.faf.one template)
- * This is the UNIVERSAL template (not xAI-specific), optimized for 85%+ initial scores
- * @param {string} repo_name
- * @param {string} owner
- * @param {string | null} [description]
- * @param {string | null} [readme]
- * @param {string | null} [package_json]
- * @returns {string}
- */
-export function generate_faf(repo_name, owner, description, readme, package_json) {
-    let deferred7_0;
-    let deferred7_1;
-    try {
-        const ptr0 = passStringToWasm0(repo_name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len0 = WASM_VECTOR_LEN;
-        const ptr1 = passStringToWasm0(owner, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len1 = WASM_VECTOR_LEN;
-        var ptr2 = isLikeNone(description) ? 0 : passStringToWasm0(description, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len2 = WASM_VECTOR_LEN;
-        var ptr3 = isLikeNone(readme) ? 0 : passStringToWasm0(readme, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len3 = WASM_VECTOR_LEN;
-        var ptr4 = isLikeNone(package_json) ? 0 : passStringToWasm0(package_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        var len4 = WASM_VECTOR_LEN;
-        const ret = wasm.generate_faf(ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, ptr4, len4);
-        var ptr6 = ret[0];
-        var len6 = ret[1];
-        if (ret[3]) {
-            ptr6 = 0; len6 = 0;
-            throw takeFromExternrefTable0(ret[2]);
-        }
-        deferred7_0 = ptr6;
-        deferred7_1 = len6;
-        return getStringFromWasm0(ptr6, len6);
-    } finally {
-        wasm.__wbindgen_free(deferred7_0, deferred7_1, 1);
-    }
-}
-
 /**
  * Generate metadata-only .faf for private repos (when README/package.json unavailable)
  * @param {string} repo_name
@@ -258,6 +218,48 @@ export function generate_faf_minimal(repo_name, owner, description, language) {
         return getStringFromWasm0(ptr5, len5);
     } finally {
         wasm.__wbindgen_free(deferred6_0, deferred6_1, 1);
+    }
+}
+
+/**
+ * Generate project.faf content (builder.faf.one template)
+ * This is the UNIVERSAL template (not xAI-specific), optimized for 85%+ initial scores
+ * @param {string} repo_name
+ * @param {string} owner
+ * @param {string | null} [description]
+ * @param {string | null} [readme]
+ * @param {string | null} [dependency_file]
+ * @param {string | null} [language]
+ * @returns {string}
+ */
+export function generate_faf(repo_name, owner, description, readme, dependency_file, language) {
+    let deferred8_0;
+    let deferred8_1;
+    try {
+        const ptr0 = passStringToWasm0(repo_name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(owner, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        var ptr2 = isLikeNone(description) ? 0 : passStringToWasm0(description, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len2 = WASM_VECTOR_LEN;
+        var ptr3 = isLikeNone(readme) ? 0 : passStringToWasm0(readme, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len3 = WASM_VECTOR_LEN;
+        var ptr4 = isLikeNone(dependency_file) ? 0 : passStringToWasm0(dependency_file, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len4 = WASM_VECTOR_LEN;
+        var ptr5 = isLikeNone(language) ? 0 : passStringToWasm0(language, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len5 = WASM_VECTOR_LEN;
+        const ret = wasm.generate_faf(ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, ptr4, len4, ptr5, len5);
+        var ptr7 = ret[0];
+        var len7 = ret[1];
+        if (ret[3]) {
+            ptr7 = 0; len7 = 0;
+            throw takeFromExternrefTable0(ret[2]);
+        }
+        deferred8_0 = ptr7;
+        deferred8_1 = len7;
+        return getStringFromWasm0(ptr7, len7);
+    } finally {
+        wasm.__wbindgen_free(deferred8_0, deferred8_1, 1);
     }
 }
 
