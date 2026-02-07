@@ -1,6 +1,11 @@
 <script lang="ts">
 	const diagrams = [
 		{
+			slug: 'builder-flow',
+			title: 'builder.faf.one - DOUBLE-WHAMMY',
+			description: 'Horizontal flow: User → GitHub → Rust WASM → Zig WASM → Preview → Output'
+		},
+		{
 			slug: 'daaft-banner',
 			title: 'Daaft Banner',
 			description: '5:2 banner for X Article - Drift to Zero-Drift progression'
