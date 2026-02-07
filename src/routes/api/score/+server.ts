@@ -1,11 +1,46 @@
 import { json } from '@sveltejs/kit';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import { writeFile, unlink } from 'fs/promises';
+import { writeFile, unlink, mkdir } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
+import { parse } from 'yaml';
 
-const execAsync = promisify(exec);
+// Simple slot-based scoring (matches faf-cli logic)
+function scoreFafContent(content: string): number {
+	try {
+		const data = parse(content);
+
+		let filledSlots = 0;
+		const totalSlots = 12;
+
+		// Core project fields (3 slots)
+		if (data?.project?.name) filledSlots++;
+		if (data?.project?.goal) filledSlots++;
+		if (data?.project?.main_language) filledSlots++;
+
+		// Human context - 6 Ws (6 slots)
+		const context = data?.human_context;
+		if (context?.who && context.who !== 'TBD' && context.who !== 'Unknown') filledSlots++;
+		if (context?.what && context.what !== 'TBD' && context.what !== 'Unknown') filledSlots++;
+		if (context?.why && context.why !== 'TBD' && context.why !== 'Unknown') filledSlots++;
+		if (context?.where && context.where !== 'TBD' && context.where !== 'Unknown') filledSlots++;
+		if (context?.when && context.when !== 'TBD' && context.when !== 'Unknown') filledSlots++;
+		if (context?.how && context.how !== 'TBD' && context.how !== 'Unknown') filledSlots++;
+
+		// Stack section (expanded fields) (3 slots)
+		const stack = data?.stack;
+		if (stack?.backend || stack?.primary || stack?.runtime) filledSlots++;
+		if (stack?.cicd || stack?.testing) filledSlots++;
+		if (stack?.package_manager || stack?.packageManager) filledSlots++;
+
+		// Calculate percentage
+		const score = Math.round((filledSlots / totalSlots) * 100);
+
+		return score;
+	} catch (error) {
+		console.error('❌ Scoring error:', error);
+		return 0;
+	}
+}
 
 export async function POST({ request }) {
 	try {
@@ -15,61 +50,18 @@ export async function POST({ request }) {
 			return json({ error: 'Missing fafContent' }, { status: 400 });
 		}
 
-		// Write .faf to temp file
-		const tempFile = join(tmpdir(), `faf-score-${Date.now()}.faf`);
-		await writeFile(tempFile, fafContent, 'utf-8');
+		console.log('📄 Scoring .faf content with TypeScript engine');
 
-		console.log('📄 Scoring with faf-cli:', tempFile);
+		// Score using TypeScript logic
+		const score = scoreFafContent(fafContent);
 
-		try {
-			// Run faf-cli score (use npx to find in node_modules)
-			const { stdout, stderr } = await execAsync(`npx faf-cli score ${tempFile} --json`, {
-				timeout: 10000,
-				maxBuffer: 1024 * 1024 // 1MB
-			});
+		console.log('✅ Score calculated:', score);
 
-			// Parse JSON output
-			let result;
-			try {
-				result = JSON.parse(stdout);
-			} catch (parseError) {
-				// If --json not supported, parse text output
-				console.log('faf-cli output:', stdout);
-
-				// Extract score from text output (e.g., "Score: 43/100")
-				const scoreMatch = stdout.match(/Score:\s*(\d+)\/100/i) ||
-				                  stdout.match(/(\d+)%/);
-
-				if (scoreMatch) {
-					const score = parseInt(scoreMatch[1], 10);
-					result = { score };
-				} else {
-					throw new Error('Could not parse faf-cli output');
-				}
-			}
-
-			// Cleanup temp file
-			await unlink(tempFile).catch(() => {});
-
-			console.log('✅ faf-cli score:', result.score);
-
-			return json({
-				score: result.score || 0,
-				source: 'faf-cli',
-				timestamp: new Date().toISOString()
-			});
-
-		} catch (execError) {
-			// Cleanup on error
-			await unlink(tempFile).catch(() => {});
-
-			console.error('❌ faf-cli error:', execError);
-
-			return json({
-				error: 'faf-cli execution failed',
-				details: execError instanceof Error ? execError.message : String(execError)
-			}, { status: 500 });
-		}
+		return json({
+			score,
+			source: 'faf-typescript-engine',
+			timestamp: new Date().toISOString()
+		});
 
 	} catch (error) {
 		console.error('❌ API error:', error);

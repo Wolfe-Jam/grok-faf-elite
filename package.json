@@ -14,7 +14,8 @@
 		"test:ui": "playwright test --ui"
 	},
 	"dependencies": {
-		"faf-cli": "^4.2.0"
+		"faf-cli": "^4.2.0",
+		"yaml": "^2.8.2"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.56.1",
