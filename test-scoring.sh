@@ -117,8 +117,21 @@ echo "Failed: $((TOTAL - PASSED))"
 
 if [ $PASSED -eq $TOTAL ]; then
     echo -e "${GREEN}✅ All tests passed! Scoring matches faf-cli exactly.${NC}"
+    STATUS="✅ PASS"
 else
     echo -e "${RED}❌ Some tests failed. Scoring needs adjustment.${NC}"
+    STATUS="❌ FAIL"
 fi
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
+
+# Append to test log
+TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+PASS_RATE=$((PASSED * 100 / TOTAL))
+
+echo "" >> TEST-LOG.md
+echo "### Quick Log - $TIMESTAMP" >> TEST-LOG.md
+echo "**Status:** $PASSED/$TOTAL PASSED (${PASS_RATE}%) $STATUS" >> TEST-LOG.md
+echo "" >> TEST-LOG.md
+
+echo "📝 Results appended to TEST-LOG.md"
