@@ -65,8 +65,8 @@ const TYPE_DEFINITIONS: Record<string, string[]> = {
 	'fullstack': ['project', 'frontend', 'backend', 'universal', 'human'],
 	'full-stack': ['project', 'frontend', 'backend', 'universal', 'human'],
 
-	// Default/Generic: 12 slots (project + backend subset + human)
-	'generic': ['project', 'human']
+	// Default/Generic: 12 slots (project + universal + human)
+	'generic': ['project', 'universal', 'human']
 };
 
 // Get applicable slots for a project type
