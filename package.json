@@ -13,7 +13,9 @@
 		"test": "playwright test",
 		"test:ui": "playwright test --ui"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"faf-cli": "^4.2.0"
+	},
 	"devDependencies": {
 		"@playwright/test": "^1.56.1",
 		"@sveltejs/adapter-auto": "^7.0.0",

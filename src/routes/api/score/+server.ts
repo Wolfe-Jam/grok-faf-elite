@@ -22,8 +22,8 @@ export async function POST({ request }) {
 		console.log('📄 Scoring with faf-cli:', tempFile);
 
 		try {
-			// Run faf-cli score
-			const { stdout, stderr } = await execAsync(`faf score ${tempFile} --json`, {
+			// Run faf-cli score (use npx to find in node_modules)
+			const { stdout, stderr } = await execAsync(`npx faf-cli score ${tempFile} --json`, {
 				timeout: 10000,
 				maxBuffer: 1024 * 1024 // 1MB
 			});
