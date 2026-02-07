@@ -115,15 +115,77 @@
 				console.log('📖 Final README length:', readme.length);
 			}
 
-			// Fetch package.json
-			const packageResponse = await fetch(
-				`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/package.json`
-			);
-			const packageJson = packageResponse.ok ? await packageResponse.text() : null;
+			// Fetch dependency file based on language
+			let dependencyFile = null;
+			let dependencyType = 'unknown';
+
+			// Python: Try requirements.txt, pyproject.toml, setup.py
+			if (language === 'Python') {
+				const pythonFiles = ['requirements.txt', 'pyproject.toml', 'setup.py'];
+				for (const file of pythonFiles) {
+					const response = await fetch(
+						`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/${file}`
+					);
+					if (response.ok) {
+						dependencyFile = await response.text();
+						dependencyType = file;
+						console.log(`✅ Found ${file} for Python project`);
+						break;
+					}
+				}
+			}
+			// JavaScript/TypeScript: package.json
+			else if (language === 'JavaScript' || language === 'TypeScript') {
+				const response = await fetch(
+					`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/package.json`
+				);
+				if (response.ok) {
+					dependencyFile = await response.text();
+					dependencyType = 'package.json';
+					console.log('✅ Found package.json for JavaScript/TypeScript project');
+				}
+			}
+			// Rust: Cargo.toml
+			else if (language === 'Rust') {
+				const response = await fetch(
+					`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/Cargo.toml`
+				);
+				if (response.ok) {
+					dependencyFile = await response.text();
+					dependencyType = 'Cargo.toml';
+					console.log('✅ Found Cargo.toml for Rust project');
+				}
+			}
+			// Go: go.mod
+			else if (language === 'Go') {
+				const response = await fetch(
+					`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/go.mod`
+				);
+				if (response.ok) {
+					dependencyFile = await response.text();
+					dependencyType = 'go.mod';
+					console.log('✅ Found go.mod for Go project');
+				}
+			}
+			// Ruby: Gemfile
+			else if (language === 'Ruby') {
+				const response = await fetch(
+					`https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/Gemfile`
+				);
+				if (response.ok) {
+					dependencyFile = await response.text();
+					dependencyType = 'Gemfile';
+					console.log('✅ Found Gemfile for Ruby project');
+				}
+			}
+
+			if (!dependencyFile) {
+				console.log(`⚠️ No dependency file found for ${language || 'unknown'} project`);
+			}
 
 			// Generate with RUST-WASM + Score with ZIG-WASM
 			console.log('🦀 Calling RUST-WASM to generate project.faf...');
-			const result = await generateAndScore(repoOwner, repoName, description, readme, packageJson, language);
+			const result = await generateAndScore(repoOwner, repoName, description, readme, dependencyFile, language);
 			console.log('✅ WASM complete:', {
 				score: result.score,
 				genTime: result.genTime + 'ms',
