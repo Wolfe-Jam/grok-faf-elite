@@ -2,6 +2,22 @@
 
 All notable changes to builder.faf.one (grok-faf-elite) will be documented in this file.
 
+## [0.8.0] - 2026-02-07
+
+### Fixed
+- **ML Framework Detection**: Now detects JAX/PyTorch/TensorFlow from README when no dependency file exists
+- **main_language Accuracy**: Uses GitHub API language instead of stack detection
+- **Type Detection**: Correctly identifies ml-research projects (was: library for all)
+
+### Tests
+- All test suite passing (4/4 tests)
+- Grok-1 now generates correctly: Python/JAX/ml-research (was: Unknown/Unknown/library)
+
+### Technical
+- Phase 1-3 complete per DOUBLE-WHAMMY plan
+- Rust WASM generator: 318KB optimized build
+- Systematic execution of planned phases
+
 ## [0.7.0] - 2026-02-07
 
 ### Added

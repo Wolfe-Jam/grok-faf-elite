@@ -1,5 +1,5 @@
 name: grok-faf-elite
-version: 0.7.0
+version: 0.8.0
 description: Instant AI context for your repos. One-click FAF builder with Rust WASM generation + Zig WASM scoring. F1-Inspired Elite Edition.
 ai_readiness: 98%
 tech_stack:
