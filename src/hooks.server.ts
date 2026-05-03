@@ -13,7 +13,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const url = process.env.UPSTASH_REDIS_REST_URL;
 	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
+	let debug = 'no-creds';
 	if (url && token) {
+		debug = 'attempted';
 		const today = new Date().toISOString().slice(0, 10);
 		const ua = event.request.headers.get('user-agent') || 'unknown';
 
@@ -31,5 +33,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}).catch(() => {}); // silent — observability never breaks the request path
 	}
 
-	return resolve(event);
+	const response = await resolve(event);
+	// DEBUG: tells us via curl whether the hook ran. Remove after diagnosis.
+	response.headers.set('x-faf-hook', debug);
+	return response;
 };
