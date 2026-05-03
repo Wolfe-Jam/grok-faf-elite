@@ -3,16 +3,15 @@
 // architecture doctrine — grok-faf-elite is the Grok premium UI tier (1-click
 // FAST⚡AF, scoring) sitting on top of grok-faf-mcp.
 //
-// SvelteKit-specific: uses $env/dynamic/private for runtime Vercel envs
-// (process.env may be bundled out by the Vite build).
+// Uses process.env directly — SvelteKit + adapter-vercel runs on Node Serverless,
+// process.env IS available at runtime. ($env/dynamic/private had timing issues here.)
 
 import type { Handle } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const PREFIX = 'elite';
-	const url = env.UPSTASH_REDIS_REST_URL;
-	const token = env.UPSTASH_REDIS_REST_TOKEN;
+	const url = process.env.UPSTASH_REDIS_REST_URL;
+	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 	if (url && token) {
 		const today = new Date().toISOString().slice(0, 10);
