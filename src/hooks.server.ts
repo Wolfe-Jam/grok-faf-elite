@@ -8,7 +8,16 @@
 
 import type { Handle } from '@sveltejs/kit';
 
+const BLOCKED_UA_PATTERNS = [/YellowMCP/i, /Chiark/i, /TacaraBot/i];
+
 export const handle: Handle = async ({ event, resolve }) => {
+	// Bot-block — agent-quality-index scanners hold Fluid Compute slots without
+	// providing adoption value. Block before any work or stats writes.
+	const blockUa = event.request.headers.get('user-agent') || '';
+	if (BLOCKED_UA_PATTERNS.some((re) => re.test(blockUa))) {
+		return new Response('Forbidden', { status: 403 });
+	}
+
 	const PREFIX = 'elite';
 	const url = process.env.UPSTASH_REDIS_REST_URL;
 	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
