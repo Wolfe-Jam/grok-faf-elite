@@ -12,10 +12,6 @@ declare global {
 				UPSTASH_REDIS_REST_TOKEN?: string;
 				GITHUB_CLIENT_ID?: string;
 				GITHUB_CLIENT_SECRET?: string;
-				X_API_KEY?: string;
-				X_API_SECRET?: string;
-				X_ACCESS_TOKEN?: string;
-				X_ACCESS_TOKEN_SECRET?: string;
 			};
 			context: { waitUntil(promise: Promise<unknown>): void };
 			caches: CacheStorage & { default: Cache };

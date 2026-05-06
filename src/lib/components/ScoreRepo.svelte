@@ -8,6 +8,7 @@
 
 	import { onMount } from 'svelte';
 	import { isWasmReady, generateAndScore } from '$lib/wasm-loader';
+	import { buildScoreShareUrl } from '$lib/share';
 
 	// Props
 	interface Props {
@@ -257,22 +258,14 @@
 	}
 
 	/**
-	 * Share on X
+	 * Share on X (web intent — no auth, user edits before posting)
 	 */
 	function shareToX() {
 		if (score === null || !tier) return;
-
-		const text = encodeURIComponent(
-			`${repoName} scored ${score}% on FAF AI-readiness! ${tier.emoji}
-
-${score >= 100 ? 'Gold Code achieved!' : 'On the path to Gold Code!'}
-
-Check your score: https://builder.faf.one
-
-#FAF #GoldCode #AIReadiness`
+		window.open(
+			buildScoreShareUrl({ repo: repoName, score, tierEmoji: tier.emoji }),
+			'_blank'
 		);
-
-		window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
 	}
 </script>
 

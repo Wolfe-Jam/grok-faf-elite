@@ -10,7 +10,8 @@
 - **Framework**: SvelteKit 5 with Svelte 5 runes
 - **Styling**: Tailwind CSS 4 with @theme
 - **Language**: TypeScript (strict mode)
-- **Deployment**: Vercel
+- **Deployment**: Cloudflare Workers via @sveltejs/adapter-cloudflare (migrated 2026-05-06 from Vercel — adapter-vercel hooks.server.ts never fired reliably across 4 fix attempts)
+- **Domain**: builder.faf.one (CF custom domain on the Worker)
 - **Testing**: Playwright E2E
 
 ## Architecture

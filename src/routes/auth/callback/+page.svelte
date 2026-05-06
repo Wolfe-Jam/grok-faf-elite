@@ -9,6 +9,7 @@
 
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { buildScoreShareUrl } from '$lib/share';
 
 	let status = $state('Committing to GitHub...');
 	let error = $state('');
@@ -109,21 +110,15 @@
 
 	function shareToX() {
 		if (!result) return;
-
-		const text = encodeURIComponent(
-			`${result.repo} scored ${result.score}% on FAF AI-readiness! ${getTierEmoji(result.score)}
-
-${result.score >= 100 ? 'Gold Code achieved!' : 'On the path to Gold Code!'}
-
-Generated in ${result.genTime.toFixed(2)}ms by Rust WASM
-Scored in ${result.scoreTime.toFixed(2)}μs by Zig WASM
-
-Check your score: https://builder.faf.one
-
-#FAF #GoldCode #AIReadiness`
+		window.open(
+			buildScoreShareUrl({
+				repo: result.repo,
+				score: result.score,
+				tierEmoji: getTierEmoji(result.score),
+				extra: `Generated in ${result.genTime.toFixed(2)}ms by Rust WASM\nScored in ${result.scoreTime.toFixed(2)}μs by Zig WASM`
+			}),
+			'_blank'
 		);
-
-		window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
 	}
 </script>
 

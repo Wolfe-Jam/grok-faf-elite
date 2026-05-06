@@ -7,6 +7,7 @@
 	import BiSyncPost from '$lib/components/BiSyncPost.svelte';
 	import ScoreRepo from '$lib/components/ScoreRepo.svelte';
 	import { isWasmReady, scoreFaf } from '$lib/wasm-loader';
+	import { buildScoreShareUrl } from '$lib/share';
 
 	// Environment configuration
 	const mcpServerUrl = 'https://grok-faf-mcp.vercel.app/sse';
@@ -101,20 +102,18 @@
 		URL.revokeObjectURL(url);
 	}
 
-	// Share on X
+	// Share on X (web intent — no auth, user edits before posting)
 	function shareToX() {
 		if (currentScore === null) return;
 		const tier = currentScore >= 100 ? '🏆' : currentScore >= 85 ? '🥉' : currentScore >= 70 ? '🟢' : '🟡';
-		const text = encodeURIComponent(
-			`${currentRepoOwner}/${currentRepoName} scored ${currentScore}% on FAF AI-readiness! ${tier}
-
-${currentScore >= 100 ? 'Gold Code achieved!' : 'On the path to Gold Code!'}
-
-Check your score: https://builder.faf.one
-
-#FAF #GoldCode #AIReadiness`
+		window.open(
+			buildScoreShareUrl({
+				repo: `${currentRepoOwner}/${currentRepoName}`,
+				score: currentScore,
+				tierEmoji: tier
+			}),
+			'_blank'
 		);
-		window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
 	}
 
 	// Get placeholder text for README form fields

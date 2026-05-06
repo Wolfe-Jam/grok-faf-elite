@@ -16,8 +16,6 @@
   //   UPSTASH_REDIS_REST_TOKEN  — stats counter auth
   //   GITHUB_CLIENT_ID          — OAuth app id (commit-faf + add-faf code exchange)
   //   GITHUB_CLIENT_SECRET      — OAuth app secret (commit-faf + add-faf code exchange)
-  //   X_API_KEY                 — X (Twitter) OAuth 1.0a app key
-  //   X_API_SECRET              — X (Twitter) OAuth 1.0a app secret
-  //   X_ACCESS_TOKEN            — X (Twitter) OAuth 1.0a user token
-  //   X_ACCESS_TOKEN_SECRET     — X (Twitter) OAuth 1.0a user token secret
+  //
+  // X (Twitter) sharing uses web intent (no auth, no tokens) — see src/lib/share.ts.
 }

@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { buildShareUrl } from '$lib/share';
+
 	let message = $state('');
 	let charCount = $derived(message.length);
 
 	const defaultTemplate = `Just scored my repo on FAF AI-readiness! 🏆
 
-Score yours: https://zero-faf-builder-amg.vercel.app
+Score yours: https://builder.faf.one
 
 @grok @xai 🚀🍊
 #AI #DevTools #dotFaffed #GoldCode`;
@@ -15,8 +17,7 @@ Score yours: https://zero-faf-builder-amg.vercel.app
 
 	function shareToX() {
 		if (!message.trim()) return;
-		const text = encodeURIComponent(message);
-		window.open(`https://x.com/intent/tweet?text=${text}`, '_blank');
+		window.open(buildShareUrl(message), '_blank');
 	}
 
 	// Load template on mount
