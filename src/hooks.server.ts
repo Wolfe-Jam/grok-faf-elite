@@ -3,24 +3,24 @@
 // architecture doctrine — grok-faf-elite is the Grok premium UI tier (1-click
 // FAST⚡AF, scoring) sitting on top of grok-faf-mcp.
 //
-// Uses process.env directly — SvelteKit + adapter-vercel runs on Node Serverless,
-// process.env IS available at runtime. ($env/dynamic/private had timing issues here.)
+// Cloudflare Workers — env comes through event.platform.env (typed via app.d.ts).
+// On `vite dev` (no platform binding), platform is undefined; the no-creds path
+// just skips the counter write — same behavior as before when secrets were unset.
 
 import type { Handle } from '@sveltejs/kit';
 
 const BLOCKED_UA_PATTERNS = [/YellowMCP/i, /Chiark/i, /TacaraBot/i];
 
 export const handle: Handle = async ({ event, resolve }) => {
-	// Bot-block — agent-quality-index scanners hold Fluid Compute slots without
-	// providing adoption value. Block before any work or stats writes.
+	// Bot-block — agent-quality-index scanners that don't represent adoption.
 	const blockUa = event.request.headers.get('user-agent') || '';
 	if (BLOCKED_UA_PATTERNS.some((re) => re.test(blockUa))) {
 		return new Response('Forbidden', { status: 403 });
 	}
 
 	const PREFIX = 'elite';
-	const url = process.env.UPSTASH_REDIS_REST_URL;
-	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+	const url = event.platform?.env?.UPSTASH_REDIS_REST_URL;
+	const token = event.platform?.env?.UPSTASH_REDIS_REST_TOKEN;
 
 	let debug = 'no-creds';
 	if (url && token) {

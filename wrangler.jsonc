@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "grok-faf-elite",
+  "compatibility_date": "2026-05-06",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": ".svelte-kit/cloudflare/_worker.js",
+  "assets": {
+    "directory": ".svelte-kit/cloudflare",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+  // Secrets (set via `wrangler secret put` — never commit values):
+  //   UPSTASH_REDIS_REST_URL    — stats counter endpoint
+  //   UPSTASH_REDIS_REST_TOKEN  — stats counter auth
+  //   X_API_KEY                 — X (Twitter) OAuth 1.0a app key
+  //   X_API_SECRET              — X (Twitter) OAuth 1.0a app secret
+  //   X_ACCESS_TOKEN            — X (Twitter) OAuth 1.0a user token
+  //   X_ACCESS_TOKEN_SECRET     — X (Twitter) OAuth 1.0a user token secret
+}

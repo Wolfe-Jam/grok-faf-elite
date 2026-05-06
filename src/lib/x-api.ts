@@ -106,13 +106,15 @@ export async function postToX(text: string, credentials: XCredentials): Promise<
 }
 
 /**
- * Get credentials from environment variables
+ * Get credentials from a Cloudflare Workers env binding.
+ * Caller passes event.platform.env (or undefined in dev when platform is missing).
  */
-export function getXCredentials(): XCredentials | null {
-	const apiKey = process.env.X_API_KEY;
-	const apiSecret = process.env.X_API_SECRET;
-	const accessToken = process.env.X_ACCESS_TOKEN;
-	const accessTokenSecret = process.env.X_ACCESS_TOKEN_SECRET;
+export function getXCredentials(env: Record<string, string | undefined> | undefined): XCredentials | null {
+	if (!env) return null;
+	const apiKey = env.X_API_KEY;
+	const apiSecret = env.X_API_SECRET;
+	const accessToken = env.X_ACCESS_TOKEN;
+	const accessTokenSecret = env.X_ACCESS_TOKEN_SECRET;
 
 	if (!apiKey || !apiSecret || !accessToken || !accessTokenSecret) {
 		return null;

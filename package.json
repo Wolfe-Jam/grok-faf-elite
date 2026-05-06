@@ -19,8 +19,7 @@
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.56.1",
-		"@sveltejs/adapter-auto": "^7.0.0",
-		"@sveltejs/adapter-vercel": "^6.1.1",
+		"@sveltejs/adapter-cloudflare": "^7.2.8",
 		"@sveltejs/kit": "^2.47.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.1",
 		"@tailwindcss/vite": "^4.1.17",
@@ -29,6 +28,7 @@
 		"svelte-check": "^4.3.3",
 		"tailwindcss": "^4.1.17",
 		"typescript": "^5.9.3",
-		"vite": "^7.1.10"
+		"vite": "^7.1.10",
+		"wrangler": "^4.86.0"
 	}
 }

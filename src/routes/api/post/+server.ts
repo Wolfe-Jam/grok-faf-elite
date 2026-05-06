@@ -2,8 +2,8 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { postToX, getXCredentials } from '$lib/x-api';
 
-export const POST: RequestHandler = async ({ request }) => {
-	const credentials = getXCredentials();
+export const POST: RequestHandler = async ({ request, platform }) => {
+	const credentials = getXCredentials(platform?.env);
 
 	if (!credentials) {
 		return json(

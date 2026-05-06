@@ -6,7 +6,18 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			env: {
+				UPSTASH_REDIS_REST_URL?: string;
+				UPSTASH_REDIS_REST_TOKEN?: string;
+				X_API_KEY?: string;
+				X_API_SECRET?: string;
+				X_ACCESS_TOKEN?: string;
+				X_ACCESS_TOKEN_SECRET?: string;
+			};
+			context: { waitUntil(promise: Promise<unknown>): void };
+			caches: CacheStorage & { default: Cache };
+		}
 	}
 }
 
