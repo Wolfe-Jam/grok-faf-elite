@@ -110,7 +110,7 @@
 				<div class="preview-display">
 					<div class="preview-score">
 						<span class="score-value">89%</span>
-						<span class="score-tier">🥉</span>
+						<span class="score-tier">◇</span>
 					</div>
 					<div class="preview-file">project.faf</div>
 				</div>

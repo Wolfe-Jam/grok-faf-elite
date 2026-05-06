@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { isWasmReady, generateAndScore } from '$lib/wasm-loader';
 	import { buildScoreShareUrl } from '$lib/share';
+	import { getTier as getTierFromLib } from '$lib/tiers';
 
 	// Props
 	interface Props {
@@ -38,16 +39,17 @@
 	let error = $state('');
 	let showDownloadTip = $state(false);
 
-	// Tier system
+	// Tier display delegated to $lib/tiers (ported from faf-cli — source of truth).
+	// Trophy 🏆 is the only emoji; sub-Trophy uses clean geometric symbols.
+	// `note` only set at Trophy — no participation copy below it.
 	function getTier(s: number): { emoji: string; name: string; color: string; note?: string } {
-		if (s >= 105) return { emoji: '🍊', name: 'Big Orange', color: 'text-orange-500', note: 'The Michelin Star for Repos' };
-		if (s >= 100) return { emoji: '🏆', name: 'Trophy', color: 'text-yellow-400', note: 'Gold Code - Perfect Score!' };
-		if (s >= 99) return { emoji: '🥇', name: 'Gold', color: 'text-yellow-300' };
-		if (s >= 95) return { emoji: '🥈', name: 'Silver', color: 'text-gray-300' };
-		if (s >= 85) return { emoji: '🥉', name: 'Bronze', color: 'text-amber-600' };
-		if (s >= 70) return { emoji: '🟢', name: 'Green', color: 'text-green-500' };
-		if (s >= 55) return { emoji: '🟡', name: 'Yellow', color: 'text-yellow-500' };
-		return { emoji: '🔴', name: 'Needs Work', color: 'text-red-500' };
+		const t = getTierFromLib(s);
+		return {
+			emoji: t.symbol,
+			name: t.name,
+			color: t.cssClass,
+			...(s >= 100 ? { note: 'Gold Code — Perfect Score!' } : {})
+		};
 	}
 
 	const tier = $derived(score !== null ? getTier(score) : null);

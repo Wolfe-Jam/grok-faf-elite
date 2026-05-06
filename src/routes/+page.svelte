@@ -8,6 +8,7 @@
 	import ScoreRepo from '$lib/components/ScoreRepo.svelte';
 	import { isWasmReady, scoreFaf } from '$lib/wasm-loader';
 	import { buildScoreShareUrl } from '$lib/share';
+	import { getTier } from '$lib/tiers';
 
 	// Environment configuration
 	const mcpServerUrl = 'https://grok-faf-mcp.vercel.app/sse';
@@ -105,12 +106,11 @@
 	// Share on X (web intent — no auth, user edits before posting)
 	function shareToX() {
 		if (currentScore === null) return;
-		const tier = currentScore >= 100 ? '🏆' : currentScore >= 85 ? '🥉' : currentScore >= 70 ? '🟢' : '🟡';
 		window.open(
 			buildScoreShareUrl({
 				repo: `${currentRepoOwner}/${currentRepoName}`,
 				score: currentScore,
-				tierEmoji: tier
+				tierEmoji: getTier(currentScore).symbol
 			}),
 			'_blank'
 		);
@@ -306,9 +306,9 @@
 					class="w-full p-6 text-center hover:bg-white/5 transition-colors duration-200 cursor-pointer"
 				>
 					<p class="text-xs text-muted-foreground mb-3">YOUR SCORE</p>
-					<div class="text-5xl mb-2">{currentScore >= 100 ? '🏆' : currentScore >= 85 ? '🥉' : currentScore >= 70 ? '🟢' : '🟡'}</div>
+					<div class="text-5xl mb-2 {getTier(currentScore).cssClass}">{getTier(currentScore).symbol}</div>
 					<div class="text-4xl font-bold {currentScore >= 100 ? 'text-green-500' : currentScore >= 70 ? 'text-green-500' : 'text-yellow-500'} mb-1">{currentScore}%</div>
-					<div class="text-sm text-muted-foreground mb-1">{currentScore >= 100 ? 'Gold Code' : currentScore >= 85 ? 'Bronze' : currentScore >= 70 ? 'Green' : 'Yellow'}</div>
+					<div class="text-sm text-muted-foreground mb-1">{currentScore >= 100 ? 'Gold Code' : getTier(currentScore).name}</div>
 					<div class="text-xs text-foreground mb-3">{currentRepoOwner}/{currentRepoName}</div>
 
 					<!-- Progress bar -->

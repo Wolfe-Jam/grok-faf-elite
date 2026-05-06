@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { buildScoreShareUrl } from '$lib/share';
+	import { getTier } from '$lib/tiers';
 
 	let status = $state('Committing to GitHub...');
 	let error = $state('');
@@ -25,24 +26,14 @@
 		readmeUpdated?: boolean;
 	} | null>(null);
 
+	// Tier display delegated to $lib/tiers (ported from faf-cli — source of truth).
+	// Trophy 🏆 is the only emoji; sub-Trophy uses clean geometric symbols.
 	function getTierEmoji(s: number): string {
-		if (s >= 105) return '🍊';
-		if (s >= 100) return '🏆';
-		if (s >= 99) return '🥇';
-		if (s >= 95) return '🥈';
-		if (s >= 85) return '🥉';
-		if (s >= 70) return '🟢';
-		return '🟡';
+		return getTier(s).symbol;
 	}
 
 	function getTierName(s: number): string {
-		if (s >= 105) return 'Big Orange';
-		if (s >= 100) return 'Trophy';
-		if (s >= 99) return 'Gold';
-		if (s >= 95) return 'Silver';
-		if (s >= 85) return 'Bronze';
-		if (s >= 70) return 'Green';
-		return 'Yellow';
+		return getTier(s).name;
 	}
 
 	onMount(async () => {
