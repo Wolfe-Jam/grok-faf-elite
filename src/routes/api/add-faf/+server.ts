@@ -1,6 +1,5 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '$env/static/private';
 
 // Simple README extraction helpers
 function extractFromReadme(readme: string) {
@@ -78,8 +77,18 @@ ai_readiness:
 `;
 }
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, platform }) => {
 	try {
+		const GITHUB_CLIENT_ID = platform?.env?.GITHUB_CLIENT_ID;
+		const GITHUB_CLIENT_SECRET = platform?.env?.GITHUB_CLIENT_SECRET;
+
+		if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
+			return json(
+				{ success: false, error: 'GitHub OAuth not configured on this Worker' },
+				{ status: 500 }
+			);
+		}
+
 		const { code, owner, repo } = await request.json();
 
 		// Step 1: Exchange code for access token

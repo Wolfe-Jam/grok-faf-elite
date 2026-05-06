@@ -10,7 +10,6 @@
 
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from '$env/static/private';
 
 interface CommitRequest {
 	code: string;
@@ -24,8 +23,18 @@ interface CommitRequest {
 	readmeUpdates?: Record<string, string>;
 }
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, platform }) => {
 	try {
+		const GITHUB_CLIENT_ID = platform?.env?.GITHUB_CLIENT_ID;
+		const GITHUB_CLIENT_SECRET = platform?.env?.GITHUB_CLIENT_SECRET;
+
+		if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
+			return json(
+				{ success: false, error: 'GitHub OAuth not configured on this Worker' },
+				{ status: 500 }
+			);
+		}
+
 		const body: CommitRequest = await request.json();
 		const { code, owner, repo, fafContent, score, genTime, scoreTime, missingFields, readmeUpdates } = body;
 
