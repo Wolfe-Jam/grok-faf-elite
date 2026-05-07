@@ -2,6 +2,63 @@
 
 All notable changes to builder.faf.one (grok-faf-elite) will be documented in this file.
 
+## [0.9.0] - 2026-05-06 — Cloudflare migration + tier doctrine + web-intent share
+
+### Changed (the big one — platform migration)
+- **Migrated from Vercel + `@sveltejs/adapter-vercel` to Cloudflare Workers + `@sveltejs/adapter-cloudflare`.**
+  `hooks.server.ts` had not fired reliably under adapter-vercel across 4 prior fix attempts
+  (`prerender = false` at layout, `+page.server.ts` no-op load, `process.env` over `$env/dynamic`,
+  root `middleware.js`). Under adapter-cloudflare it fires every request — proven by the
+  `x-faf-hook: attempted` response header.
+- `process.env.*` → `event.platform.env.*` across `hooks.server.ts`, `src/lib/x-api.ts`,
+  and the API route handlers (`add-faf`, `commit-faf`, `post`).
+- `$env/static/private` imports retired — `GITHUB_CLIENT_ID` + `GITHUB_CLIENT_SECRET` now read
+  from `event.platform.env` at runtime (no build-time secret baking).
+- `src/app.d.ts` — `App.Platform.env` typed for the 4 runtime secrets.
+- `wrangler.jsonc` added with `nodejs_compat` (for Node `crypto` in OAuth signing).
+- Custom domain `builder.faf.one` cut from Vercel to a Cloudflare Worker custom domain
+  (cert auto-issued by CF, DNS proxied through CF).
+- Vercel project for `xai-faf-elite` / `grok-faf-elite` deleted — single source of truth
+  is now the Cloudflare Worker.
+
+### Changed (tier doctrine alignment)
+- All tier-emoji ladders aligned with `~/FAF/cli/src/core/tiers.ts` (the source of truth).
+  Trophy 🏆 is the ONLY emoji; sub-Trophy uses clean Unicode geometric symbols (★ ◆ ◇ ● ○ ♡).
+  Retired emojis (🥇 🥈 🥉 🟢 🟡 🔴 🤍) and `>= 105 → 🍊` ghost branches are gone from:
+  - `src/lib/tiers.ts` (NEW — ports faf-cli's TIERS verbatim)
+  - `src/routes/+page.svelte` (homepage YOUR SCORE display)
+  - `src/lib/components/ScoreRepo.svelte` (score result component)
+  - `src/routes/auth/callback/+page.svelte` (post-OAuth tier display)
+  - `src/routes/diagrams/builder-flow/+page.svelte` (marketing diagram)
+
+### Added
+- `src/lib/share.ts` — single source for web-intent X share URLs. Two helpers:
+  `buildScoreShareUrl(input)` for Trophy-aware score shares, and `buildShareUrl(text, url?)`
+  for free-form shares. Intent URL uses `?text=...&url=...` separately so X renders a
+  card preview below the tweet.
+
+### Removed
+- `src/lib/x-api.ts` (124 LOC) — dead OAuth 1.0a code, never had a UI caller.
+- `src/routes/api/post/+server.ts` (58 LOC) — the endpoint nothing called.
+- `src/lib/components/ScoreRepo.svelte.old` — stale Feb backup.
+- 4 X-token entries in `src/app.d.ts Platform.env` (no longer used).
+
+### Fixed
+- `src/lib/components/BiSyncPost.svelte` default share template — stale URL
+  `https://zero-faf-builder-amg.vercel.app` corrected to `https://builder.faf.one`.
+
+### Bot-block (Edge layer)
+- `hooks.server.ts` now blocks `YellowMCP-HealthChecker`, `YellowMCP-SecurityScanner`,
+  `Chiark`, and `TacaraBot` UAs with 403 before any work or stats writes.
+  This is the same block deployed across the 4 Vercel-hosted MCP apps tonight.
+
+### Doctrine references (memory)
+- `memory/trophy-is-ai-optimised-certification.md` — Trophy 🏆 = "100% AI Optimised" functional cert.
+- `memory/faf-dont-lie-deterministic-scoring.md` — score positioning ("FAF don't lie").
+- `memory/feedback-tier-symbols.md` — tier symbols doctrine (already locked 2026-04-29).
+- `memory/builder-faf-one-evolution-arc.md` — "today scorer, tomorrow builder. Don't rename."
+- `memory/builder-faf-one-grok-pivot-history.md` — repo-name origin (grok-faf-elite → builder pivot).
+
 ## [0.8.0] - 2026-02-07
 
 ### Fixed
