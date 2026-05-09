@@ -28,19 +28,16 @@
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 
-	<!-- Default OG meta lives here. +page.svelte overrides og:image and
-	     twitter:image when ?repo=<owner>/<repo> is in the URL — dynamic
-	     per-repo card is rendered by mcpaas.live/og/<owner>/<repo>.png. -->
+	<!-- og:image / twitter:image are rendered SOLELY by +page.svelte.
+	     Reason: cross-platform crawlers (X / FB / LinkedIn / Slack) handle
+	     duplicate og:image tags inconsistently — some take the first, some
+	     the last. Single source = consistent rendering. The layout still
+	     owns og:type / og:description / twitter:card / twitter:description
+	     because those don't vary per-repo. -->
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://builder.faf.one" />
-	<meta property="og:title" content="builder.faf.one — Score your repo's AI-readiness" />
 	<meta property="og:description" content="The first IANA-registered Context score for repos. 100% 🏆 = AI Optimised. FAF don't lie." />
-	<meta property="og:image" content="https://mcpaas.live/og/Wolfe-Jam/faf-cli.png" />
-
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="builder.faf.one — Score your repo's AI-readiness" />
 	<meta name="twitter:description" content="The first IANA-registered Context score for repos. 100% 🏆 = AI Optimised. FAF don't lie." />
-	<meta name="twitter:image" content="https://mcpaas.live/og/Wolfe-Jam/faf-cli.png" />
 </svelte:head>
 
 <!-- Version badge -->

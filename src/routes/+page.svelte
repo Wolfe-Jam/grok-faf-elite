@@ -301,11 +301,11 @@
 	}
 </script>
 
-<!-- Per-repo OG override — when ?repo=owner/repo is in the URL, swap the
-     default OG image for the dynamic per-repo card. Social card crawlers
-     pick up these tags from the SSR'd HTML; +page.server.ts validated
-     the param shape. svelte:head must live at top level (not inside
-     {#if}); the conditional is inside the head block. -->
+<!-- og:image / twitter:image are SOLE-SOURCED here (not in +layout.svelte)
+     to avoid duplicate-tag inconsistency across X / FB / LinkedIn / Slack
+     crawlers. When ?repo=owner/repo is in the URL, render the dynamic
+     per-repo card; otherwise fall back to faf-cli's Trophy as the
+     canonical default. +page.server.ts validates the repo param shape. -->
 <svelte:head>
 	{#if data?.repo}
 		<meta property="og:url" content="https://builder.faf.one/?repo={data.repo}" />
@@ -313,6 +313,12 @@
 		<meta property="og:image" content="https://mcpaas.live/og/{data.repo}.png" />
 		<meta name="twitter:title" content="{data.repo} — FAF Score" />
 		<meta name="twitter:image" content="https://mcpaas.live/og/{data.repo}.png" />
+	{:else}
+		<meta property="og:url" content="https://builder.faf.one" />
+		<meta property="og:title" content="builder.faf.one — Score your repo's AI-readiness" />
+		<meta property="og:image" content="https://mcpaas.live/og/Wolfe-Jam/faf-cli.png" />
+		<meta name="twitter:title" content="builder.faf.one — Score your repo's AI-readiness" />
+		<meta name="twitter:image" content="https://mcpaas.live/og/Wolfe-Jam/faf-cli.png" />
 	{/if}
 </svelte:head>
 
