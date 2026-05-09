@@ -22,24 +22,25 @@
 </script>
 
 <svelte:head>
-	<title>Grok-FAF-Elite</title>
-	<meta name="description" content="Score your repo's AI-readiness. Aim for 100% 🏆 Gold Code" />
-	<meta name="theme-color" content="#FF8C00" />
+	<title>builder.faf.one — Score your repo's AI-readiness</title>
+	<meta name="description" content="The first IANA-registered Context score for repos. 100% 🏆 = AI Optimised. FAF don't lie." />
+	<meta name="theme-color" content="#0a0a0a" />
 	<link rel="manifest" href="/manifest.json" />
 	<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 
-	<!-- Open Graph -->
+	<!-- Default OG meta lives here. +page.svelte overrides og:image and
+	     twitter:image when ?repo=<owner>/<repo> is in the URL — dynamic
+	     per-repo card is rendered by mcpaas.live/og/<owner>/<repo>.png. -->
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://zero-faf-builder-amg.vercel.app" />
-	<meta property="og:title" content="Make Your Repos AI-Ready" />
-	<meta property="og:description" content="Score your AI-readiness. Aim for 100% 🏆 Gold Code — AI Fully Optimized" />
-	<meta property="og:image" content="https://zero-faf-builder-amg.vercel.app/og-image.png" />
+	<meta property="og:url" content="https://builder.faf.one" />
+	<meta property="og:title" content="builder.faf.one — Score your repo's AI-readiness" />
+	<meta property="og:description" content="The first IANA-registered Context score for repos. 100% 🏆 = AI Optimised. FAF don't lie." />
+	<meta property="og:image" content="https://mcpaas.live/og/Wolfe-Jam/faf-cli.png" />
 
-	<!-- Twitter/X -->
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content="Make Your Repos AI-Ready" />
-	<meta name="twitter:description" content="Score your AI-readiness. Aim for 100% 🏆 Gold Code" />
-	<meta name="twitter:image" content="https://zero-faf-builder-amg.vercel.app/og-image.png" />
+	<meta name="twitter:title" content="builder.faf.one — Score your repo's AI-readiness" />
+	<meta name="twitter:description" content="The first IANA-registered Context score for repos. 100% 🏆 = AI Optimised. FAF don't lie." />
+	<meta name="twitter:image" content="https://mcpaas.live/og/Wolfe-Jam/faf-cli.png" />
 </svelte:head>
 
 <!-- Version badge -->

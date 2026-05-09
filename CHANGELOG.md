@@ -2,6 +2,26 @@
 
 All notable changes to builder.faf.one (grok-faf-elite) will be documented in this file.
 
+## [0.9.1] - 2026-05-08 — OG image wire-up + URL/meta freshness
+
+### Changed
+- **`+layout.svelte`** — fixed stale `zero-faf-builder-amg.vercel.app` URL across `og:url`, `og:image`, `twitter:image`. Default site OG meta now points at `https://builder.faf.one` and `https://mcpaas.live/og/Wolfe-Jam/faf-cli.png` (faf-cli's Trophy card as the canonical default preview).
+- **Description copy** in default OG / Twitter meta updated to current positioning: *"The first IANA-registered Context score for repos. 100% 🏆 = AI Optimised. FAF don't lie."* (per `memory/trophy-is-ai-optimised-certification.md` and `memory/faf-dont-lie-deterministic-scoring.md`).
+- **Theme color** `#FF8C00` → `#0a0a0a` to match the actual dark FAF aesthetic on the page.
+
+### Added
+- **`+page.server.ts`** parses `?repo=<owner>/<repo>` query param at SSR time, validates shape (`/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/`), passes to the page as `data.repo`. Social card crawlers don't run JS, so per-repo OG meta MUST be in the SSR'd HTML.
+- **`+page.svelte`** `<svelte:head>` block conditionally overrides `og:url`, `og:title`, `og:image`, `twitter:title`, `twitter:image` when `data.repo` is set. The OG image points at `https://mcpaas.live/og/<owner>/<repo>.png` — the dynamic per-repo card endpoint shipped in mcpaas-cf v1.5.15.
+
+### Result
+Sharing `https://builder.faf.one/?repo=Wolfe-Jam/faf-cli` on X / Slack / Discord / LinkedIn now renders a 1200×630 card with the repo's tier emoji, score, and FAF brand line — instead of a plain link. Every shared score becomes a card preview.
+
+### Doctrine
+- Memory: `trophy-is-ai-optimised-certification.md` — OG card is the "everybody knows" layer made visible
+- Memory: `faf-dont-lie-deterministic-scoring.md` — same positioning across the score page, the badge, and now the OG card
+
+
+
 ## [0.9.0] - 2026-05-06 — Cloudflare migration + tier doctrine + web-intent share
 
 ### Changed (the big one — platform migration)

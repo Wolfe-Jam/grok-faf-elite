@@ -10,6 +10,12 @@
 	import { buildScoreShareUrl } from '$lib/share';
 	import { getTier } from '$lib/tiers';
 
+	// SSR data — see +page.server.ts. `data.repo` is the validated `?repo=`
+	// query param ("owner/repo") or null. Used below to render a per-repo
+	// OG image so social shares of `builder.faf.one/?repo=X` get a card
+	// preview specific to that repo.
+	let { data } = $props();
+
 	// Environment configuration
 	const mcpServerUrl = 'https://grok-faf-mcp.vercel.app/sse';
 	const templateRepoUrl = 'https://github.com/wolfe-jam/grok-faf-elite';
@@ -294,6 +300,21 @@
 		}
 	}
 </script>
+
+<!-- Per-repo OG override — when ?repo=owner/repo is in the URL, swap the
+     default OG image for the dynamic per-repo card. Social card crawlers
+     pick up these tags from the SSR'd HTML; +page.server.ts validated
+     the param shape. svelte:head must live at top level (not inside
+     {#if}); the conditional is inside the head block. -->
+<svelte:head>
+	{#if data?.repo}
+		<meta property="og:url" content="https://builder.faf.one/?repo={data.repo}" />
+		<meta property="og:title" content="{data.repo} — FAF Score" />
+		<meta property="og:image" content="https://mcpaas.live/og/{data.repo}.png" />
+		<meta name="twitter:title" content="{data.repo} — FAF Score" />
+		<meta name="twitter:image" content="https://mcpaas.live/og/{data.repo}.png" />
+	{/if}
+</svelte:head>
 
 <main class="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative">
 	<!-- Score Display Panel - Expandable with smooth animations -->
