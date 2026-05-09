@@ -2,7 +2,33 @@
 
 All notable changes to builder.faf.one (grok-faf-elite) will be documented in this file.
 
-## [0.9.1] - 2026-05-08 — OG image wire-up + URL/meta freshness
+## [0.9.2] - 2026-05-08 — How-is-this-scored transparency page + single-source OG fix
+
+### Added
+- **`/how-it-works`** — the rubric page that turns "FAF don't lie" into a falsifiable receipt:
+  - The math (`score = populated / active × 100`, capped at 100)
+  - All 33 canonical slots, listed by category, with the GitHub source link
+  - App-type-aware scoring table (documentation 9 → enterprise 33)
+  - Tier table (Trophy 🏆 the only emoji; ★ ◆ ◇ ● ○ ♡ for sub-Trophy)
+  - "Verify it yourself" — `npm install -g faf-cli && faf-cli score`. Same kernel
+    in browser / CLI / edge — one rubric, one number.
+  - "Why this matters" — first / IANA-registered / deterministic / mechanical /
+    falsifiable. Closes with: *"Theirs is an opinion. Ours is a measurement.
+    FAF don't lie."*
+  - Source: `~/FAF/cli/src/core/{slots,scorer,tiers}.ts` — every claim on the
+    page traces back to a public file.
+  - OG meta on the page itself uses faf-cli's Trophy card as the preview image.
+- **`/how-it-works/+page.server.ts`** no-op load — same SSR-forcing pattern as
+  the homepage, so `hooks.server.ts` (bot-block + stats) fires on this route too.
+
+### Fixed
+- Single-source `og:image` / `og:url` / `og:title` — moved out of `+layout.svelte`
+  into `+page.svelte` (with fallback) to avoid X / FB / LinkedIn / Slack
+  inconsistency over duplicate-tag handling. Layout now only owns `og:type`,
+  `og:description`, `twitter:card`, `twitter:description` (the per-page-invariant
+  meta).
+
+
 
 ### Changed
 - **`+layout.svelte`** — fixed stale `zero-faf-builder-amg.vercel.app` URL across `og:url`, `og:image`, `twitter:image`. Default site OG meta now points at `https://builder.faf.one` and `https://mcpaas.live/og/Wolfe-Jam/faf-cli.png` (faf-cli's Trophy card as the canonical default preview).
