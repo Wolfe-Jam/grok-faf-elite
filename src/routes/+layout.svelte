@@ -9,9 +9,8 @@
 		// Load WASM modules upfront (Rust 300KB + Zig 2.7KB)
 		try {
 			await initWasm();
-			console.log('✅ DOUBLE-WHAMMY loaded: Rust + Zig WASM ready');
 		} catch (err) {
-			console.error('❌ WASM init failed:', err);
+			console.error('WASM init failed:', err);
 		}
 
 		// Service worker

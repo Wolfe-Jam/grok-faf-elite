@@ -11,6 +11,7 @@
 	import { goto } from '$app/navigation';
 	import { buildScoreShareUrl } from '$lib/share';
 	import { getTier } from '$lib/tiers';
+	import { formatScoreTime } from '$lib/wasm-loader';
 
 	let status = $state('Committing to GitHub...');
 	let error = $state('');
@@ -106,7 +107,7 @@
 				repo: result.repo,
 				score: result.score,
 				tierEmoji: getTierEmoji(result.score),
-				extra: `Generated in ${result.genTime.toFixed(2)}ms by Rust WASM\nScored in ${result.scoreTime.toFixed(2)}μs by Zig WASM`
+				extra: `Generated in ${result.genTime.toFixed(2)}ms by Rust WASM\nScored in ${formatScoreTime(result.scoreTime)} by Zig WASM`
 			}),
 			'_blank'
 		);
@@ -158,7 +159,7 @@
 						</div>
 						<div class="flex items-center justify-between">
 							<span>⚡ Zig WASM Scoring:</span>
-							<span class="font-bold">{result.scoreTime.toFixed(2)}μs</span>
+							<span class="font-bold">{formatScoreTime(result.scoreTime)}</span>
 						</div>
 						<div class="border-t border-primary/20 pt-2 mt-2 text-xs text-muted-foreground text-center">
 							71,428 scores/second • 213.7KB total bundle

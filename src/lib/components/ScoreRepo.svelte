@@ -7,7 +7,7 @@
 	 */
 
 	import { onMount } from 'svelte';
-	import { isWasmReady, generateAndScore } from '$lib/wasm-loader';
+	import { isWasmReady, generateAndScore, formatScoreTime } from '$lib/wasm-loader';
 	import { buildScoreShareUrl } from '$lib/share';
 	import { getTier as getTierFromLib } from '$lib/tiers';
 
@@ -113,9 +113,6 @@
 				if (formData.how) sections.push(`\n\n## How\n\n${formData.how}`);
 				const enhancement = sections.join('');
 				readme += enhancement;
-				console.log('📝 Enhanced README with form data:', Object.keys(formData));
-				console.log('📝 Added to README:', enhancement);
-				console.log('📖 Final README length:', readme.length);
 			}
 
 			// Fetch dependency file based on language
@@ -132,7 +129,6 @@
 					if (response.ok) {
 						dependencyFile = await response.text();
 						dependencyType = file;
-						console.log(`✅ Found ${file} for Python project`);
 						break;
 					}
 				}
@@ -145,7 +141,6 @@
 				if (response.ok) {
 					dependencyFile = await response.text();
 					dependencyType = 'package.json';
-					console.log('✅ Found package.json for JavaScript/TypeScript project');
 				}
 			}
 			// Rust: Cargo.toml
@@ -156,7 +151,6 @@
 				if (response.ok) {
 					dependencyFile = await response.text();
 					dependencyType = 'Cargo.toml';
-					console.log('✅ Found Cargo.toml for Rust project');
 				}
 			}
 			// Go: go.mod
@@ -167,7 +161,6 @@
 				if (response.ok) {
 					dependencyFile = await response.text();
 					dependencyType = 'go.mod';
-					console.log('✅ Found go.mod for Go project');
 				}
 			}
 			// Ruby: Gemfile
@@ -178,23 +171,11 @@
 				if (response.ok) {
 					dependencyFile = await response.text();
 					dependencyType = 'Gemfile';
-					console.log('✅ Found Gemfile for Ruby project');
 				}
 			}
 
-			if (!dependencyFile) {
-				console.log(`⚠️ No dependency file found for ${language || 'unknown'} project`);
-			}
-
 			// Generate with RUST-WASM + Score with ZIG-WASM
-			console.log('🦀 Calling RUST-WASM to generate project.faf...');
 			const result = await generateAndScore(repoOwner, repoName, description, readme, dependencyFile, language);
-			console.log('✅ WASM complete:', {
-				score: result.score,
-				genTime: result.genTime + 'ms',
-				scoreTime: result.scoreTime + 'μs',
-				contentLength: result.fafContent.length + ' bytes'
-			});
 
 			// Store results
 			fafContent = result.fafContent;
@@ -302,7 +283,7 @@
 			<p class="text-sm font-bold text-primary mb-2">✅⚡ DOUBLE-WHAMMY Performance:</p>
 			<div class="text-xs text-foreground space-y-1">
 				<div>🦀⚡️ Generated in {genTime.toFixed(2)}ms by Rust WASM (312KB)</div>
-				<div>👻⚡ Scored in {scoreTime.toFixed(2)}μs by Zig WASM (2.7KB)</div>
+				<div>👻⚡ Scored in {formatScoreTime(scoreTime)} by Zig WASM (2.7KB)</div>
 				<div class="text-muted-foreground mt-2">71,428 scores/second • 314.7KB total</div>
 			</div>
 		</div>

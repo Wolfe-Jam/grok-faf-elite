@@ -81,7 +81,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 		const accessToken = tokenData.access_token;
 
 		if (!accessToken) {
-			console.error('No access token in response:', tokenData);
+			console.error('No access token in OAuth response:', tokenData?.error ?? 'unknown', tokenData?.error_description ?? '');
 			return json(
 				{ success: false, error: 'GitHub authentication failed' },
 				{ status: 401 }
@@ -150,7 +150,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 				);
 			}
 
-			console.error('GitHub commit failed:', commitResponse.status, errorData);
+			console.error('GitHub commit failed:', commitResponse.status, errorData?.message ?? 'unknown error');
 			throw new Error(
 				errorData.message || `GitHub API error (${commitResponse.status})`
 			);

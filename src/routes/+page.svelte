@@ -6,7 +6,7 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import BiSyncPost from '$lib/components/BiSyncPost.svelte';
 	import ScoreRepo from '$lib/components/ScoreRepo.svelte';
-	import { isWasmReady, scoreFaf } from '$lib/wasm-loader';
+	import { isWasmReady, scoreFaf, formatScoreTime } from '$lib/wasm-loader';
 	import { buildScoreShareUrl } from '$lib/share';
 	import { getTier } from '$lib/tiers';
 
@@ -59,9 +59,7 @@
 
 	// Button should be black when form is open OR has data
 	let shouldRecalculate = $derived.by(() => {
-		const result = showReadmeForm || hasFormData;
-		console.log('🔍 shouldRecalculate:', { showReadmeForm, hasFormData, result, showScore });
-		return result;
+		return showReadmeForm || hasFormData;
 	});
 
 	// Load recent URLs from localStorage on mount
@@ -182,81 +180,6 @@
 		return updated;
 	}
 
-// DISABLED: 	// Real-time scoring effect - triggers on form changes
-// DISABLED: 	$effect(() => {
-// DISABLED: 		// Watch form data changes - need to read VALUES to trigger on changes
-// DISABLED: 		const formValues = JSON.stringify(readmeUpdates); // Forces watching all values
-// DISABLED: 		const hasCheckboxes = howCheckboxes.length > 0;
-// DISABLED: 		const hasOtherText = howOtherText.trim().length > 0;
-// DISABLED: 		const formHasData = Object.keys(readmeUpdates).length > 0 || hasCheckboxes || hasOtherText;
-// DISABLED: 
-// DISABLED: 		// Debug: Always log what we're watching
-// DISABLED: 		console.log('👀 $effect triggered:', {
-// DISABLED: 			hasCurrentFaf: !!currentFafContent,
-// DISABLED: 			fafLength: currentFafContent?.length || 0,
-// DISABLED: 			formHasData,
-// DISABLED: 			readmeUpdates: { ...readmeUpdates }, // De-proxy for logging
-// DISABLED: 			howCheckboxes: [...howCheckboxes],
-// DISABLED: 			howOtherText
-// DISABLED: 		});
-// DISABLED: 
-// DISABLED: 		// Only score if we have initial .faf content and form data
-// DISABLED: 		if (!currentFafContent || !formHasData) {
-// DISABLED: 			console.log('⏸️ Skipping score - missing data');
-// DISABLED: 			return;
-// DISABLED: 		}
-// DISABLED: 
-// DISABLED: 		console.log('🔄 Real-time scoring triggered:', {
-// DISABLED: 			readmeUpdates,
-// DISABLED: 			howCheckboxes,
-// DISABLED: 			howOtherText,
-// DISABLED: 			hasInitialFaf: currentFafContent.length > 0
-// DISABLED: 		});
-// DISABLED: 
-// DISABLED: 		try {
-// DISABLED: 			// Check if WASM is ready
-// DISABLED: 			if (!isWasmReady()) {
-// DISABLED: 				console.warn('⏳ WASM not ready yet, skipping real-time score');
-// DISABLED: 				return;
-// DISABLED: 			}
-// DISABLED: 
-// DISABLED: 			// Update slots in .faf
-// DISABLED: 			const updatedFaf = updateFafSlots(currentFafContent, {
-// DISABLED: 				...readmeUpdates,
-// DISABLED: 				how: howCheckboxes.join(' | ') + (howOtherText ? ` | ${howOtherText}` : '')
-// DISABLED: 			});
-// DISABLED: 
-// DISABLED: 			console.log('📝 Updated .faf slots:', {
-// DISABLED: 				before: currentFafContent.substring(0, 200),
-// DISABLED: 				after: updatedFaf.substring(0, 200),
-// DISABLED: 				changed: currentFafContent !== updatedFaf
-// DISABLED: 			});
-// DISABLED: 
-// DISABLED: 			// Score with server-side faf-cli (matches production!)
-// DISABLED: 			const startTime = performance.now();
-// DISABLED: 			const result = await scoreFaf(updatedFaf);
-// DISABLED: 			const duration = performance.now() - startTime;
-// DISABLED: 
-// DISABLED: 			console.log('⚡ Real-time score:', {
-// DISABLED: 				oldScore: currentScore,
-// DISABLED: 				newScore: result.score,
-// DISABLED: 				time: `${duration.toFixed(2)}ms`,
-// DISABLED: 				apiTime: `${result.time.toFixed(2)}μs`,
-// DISABLED: 				improved: result.score > currentScore
-// DISABLED: 			});
-// DISABLED: 
-// DISABLED: 			// Update current score (live feedback!)
-// DISABLED: 			currentScore = result.score;
-// DISABLED: 			currentFafContent = updatedFaf; // Store updated .faf
-// DISABLED: 
-// DISABLED: 		} catch (error) {
-// DISABLED: 			console.error('❌ Real-time scoring error:', error);
-// DISABLED: 			console.error('Error details:', {
-// DISABLED: 				message: error instanceof Error ? error.message : String(error),
-// DISABLED: 				stack: error instanceof Error ? error.stack : undefined
-// DISABLED: 			});
-// DISABLED: 		}
-// DISABLED: 	});
 
 	// Clipboard feedback
 	let copiedNew = $state(false);
@@ -360,7 +283,7 @@
 								<p class="text-sm font-bold text-primary mb-2">✅⚡ DOUBLE-WHAMMY Performance:</p>
 								<div class="text-xs text-foreground space-y-1">
 									<div>🦀⚡️ Generated in {currentGenTime.toFixed(2)}ms by Rust WASM (312KB)</div>
-									<div>👻⚡ Scored in {currentScoreTime.toFixed(2)}μs by Zig WASM (2.7KB)</div>
+									<div>👻⚡ Scored in {formatScoreTime(currentScoreTime)} by Zig WASM (2.7KB)</div>
 									<div class="text-muted-foreground mt-2">71,428 scores/second • 314.7KB total</div>
 								</div>
 							</div>
@@ -609,8 +532,7 @@
 								{#if shouldRecalculate}
 									<button
 										onclick={() => {
-											console.log('🔄 Re-running score from scratch...');
-											// Simple: Just re-trigger the scoring flow
+											// Re-trigger the scoring flow
 											showScore = false;
 											setTimeout(() => {
 												showScore = true;
@@ -629,7 +551,6 @@
 									onclick={async () => {
 										// If user filled form, regenerate with enhanced README for accurate score
 										if (hasFormData) {
-											console.log('🔄 Regenerating with form data for fresh score...');
 											try {
 												// Fetch original README
 												const readmeResponse = await fetch(
@@ -669,10 +590,8 @@
 												currentGenTime = result.genTime;
 												currentScoreTime = result.scoreTime;
 												currentMissingFields = result.missingFields;
-
-												console.log('✅ Fresh score:', currentScore + '%');
 											} catch (err) {
-												console.error('⚠️ Regeneration failed, using original:', err);
+												console.error('Regeneration failed, using original score:', err);
 											}
 										}
 
