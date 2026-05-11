@@ -159,6 +159,31 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 		const commitData = await commitResponse.json();
 		const commitUrl = commitData.content?.html_url || `https://github.com/${owner}/${repo}/blob/main/project.faf`;
 
+		// Trophy cohort counter — fire-and-forget Upstash INCR when a repo commits
+		// at 100% (Trophy). Surfaces as the "X repos AI-Optimised" counter on the
+		// homepage. Per-day key allows time-series visualization later. Same
+		// pipeline pattern as hooks.server.ts stats. Failures never block the
+		// commit response — counter writes are observability, not load-bearing.
+		if (score === 100) {
+			const upstashUrl = platform?.env?.UPSTASH_REDIS_REST_URL;
+			const upstashToken = platform?.env?.UPSTASH_REDIS_REST_TOKEN;
+			if (upstashUrl && upstashToken) {
+				const today = new Date().toISOString().slice(0, 10);
+				fetch(`${upstashUrl}/pipeline`, {
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${upstashToken}`,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify([
+						['INCR', 'elite:stats:trophy_count'],
+						['INCR', `elite:stats:trophy_count:${today}`],
+						['SADD', 'elite:stats:trophy_repos', `${owner}/${repo}`]
+					])
+				}).catch(() => {});
+			}
+		}
+
 		// Step 4: Update README.md if user provided missing field content
 		let readmeUpdated = false;
 		if (readmeUpdates && Object.keys(readmeUpdates).length > 0) {

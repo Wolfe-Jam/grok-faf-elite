@@ -62,15 +62,31 @@
 		return showReadmeForm || hasFormData;
 	});
 
-	// Load recent URLs from localStorage on mount
+	// Trophy cohort counter — live "X repos AI-Optimised" social proof.
+	// Counter is INCR'd on /api/commit-faf when score === 100. Read here
+	// via /api/trophy-count; failures silently set count = 0 so the page
+	// never breaks. Truth-printing applies — we show real numbers even
+	// when small. "1 repo AI-Optimised" is honest and grows.
+	let trophyCount = $state(0);
+
+	// Load recent URLs + trophy count from API on mount
 	import { onMount } from 'svelte';
-	onMount(() => {
+	onMount(async () => {
 		const saved = localStorage.getItem('faf_recent_urls');
 		if (saved) {
 			try {
 				recentUrls = JSON.parse(saved);
 			} catch {}
 		}
+
+		// Fire-and-forget — don't block render if Upstash is slow/unreachable
+		try {
+			const res = await fetch('/api/trophy-count');
+			if (res.ok) {
+				const { count } = await res.json();
+				if (typeof count === 'number' && count > 0) trophyCount = count;
+			}
+		} catch {}
 	});
 
 	// Save URL to recent list
@@ -246,6 +262,19 @@
 </svelte:head>
 
 <main class="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative">
+	<!-- Trophy cohort counter — live social proof. Only renders when count > 0
+	     (truth-printing — no fake "0 repos" copy). Counter pulled from
+	     /api/trophy-count which reads Upstash. Compounds with the OG image
+	     and /how-it-works links to build trust before the user scores. -->
+	{#if trophyCount > 0}
+		<div class="mb-8 px-4 py-2 rounded-full border border-orange-400/30 bg-orange-400/5 text-sm">
+			<span class="text-orange-400 font-bold">🏆 {trophyCount.toLocaleString()}</span>
+			<span class="text-muted-foreground">
+				{trophyCount === 1 ? 'repo' : 'repos'} AI Optimised
+			</span>
+		</div>
+	{/if}
+
 	<!-- Score Display Panel - Expandable with smooth animations -->
 	<div class="w-full max-w-md mb-8">
 		<div class="bg-muted/30 border-2 border-white/10 rounded-xl overflow-hidden min-h-[320px]">
@@ -273,6 +302,15 @@
 						</div>
 					</div>
 				</button>
+
+				<!-- Transparency link — separate from the panel button so clicking it
+				     doesn't toggle the panel. Lifts /how-it-works discoverability for
+				     skeptics + sharers who want to verify the rubric. -->
+				<div class="px-6 pb-4 text-center">
+					<a href="/how-it-works" class="text-xs text-muted-foreground hover:text-cyan-400 transition-colors underline-offset-4 hover:underline">
+						How is this scored? →
+					</a>
+				</div>
 
 				<!-- Expandable Details Section -->
 				{#if isPanelExpanded}
@@ -867,6 +905,8 @@
 	<!-- Footer -->
 	<footer class="mt-12 text-center text-sm text-muted-foreground">
 		<p>
+			<a href="/how-it-works" class="text-primary hover:underline">How is this scored?</a>
+			 ·
 			Powered by <a href="https://www.npmjs.com/package/grok-faf-mcp" target="_blank" rel="noopener" class="text-primary hover:underline">grok-faf-mcp</a>
 			 ·
 			<a href={templateRepoUrl} target="_blank" rel="noopener" class="text-primary hover:underline">GitHub</a>

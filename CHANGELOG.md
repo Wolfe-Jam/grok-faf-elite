@@ -2,7 +2,32 @@
 
 All notable changes to builder.faf.one (grok-faf-elite) will be documented in this file.
 
-## [0.9.2] - 2026-05-08 — How-is-this-scored transparency page + single-source OG fix
+## [0.9.3] - 2026-05-11 — Trophy cohort counter + /how-it-works discoverability
+
+### Added
+- **`/api/trophy-count`** — reads the live Upstash `elite:stats:trophy_count`
+  cumulative counter. Failures silently return `{ count: 0 }`; homepage never
+  breaks when Upstash is slow/unreachable. 60s edge / 5min CDN cache.
+- **Trophy cohort counter on builder.faf.one homepage** — small orange pill
+  rendering "🏆 N repos AI Optimised" above the score panel. Only renders
+  when count > 0 (truth-printing — no fake "0 repos" copy).
+- **`/how-it-works` discoverability**:
+  - Below the score result panel, a "How is this scored? →" link (outside
+    the panel button so clicks don't toggle the panel)
+  - In the footer, alongside the existing `grok-faf-mcp` + GitHub links
+- **commit-faf INCR hook** — `/api/commit-faf` now fires a pipeline INCR on
+  `elite:stats:trophy_count` + per-day key + SADD on `elite:stats:trophy_repos`
+  when a repo commits at score === 100. Fire-and-forget; never blocks the
+  commit response. First Trophy committed via this flow creates the count.
+
+### Why
+Closes the "everybody knows" social-proof layer (`memory/trophy-is-ai-optimised-certification.md`).
+Every Trophy now adds to a public cohort number; new visitors see the
+momentum before they score. Discoverability fix lifts `/how-it-works`
+reach — the transparency page now has two entry points on the homepage,
+not just URL-shareable.
+
+
 
 ### Added
 - **`/how-it-works`** — the rubric page that turns "FAF don't lie" into a falsifiable receipt:
