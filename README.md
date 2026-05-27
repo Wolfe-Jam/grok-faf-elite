@@ -71,7 +71,7 @@ npm run check
 ## Links
 
 - [grok-faf-mcp on npm](https://www.npmjs.com/package/grok-faf-mcp)
-- [MCP Server URL](https://grok-faf-mcp.vercel.app/sse)
+- [MCP Server URL](https://mcpaas.live/grok/mcp/v1) — hosted on Cloudflare Workers, sub-ms cold start. Discovery: [/info](https://mcpaas.live/grok/mcp/v1/info)
 - [FAF Format](https://faf.one)
 - [GitHub](https://github.com/Wolfe-Jam/grok-faf-elite)
 
