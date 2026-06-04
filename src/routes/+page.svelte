@@ -6,6 +6,8 @@
 	import Modal from '$lib/components/Modal.svelte';
 	import BiSyncPost from '$lib/components/BiSyncPost.svelte';
 	import ScoreRepo from '$lib/components/ScoreRepo.svelte';
+	import ScoreDial from '$lib/components/ScoreDial.svelte';
+	import Interview from '$lib/components/Interview.svelte';
 	import { isWasmReady, scoreFaf, formatScoreTime } from '$lib/wasm-loader';
 	import { buildScoreShareUrl } from '$lib/share';
 	import { getTier } from '$lib/tiers';
@@ -30,6 +32,56 @@
 
 	// Form inputs
 	let projectName = $state('my-faf-project');
+
+	// No repo? Start at the interview. A blank .faf seeded with just the name —
+	// the 6-Ws interview fills the rest and climbs the dial.
+	let newFaf = $state('');
+	function seedNewFaf(name: string): string {
+		const n = (name || 'my-project').trim();
+		const si = 'slotignored';
+		// An idea has no stack yet → slotignore it, so the active slots are just
+		// project + the 6 human Ws (9 total). Filling them climbs the dial honestly.
+		return `faf_version: "3.3"
+project:
+  name: ${n}
+  goal:
+  main_language:
+  type: documentation
+stack:
+  frontend: ${si}
+  css_framework: ${si}
+  ui_library: ${si}
+  state_management: ${si}
+  backend: ${si}
+  api_type: ${si}
+  runtime: ${si}
+  database: ${si}
+  connection: ${si}
+  hosting: ${si}
+  build: ${si}
+  cicd: ${si}
+  monorepo_tool: ${si}
+  package_manager: ${si}
+  workspaces: ${si}
+  admin: ${si}
+  cache: ${si}
+  search: ${si}
+  storage: ${si}
+human_context:
+  who:
+  what:
+  why:
+  where:
+  when:
+  how:
+monorepo:
+  packages_count: ${si}
+  build_orchestrator: ${si}
+  versioning_strategy: ${si}
+  shared_configs: ${si}
+  remote_cache: ${si}
+`;
+	}
 	let githubUrl = $state('');
 	let scoreRepoUrl = $state('https://github.com/Wolfe-Jam/test-faf-demo');
 
@@ -284,16 +336,10 @@
 					onclick={() => isPanelExpanded = !isPanelExpanded}
 					class="w-full p-6 text-center hover:bg-white/5 transition-colors duration-200 cursor-pointer"
 				>
-					<p class="text-xs text-muted-foreground mb-3">YOUR SCORE</p>
-					<div class="text-5xl mb-2 {getTier(currentScore).cssClass}">{getTier(currentScore).symbol}</div>
-					<div class="text-4xl font-bold {currentScore >= 100 ? 'text-green-500' : currentScore >= 70 ? 'text-green-500' : 'text-yellow-500'} mb-1">{currentScore}%</div>
-					<div class="text-sm text-muted-foreground mb-1">{currentScore >= 100 ? 'Gold Code' : getTier(currentScore).name}</div>
-					<div class="text-xs text-foreground mb-3">{currentRepoOwner}/{currentRepoName}</div>
-
-					<!-- Progress bar -->
-					<div class="w-full bg-muted-foreground/20 rounded-full h-2 mb-3 overflow-hidden">
-						<div class="h-full rounded-full bg-green-500 transition-all duration-500" style="width: {Math.min(currentScore, 100)}%"></div>
+					<div class="flex justify-center mb-3">
+						<ScoreDial score={currentScore} size={188} />
 					</div>
+					<div class="text-xs text-foreground mb-3">{currentRepoOwner}/{currentRepoName}</div>
 
 					<!-- Toggle Triangle (Right Side) -->
 					<div class="flex justify-end">
@@ -861,7 +907,7 @@
 	<div class="w-full max-w-xl space-y-4">
 
 		<ActionButton
-			onclick={() => showNewProject = true}
+			onclick={() => { newFaf = seedNewFaf(projectName); showNewProject = true; }}
 			label="New Project"
 			description="Create a fresh FAF-ready project from template"
 		>
@@ -960,6 +1006,12 @@
 					Reset
 				</button>
 			</div>
+		</div>
+
+		<!-- No repo? Start here — answer the 6 Ws, make your AI happy -->
+		<div class="pt-4 border-t border-muted-foreground/20">
+			<p class="text-xs text-muted-foreground mb-4 text-center">No repo yet? Describe it — a few questions and your AI's in tune.</p>
+			<Interview bind:faf={newFaf} />
 		</div>
 	</div>
 </Modal>
