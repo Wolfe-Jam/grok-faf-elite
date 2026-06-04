@@ -1,5 +1,5 @@
 name: grok-faf-elite
-version: 0.8.0
+version: 1.0.0
 description: Instant AI context for your repos. One-click FAF builder with Rust WASM generation + Zig WASM scoring. F1-Inspired Elite Edition.
 ai_readiness: 98%
 tech_stack:
@@ -46,7 +46,7 @@ human_context:
   what: One-click .faf builder - Paste GitHub URL, get perfect AI context
   why: Eliminate AI context setup tax - from hours to seconds
   where: Browser (builder.faf.one), Vercel Edge deployment
-  when: Production v0.7.0 - WASM-powered generation + scoring
+  when: Production v1.0.0 - AI-Readiness dial + 6-Ws interview + dotFAF, on WASM generation + scoring
   how: Rust WASM (generation) + Zig WASM (scoring) + SvelteKit 5
 persona:
   voice: Fast, direct, zero-faff

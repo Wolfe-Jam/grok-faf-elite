@@ -1,9 +1,9 @@
 # builder.faf.one
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Vercel](https://img.shields.io/badge/Vercel-deployed-black)](https://builder.faf.one)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-deployed-orange)](https://builder.faf.one)
 [![FAF](https://img.shields.io/badge/FAF-98%25-orange)](https://faf.one)
-[![Version](https://img.shields.io/badge/version-0.7.0-blue)](https://github.com/Wolfe-Jam/grok-faf-elite/releases)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/Wolfe-Jam/grok-faf-elite)
 
 **Instant AI context for your repos.** Paste a GitHub URL, get perfect .faf in one click.
 

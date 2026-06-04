@@ -24,7 +24,9 @@
 	let answer = $state('');
 
 	function isEmpty(text: string, key: string): boolean {
-		const m = text.match(new RegExp(`^  ${key}:\\s*(.*)$`, 'm'));
+		// [ \t]* not \s* — \s matches newlines, so `who:\n  what:` would read
+		// "what:" as who's value and the slot would look filled when it's blank.
+		const m = text.match(new RegExp(`^  ${key}:[ \\t]*(.*)$`, 'm'));
 		const v = m?.[1]?.trim() ?? '';
 		return v === '' || v === '""';
 	}
