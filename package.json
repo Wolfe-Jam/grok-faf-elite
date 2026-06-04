@@ -14,7 +14,7 @@
 		"test:ui": "playwright test --ui"
 	},
 	"dependencies": {
-		"faf-wasm-sdk": "^1.2.1",
+		"faf-wasm-gen": "^2.0.0",
 		"yaml": "^2.8.2"
 	},
 	"devDependencies": {

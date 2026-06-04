@@ -1,10 +1,11 @@
 /**
  * WASM Loader - DOUBLE-WHAMMY Architecture
  *
- * Rust WASM (312KB): Generate project.faf
- * Zig WASM (2.7KB): Score project.faf (14μs, 71K scores/sec)
+ * Rust WASM (faf-wasm-gen, ~969KB): Generate project.faf (faf_version 3.3, 33-slot Mk4)
+ * Zig WASM (xai-faf-ghost, 2.7KB): Score project.faf (~14μs) — parity-tested vs faf-rust-sdk
  *
- * Both loaded from static/ directory (no npm dependencies)
+ * Both vendored in static/ (web-target wasm-pack builds; faf-wasm-core's
+ * fs-based router is Node-only and does not fit this browser surface).
  */
 
 let rustWasmReady = false;
@@ -65,7 +66,7 @@ export async function initWasm(): Promise<void> {
 		}
 
 		// @ts-ignore - globally loaded WASM init and module
-		await window.__FAF_WASM_INIT__('/faf_wasm_sdk_bg.wasm');
+		await window.__FAF_WASM_INIT__('/faf_wasm_gen_bg.wasm');
 		// @ts-ignore
 		rustWasmModule = window.__FAF_WASM_MODULE__;
 		rustWasmReady = true;
@@ -84,7 +85,7 @@ export async function initWasm(): Promise<void> {
 		zigWasmExports = zigModule.instance.exports;
 		zigWasmReady = true;
 
-		console.log('✅ DOUBLE-WHAMMY loaded: Rust (312KB) + Zig (2.7KB) WASM ready');
+		console.log('✅ DOUBLE-WHAMMY loaded: faf-wasm-gen (~969KB) + Zig ghost (2.7KB) WASM ready');
 	} catch (err) {
 		console.error('❌ WASM init failed:', err);
 		throw err;
@@ -140,23 +141,16 @@ export async function generateAndScore(
 	let fafContent: string;
 
 	try {
-		if (readme || packageJson) {
-			fafContent = rustWasmModule.generate_faf(
-				repo,
-				owner,
-				description || undefined,
-				readme || undefined,
-				packageJson || undefined,
-				language || undefined  // NEW: Pass language parameter
-			);
-		} else {
-			fafContent = rustWasmModule.generate_faf_minimal(
-				repo,
-				owner,
-				description || undefined,
-				language || undefined
-			);
-		}
+		// faf-wasm-gen exposes a single generate_faf that handles null readme/deps
+		// gracefully (the former generate_faf_minimal branch is now redundant).
+		fafContent = rustWasmModule.generate_faf(
+			repo,
+			owner,
+			description || undefined,
+			readme || undefined,
+			packageJson || undefined,
+			language || undefined
+		);
 	} catch (err) {
 		throw new Error(`Rust WASM generation failed: ${err instanceof Error ? err.message : String(err)}`);
 	}
