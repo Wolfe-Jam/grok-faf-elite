@@ -759,35 +759,30 @@ monorepo:
 				{/if}
 
 			{:else if !showLiveExample}
-				<!-- 0% Ready State -->
+				<!-- Ready State — the empty dial, waiting to climb -->
 				<div class="p-6 text-center">
 					<p class="text-xs text-muted-foreground mb-3">READY TO SCORE</p>
-					<div class="text-5xl mb-2">⚪</div>
-					<div class="text-4xl font-bold text-white mb-1">0%</div>
-					<div class="text-sm text-muted-foreground mb-1">Enter repo URL to score</div>
-					<div class="w-full bg-muted-foreground/20 rounded-full h-2 mt-4 overflow-hidden">
-						<div class="h-full rounded-full bg-muted-foreground/50" style="width: 0%"></div>
+					<div class="flex justify-center">
+						<ScoreDial score={0} size={188} />
 					</div>
+					<div class="text-sm text-muted-foreground mt-2">Enter a repo URL to score</div>
 				</div>
 
 			{:else}
-				<!-- Default 100% Example -->
+				<!-- Default — the dial, illuminated at 100% (grok-faf-elite, dogfooded) -->
 				<div class="p-6 text-center">
 					<p class="text-sm font-bold text-white mb-3">1-Click> CONTEXT!</p>
-					<div class="text-5xl mb-2">🏆</div>
-					<div class="text-4xl font-bold text-green-500 mb-1">100%</div>
-					<div class="text-sm text-muted-foreground mb-1">Gold Code - AI Fully Optimized</div>
+					<div class="flex justify-center">
+						<ScoreDial score={100} size={188} />
+					</div>
 					<a
 						href="https://github.com/Wolfe-Jam/grok-faf-elite"
 						target="_blank"
 						rel="noopener"
-						class="text-xs text-primary hover:underline"
+						class="text-xs text-primary hover:underline mt-2 inline-block"
 					>
 						grok-faf-elite
 					</a>
-					<div class="w-full bg-muted-foreground/20 rounded-full h-2 mt-4 overflow-hidden">
-						<div class="h-full rounded-full bg-green-500" style="width: 100%"></div>
-					</div>
 				</div>
 			{/if}
 		</div>
