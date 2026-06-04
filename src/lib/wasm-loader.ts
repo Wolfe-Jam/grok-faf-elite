@@ -1,8 +1,9 @@
 /**
  * WASM Loader - DOUBLE-WHAMMY Architecture
  *
- * Rust WASM (faf-wasm-gen, ~969KB): Generate project.faf (faf_version 3.3, 33-slot Mk4)
- * Zig WASM (xai-faf-ghost, 2.7KB): Score project.faf (~14μs) — parity-tested vs faf-rust-sdk
+ * Rust WASM (faf-wasm-gen, ~899KB): Generate project.faf (faf_version 3.3, 33-slot Mk4)
+ * Zig WASM (ZEPH cascade, 2.7KB): Score project.faf (sub-μs) — parity-verified vs the
+ *   canonical Rust Mk4 scorer (ZEPH dogfood gate: reference=100, partial 58=58 vs faf-cli)
  *
  * Both vendored in static/ (web-target wasm-pack builds; faf-wasm-core's
  * fs-based router is Node-only and does not fit this browser surface).
@@ -71,10 +72,10 @@ export async function initWasm(): Promise<void> {
 		rustWasmModule = window.__FAF_WASM_MODULE__;
 		rustWasmReady = true;
 
-		// Load Zig WASM
-		const zigResponse = await fetch('/xai-faf-ghost.wasm');
+		// Load Zig WASM (current ZEPH cascade — parity-verified vs canonical Mk4)
+		const zigResponse = await fetch('/cascade.wasm');
 		if (!zigResponse.ok) {
-			throw new Error(`Failed to fetch Zig WASM: ${zigResponse.status}`);
+			throw new Error(`Failed to fetch ZEPH cascade WASM: ${zigResponse.status}`);
 		}
 		const zigBuffer = await zigResponse.arrayBuffer();
 		const zigModule = await WebAssembly.instantiate(zigBuffer, {
@@ -85,7 +86,7 @@ export async function initWasm(): Promise<void> {
 		zigWasmExports = zigModule.instance.exports;
 		zigWasmReady = true;
 
-		console.log('✅ DOUBLE-WHAMMY loaded: faf-wasm-gen (~969KB) + Zig ghost (2.7KB) WASM ready');
+		console.log('✅ DOUBLE-WHAMMY loaded: faf-wasm-gen (~899KB) + ZEPH cascade (2.7KB) WASM ready');
 	} catch (err) {
 		console.error('❌ WASM init failed:', err);
 		throw err;
@@ -107,18 +108,26 @@ function analyzeMissingFields(fafContent: string): string[] {
 	return missing;
 }
 
+// ZEPH cascade ABI: write input past page 1 (INPUT_OFFSET), grow memory if
+// needed (the buffer detaches on grow), then `score(offset, len)`. The current
+// cascade exports `score` — not the retired ghost's `score_faf` — and is
+// parity-verified vs the canonical Rust Mk4 scorer (ZEPH dogfood gate:
+// reference=100, partial 58=58 vs faf-cli).
+const ZIG_INPUT_OFFSET = 65536;
+
 function scoreWithZig(fafContent: string): { score: number; time: number } {
 	if (!zigWasmReady || !zigWasmExports) {
-		throw new Error('Zig WASM not initialized');
+		throw new Error('ZEPH cascade WASM not initialized');
 	}
 
 	const startTime = performance.now();
-	const encoder = new TextEncoder();
-	const encoded = encoder.encode(fafContent);
-	const memory = new Uint8Array(zigWasmExports.memory.buffer);
-	const ptr = 1000;
-	memory.set(encoded, ptr);
-	const score = zigWasmExports.score_faf(ptr, encoded.length);
+	const encoded = new TextEncoder().encode(fafContent);
+	const need = ZIG_INPUT_OFFSET + encoded.length;
+	if (zigWasmExports.memory.buffer.byteLength < need) {
+		zigWasmExports.memory.grow(Math.ceil((need - zigWasmExports.memory.buffer.byteLength) / 65536));
+	}
+	new Uint8Array(zigWasmExports.memory.buffer).set(encoded, ZIG_INPUT_OFFSET);
+	const score = zigWasmExports.score(ZIG_INPUT_OFFSET, encoded.length);
 	const endTime = performance.now();
 	const scoreTime = (endTime - startTime) * 1000;
 

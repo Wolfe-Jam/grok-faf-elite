@@ -30,16 +30,17 @@ test('faf-wasm-gen generates v3.3 .faf and the Zig ghost scores it', async ({ pa
 			'Rust'
 		);
 
-		// Score with the same Zig ghost the app uses.
-		const resp = await fetch('/xai-faf-ghost.wasm');
+		// Score with the same ZEPH cascade the app uses (ABI: score(offset,len), grow).
+		const resp = await fetch('/cascade.wasm');
 		const buf = await resp.arrayBuffer();
 		const zig = await WebAssembly.instantiate(buf, { env: { abort: () => {} } });
 		const exp: any = zig.instance.exports;
 		const enc = new TextEncoder().encode(faf);
-		const mem = new Uint8Array(exp.memory.buffer);
-		const ptr = 1000;
-		mem.set(enc, ptr);
-		const score: number = exp.score_faf(ptr, enc.length);
+		const OFF = 65536;
+		const need = OFF + enc.length;
+		if (exp.memory.buffer.byteLength < need) exp.memory.grow(Math.ceil((need - exp.memory.buffer.byteLength) / 65536));
+		new Uint8Array(exp.memory.buffer).set(enc, OFF);
+		const score: number = exp.score(OFF, enc.length);
 
 		return { faf, score };
 	});

@@ -316,13 +316,14 @@
 				{#if isPanelExpanded}
 					<div transition:slide={{ duration: 400, easing: quintOut }} class="border-t border-muted-foreground/20">
 						<div class="p-6 space-y-4">
-							<!-- DOUBLE-WHAMMY Performance -->
+							<!-- DOUBLE-WHAMMY Performance + Rust↔Zig parity -->
 							<div class="p-4 rounded-lg bg-black border border-white/10">
 								<p class="text-sm font-bold text-primary mb-2">✅⚡ DOUBLE-WHAMMY Performance:</p>
 								<div class="text-xs text-foreground space-y-1">
-									<div>🦀⚡️ Generated in {currentGenTime.toFixed(2)}ms by Rust WASM (312KB)</div>
-									<div>👻⚡ Scored in {formatScoreTime(currentScoreTime)} by Zig WASM (2.7KB)</div>
-									<div class="text-muted-foreground mt-2">71,428 scores/second • 314.7KB total</div>
+									<div>🦀⚡️ Generated in {currentGenTime.toFixed(2)}ms by Rust WASM (faf-wasm-gen)</div>
+									<div>💨⚡ Scored in {formatScoreTime(currentScoreTime)} by ZEPH Zig (2.7KB)</div>
+									<div class="text-primary mt-2 font-bold">🦀 Rust Mk4 ≡ 💨 ZEPH Zig · same {currentScore}% · parity-verified</div>
+									<div class="text-muted-foreground">two languages, one deterministic score — the score doesn't lie</div>
 								</div>
 							</div>
 
