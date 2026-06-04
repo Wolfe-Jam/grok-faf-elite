@@ -1,7 +1,8 @@
 <script lang="ts">
 	/**
 	 * ScoreDial — AI-Readiness gauge (F1 speedometer).
-	 * 0→100 arc · trophy brightens as you climb · at 100% it ignites and
+	 * The arc sweeps 0→100; the TROPHY sits in the centre and gains colour +
+	 * brightness as you climb — grey ghost at 0, full gold + glow at 100, where
 	 * dotFAF (Dorothy Faff) lights up: "you made your AI happy".
 	 * NON-JUDGMENTAL: a low number is "more road ahead", never "you failed".
 	 */
@@ -19,32 +20,40 @@
 		pct >= 55 ? '#00D4D4' :       // cyan (green/yellow)
 		'#6b7280'                     // grey (low — calm, not alarming)
 	);
-	// trophy: grayscale + dim at low → full colour + glow near 100
+	// the trophy gains COLOUR + BRIGHTNESS + PRESENCE as the score climbs:
+	// grey + dim ghost at 0 → vivid gold at 100.
 	const trophyFilter = $derived(
-		`grayscale(${(1 - pct / 100).toFixed(2)}) opacity(${(0.28 + 0.72 * pct / 100).toFixed(2)})`
+		`grayscale(${(1 - pct / 100).toFixed(2)}) ` +
+		`saturate(${(0.6 + 0.9 * pct / 100).toFixed(2)}) ` +
+		`brightness(${(0.6 + 0.5 * pct / 100).toFixed(2)}) ` +
+		`opacity(${(0.32 + 0.68 * pct / 100).toFixed(2)})`
 	);
 </script>
 
 <div class="dial" style="width:{size}px">
-	<svg viewBox="0 0 120 120" class="ring" class:lit={isMax}>
-		<!-- track -->
-		<circle cx="60" cy="60" r={R} fill="none" stroke="#1f1f1f" stroke-width="9" />
-		<!-- progress arc -->
-		<circle
-			cx="60" cy="60" r={R} fill="none"
-			stroke={arcColor} stroke-width="9" stroke-linecap="round"
-			stroke-dasharray="{dash} {C}" transform="rotate(-90 60 60)"
-			class="arc" />
-		<text x="60" y="56" text-anchor="middle" class="num" style="fill:{arcColor}">{pct}%</text>
-		<text x="60" y="74" text-anchor="middle" class="lbl">AI-Readiness</text>
-	</svg>
+	<div class="ringwrap" style="height:{size}px">
+		<svg viewBox="0 0 120 120" class="ring" class:lit={isMax}>
+			<!-- track -->
+			<circle cx="60" cy="60" r={R} fill="none" stroke="#1f1f1f" stroke-width="9" />
+			<!-- progress arc -->
+			<circle
+				cx="60" cy="60" r={R} fill="none"
+				stroke={arcColor} stroke-width="9" stroke-linecap="round"
+				stroke-dasharray="{dash} {C}" transform="rotate(-90 60 60)"
+				class="arc" />
+		</svg>
 
-	<!-- trophy: always present, brightens with the score, ignites at 100 -->
-	<div class="trophy" class:ignite={isMax} style="filter:{trophyFilter}" aria-hidden="true">🏆</div>
+		<!-- centre: trophy fills the ring, brightening with the score -->
+		<div class="center">
+			<div class="trophy" class:ignite={isMax} style="filter:{trophyFilter}">🏆</div>
+			<div class="pct" style="color:{arcColor}">{pct}%</div>
+			<div class="lbl">AI-Readiness</div>
+		</div>
+	</div>
 
 	{#if isMax}
 		<div class="happy">
-			<img src="/dotfaf-happy.png" alt="dotFAF — your AI is happy" width="64" height="64" />
+			<img src="/dotfaf-happy.png" alt="dotFAF — your AI is happy" width="60" height="60" />
 			<p>You made your AI happy</p>
 		</div>
 	{/if}
@@ -52,22 +61,25 @@
 
 <style>
 	.dial { position: relative; display: flex; flex-direction: column; align-items: center; }
-	.ring { width: 100%; height: auto; }
-	.num { font: 700 22px -apple-system, system-ui, sans-serif; }
-	.lbl { font: 600 7px -apple-system, system-ui, sans-serif; fill: #9aa0a6; letter-spacing: .08em; text-transform: uppercase; }
-	.arc { transition: stroke-dasharray .6s cubic-bezier(.4,0,.2,1), stroke .4s ease; }
+	.ringwrap { position: relative; width: 100%; }
+	.ring { width: 100%; height: 100%; display: block; }
 	.ring.lit { animation: pop .5s ease; }
-	@keyframes pop { 50% { transform: scale(1.04); } }
+	@keyframes pop { 50% { transform: scale(1.03); } }
+	.arc { transition: stroke-dasharray .6s cubic-bezier(.4,0,.2,1), stroke .4s ease; }
 
-	.trophy {
-		position: absolute; top: -14px; right: -6px; font-size: 30px; line-height: 1;
-		transition: filter .5s ease;
+	.center {
+		position: absolute; inset: 0;
+		display: flex; flex-direction: column; align-items: center; justify-content: center;
+		gap: 1px; pointer-events: none;
 	}
+	.trophy { font-size: 54px; line-height: 1; transition: filter .5s ease; }
 	.trophy.ignite { animation: glow 1.6s ease-in-out infinite alternate; }
 	@keyframes glow {
-		from { transform: translateY(0) scale(1); }
-		to   { transform: translateY(-2px) scale(1.12); filter: grayscale(0) opacity(1) drop-shadow(0 0 8px #FFB000) !important; }
+		from { transform: scale(1); filter: grayscale(0) saturate(1.5) brightness(1) opacity(1); }
+		to   { transform: scale(1.08); filter: grayscale(0) saturate(1.6) brightness(1.15) opacity(1) drop-shadow(0 0 10px #FFB000); }
 	}
+	.pct { font: 700 22px -apple-system, system-ui, sans-serif; margin-top: 3px; }
+	.lbl { font: 600 7px -apple-system, system-ui, sans-serif; color: #9aa0a6; letter-spacing: .1em; text-transform: uppercase; }
 
 	.happy { margin-top: 10px; text-align: center; animation: rise .5s ease both; }
 	.happy img { display: block; margin: 0 auto 4px; animation: bob 2s ease-in-out infinite; }

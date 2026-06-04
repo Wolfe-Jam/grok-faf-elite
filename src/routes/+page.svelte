@@ -349,10 +349,16 @@ monorepo:
 					</div>
 				</button>
 
-				<!-- Transparency link — separate from the panel button so clicking it
-				     doesn't toggle the panel. Lifts /how-it-works discoverability for
-				     skeptics + sharers who want to verify the rubric. -->
-				<div class="px-6 pb-4 text-center">
+				<!-- Explore + transparency links — kept OUTSIDE the panel button so
+				     clicking them doesn't toggle the panel. The repo link is the
+				     "go look at it on GitHub" affordance people reach for. -->
+				<div class="px-6 pb-4 flex items-center justify-center gap-5">
+					{#if currentRepoOwner && currentRepoName}
+						<a href="https://github.com/{currentRepoOwner}/{currentRepoName}" target="_blank" rel="noopener"
+						   class="text-xs text-primary hover:underline underline-offset-4 inline-flex items-center gap-1">
+							View on GitHub ↗
+						</a>
+					{/if}
 					<a href="/how-it-works" class="text-xs text-muted-foreground hover:text-cyan-400 transition-colors underline-offset-4 hover:underline">
 						How is this scored? →
 					</a>
