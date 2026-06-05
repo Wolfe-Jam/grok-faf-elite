@@ -9,52 +9,7 @@
 	import ScoreDial from '$lib/components/ScoreDial.svelte';
 	import Interview from '$lib/components/Interview.svelte';
 	import { initWasm, isWasmReady, generateAndScore, scoreFaf } from '$lib/wasm-loader';
-
-	// A fresh idea has no stack yet → slotignore it, so only project + the human
-	// Ws count. A scored repo replaces this whole .faf with its generated one.
-	function seedFaf(name = ''): string {
-		const si = 'slotignored';
-		return `faf_version: "3.3"
-project:
-  name: ${name}
-  goal:
-  main_language: ${si}
-  type: intent
-stack:
-  frontend: ${si}
-  css_framework: ${si}
-  ui_library: ${si}
-  state_management: ${si}
-  backend: ${si}
-  api_type: ${si}
-  runtime: ${si}
-  database: ${si}
-  connection: ${si}
-  hosting: ${si}
-  build: ${si}
-  cicd: ${si}
-  monorepo_tool: ${si}
-  package_manager: ${si}
-  workspaces: ${si}
-  admin: ${si}
-  cache: ${si}
-  search: ${si}
-  storage: ${si}
-human_context:
-  who:
-  what:
-  why:
-  where:
-  when:
-  how:
-monorepo:
-  packages_count: ${si}
-  build_orchestrator: ${si}
-  versioning_strategy: ${si}
-  shared_configs: ${si}
-  remote_cache: ${si}
-`;
-	}
+	import { seedFaf, buildExport } from '$lib/faf-export';
 
 	let faf = $state(seedFaf());
 	let score = $state(0);
@@ -98,7 +53,12 @@ monorepo:
 	];
 	let targetType = $state('');
 
+	// ?nodemo=1 disables the attract demo (and its re-fire) — a test seam for
+	// deterministic E2E. Set before wasmReady so the Interview mounts with it off.
+	let noDemo = false;
 	onMount(async () => {
+		noDemo = new URLSearchParams(window.location.search).has('nodemo');
+		if (noDemo) demoMode = false;
 		try { await initWasm(); } catch (e) { console.error(e); }
 		wasmReady = true;
 	});
@@ -110,6 +70,7 @@ monorepo:
 	const bump = () => { lastActivity = Date.now(); };
 	onMount(() => {
 		const id = setInterval(() => {
+			if (noDemo) return; // test seam: never re-fire the demo
 			if (demoMode || Date.now() - lastActivity < 30000) return;
 			if (score === 0 || score >= 100) { faf = seedFaf(); demoMode = true; lastActivity = Date.now(); }
 		}, 4000);
@@ -154,35 +115,13 @@ monorepo:
 		grabbed = false;
 	}
 
-	// Export aligned to the .faf single truth (faf-format-single-truth-33-slot):
-	// this builder produces a `documentation` app_type .faf — 9 active slots
-	// (project meta + the 6 Ws). `slotignored` is the CANONICAL on-wire marker
-	// for slots that don't apply to this type (faf-cli writes + reads exactly
-	// this value), so we KEEP it — the file scores a real 100% as a documentation
-	// .faf in any compliant scorer. We add only canonical fields: `app_type`,
-	// `generated:` (metastamp), and a `context:` section (free-form AI primer).
+	// Export = the .faf the receiving AI gets. Score the real file, then run the
+	// pure transform (src/lib/faf-export). Keeps slotignored (canonical), adds
+	// app_type/generated/context only. See faf-format-single-truth-33-slot.
 	async function exportFaf(text: string): Promise<string> {
 		let pct = 100;
 		try { pct = Math.round((await scoreFaf(text)).score); } catch { /* wasm not ready */ }
-		const inserts: string[] = [];
-		if (!/^app_type:/m.test(text)) inserts.push('app_type: intent');
-		inserts.push(`generated: ${new Date().toISOString()}`);
-		const head = text.replace(/^(faf_version:.*)$/m, `$1\n${inserts.join('\n')}`);
-		// optional bonus: the human's intended app_type (from the dropdown)
-		const targetLine = targetType
-			? `\n  The human indicated the intended type: ${targetType}. Confirm it against
-  the codebase, then set app_type: ${targetType} and fill its active slots.`
-			: '';
-		// canonical CONTEXT section: a primer for any receiving AI on any project
-		const context = `context: |
-  This is an intent-type project.faf — ${pct}% complete for that type.
-  A human gave the intent at builder.faf.one: name, goal, and the 6 Ws
-  (who, what, why, where, when, how). Slots marked "slotignored" are not
-  part of the intent type.
-  YOUR TURN: read this project's codebase, set app_type to the real type
-  (e.g. cli, mcp, frontend, fullstack), and fill the now-active stack/monorepo
-  slots to produce a higher-fidelity project.faf.${targetLine}`;
-		return `${head.trimEnd()}\n${context}\n`;
+		return buildExport(text, { pct, target: targetType, stamp: new Date().toISOString() });
 	}
 
 	async function downloadFaf() {

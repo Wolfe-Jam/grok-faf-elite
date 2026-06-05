@@ -258,6 +258,9 @@
 	{/if}
 
 	{#if !done && current}
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<!-- barge-in convenience only; the visible "Click to start" button + window
+		     keydown are the real, accessible affordances -->
 		<div class="q" onpointerdown={takeOver}>
 			<label for="ans" class="ask">{qText}</label>
 			<p class="hint">{hintText}</p>
