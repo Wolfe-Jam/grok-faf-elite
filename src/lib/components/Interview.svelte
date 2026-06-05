@@ -22,13 +22,15 @@
 		onScore = (_s: number) => {},
 		demo = false,
 		onDemoEnd = () => {},
+		onDemoReset = () => {},
 		onStart = () => {}
 	}: {
 		faf?: string;
 		showDial?: boolean;
 		onScore?: (s: number) => void;
 		demo?: boolean;
-		onDemoEnd?: () => void;   // natural demo completion → success screen stays up
+		onDemoEnd?: () => void;   // (unused) kept for compat — the demo now loops
+		onDemoReset?: () => void; // demo hit 100% → reset to a blank seed and loop
 		onStart?: () => void;     // barge-in / "click to start" → fresh blank interview
 	} = $props();
 
@@ -146,21 +148,29 @@
 		demoing = true;
 		aborted = false;
 		await sleep(700); // let wasm warm + the first score settle
-		while (current && !aborted && demo) {
-			const text = current.suggest ?? '';
-			for (let i = 1; i <= text.length && !aborted && demo; i++) {
-				answer = text.slice(0, i); // typewriter
-				await sleep(34);
+		// loop forever (attract mode): fill to 100%, hold, reset, run again.
+		// The demo NEVER shows the download/success screen — that is reserved for a
+		// real human who genuinely reaches the end.
+		while (demo && !aborted) {
+			while (current && !aborted && demo) {
+				const text = current.suggest ?? '';
+				for (let i = 1; i <= text.length && !aborted && demo; i++) {
+					answer = text.slice(0, i); // typewriter
+					await sleep(34);
+				}
+				if (aborted || !demo) break;
+				await sleep(420);
+				if (aborted || !demo) break;
+				await submit(); // dial climbs
+				await sleep(600);
 			}
 			if (aborted || !demo) break;
-			await sleep(420);
+			await sleep(1900);    // let the dial land on 100% and breathe
 			if (aborted || !demo) break;
-			await submit(); // dial climbs
-			await sleep(600);
+			onDemoReset();        // parent: faf = seedFaf() — fresh blank, stays in demo
+			await sleep(650);
 		}
 		demoing = false;
-		if (aborted || !demo) return; // user took over, or the page switched demo off
-		onDemoEnd(); // natural completion → the success screen stays up (with "click to start")
 	}
 
 	function takeOver() {
@@ -191,8 +201,9 @@
 	let doneText = $state('');
 	let doneToken = 0;
 	$effect(() => {
-		if (done) { runDoneSequence(); }
-		else { doneToken++; doneText = ''; } // cancel any running sequence on reset
+		// only a REAL completion (not the looping demo) earns the download screen
+		if (done && !demoing) { runDoneSequence(); }
+		else { doneToken++; doneText = ''; } // cancel any running sequence on reset/demo
 	});
 	async function runDoneSequence() {
 		const my = ++doneToken;
@@ -273,9 +284,15 @@
 		</div>
 	{:else}
 		<div class="done">
-			<p class="donetext">{doneText}</p>
-			<!-- Success = focus on the win. Next step is grab the .faf, not start
-			     a new project, so the "New project" CTA is intentionally hidden here. -->
+			{#if demoing}
+				<!-- demo payoff: 100% reached, then it loops — no download steps here -->
+				<p class="donetext">100% — your AI is happy</p>
+				<button class="clickstart" onclick={takeOver}>Click to start ▸</button>
+			{:else}
+				<!-- Success = focus on the win. Next step is grab the .faf, not start
+				     a new project, so the "New project" CTA is intentionally hidden here. -->
+				<p class="donetext">{doneText}</p>
+			{/if}
 		</div>
 	{/if}
 </div>

@@ -170,7 +170,7 @@ monorepo:
 	<!-- the interview = the app -->
 	<div class="mt-4">
 		{#if wasmReady}
-			<Interview bind:faf showDial={false} onScore={(s) => (score = s)} demo={demoMode} onDemoEnd={demoFinished} onStart={startFresh} />
+			<Interview bind:faf showDial={false} onScore={(s) => (score = s)} demo={demoMode} onDemoEnd={demoFinished} onDemoReset={() => (faf = seedFaf())} onStart={startFresh} />
 		{:else}
 			<p class="text-center text-sm text-muted-foreground">Warming up the engines…</p>
 		{/if}
