@@ -26,10 +26,10 @@
 	const progDash = $derived(`${((tw.current / 100) * HALF * C).toFixed(2)} ${C}`);
 	const isMax = $derived(pct >= 100);
 	const arcColor = $derived(
-		pct >= 100 ? '#FFB000' :
-		pct >= 85 ? '#FF6B35' :
-		pct >= 55 ? '#00D4D4' :
-		'#6b7280'
+		pct >= 100 ? '#4ade80' :      // FAF green — the 100% / Happy AI colour
+		pct >= 85 ? '#FF6B35' :       // orange (bronze+)
+		pct >= 55 ? '#00D4D4' :       // cyan (green/yellow)
+		'#6b7280'                     // grey (low)
 	);
 	const trophyFilter = $derived(
 		`grayscale(${(1 - pct / 100).toFixed(2)}) ` +

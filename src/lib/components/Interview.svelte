@@ -175,6 +175,35 @@
 			answer = current.suggest; // fill, so they can edit before Enter
 		}
 	}
+
+	// ---- success-screen sequence: "happy" → typewriter the what-next ----
+	const DONE_SEQ = [
+		'Your AI is happy',
+		"We've created a project.faf file for you, behind the scenes — copy & paste it into your AI tool now",
+		'Download, or copy & paste your .faf'
+	];
+	let doneText = $state('');
+	let doneToken = 0;
+	$effect(() => {
+		if (done) { runDoneSequence(); }
+		else { doneToken++; doneText = ''; } // cancel any running sequence on reset
+	});
+	async function runDoneSequence() {
+		const my = ++doneToken;
+		doneText = DONE_SEQ[0];           // "Your AI is happy" — holds a moment
+		await sleep(2200); if (my !== doneToken) return;
+		await typewrite(DONE_SEQ[1], my); if (my !== doneToken) return;
+		await sleep(1500); if (my !== doneToken) return;
+		await typewrite(DONE_SEQ[2], my);
+	}
+	async function typewrite(text: string, my: number) {
+		doneText = '';
+		for (let i = 1; i <= text.length; i++) {
+			if (my !== doneToken) return;
+			doneText = text.slice(0, i);
+			await sleep(52); // calm reading pace
+		}
+	}
 </script>
 
 <svelte:window onkeydown={() => { if (demoing) takeOver(); }} />
@@ -211,8 +240,7 @@
 		</div>
 	{:else}
 		<div class="done">
-			<p class="ask">Your AI is happy.</p>
-			<p class="hint">Save your <code>.faf</code> below.</p>
+			<p class="donetext">{doneText}</p>
 		</div>
 	{/if}
 </div>
@@ -252,6 +280,6 @@
 		font: 500 15px system-ui; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
 	}
 	.skip:hover { color: #fff; }
-	.done { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-	.done code { color: #FF6B35; }
+	.done { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+	.donetext { margin: 0; font: 600 18px system-ui; color: #fff; line-height: 1.45; max-width: 360px; min-height: 1.45em; }
 </style>
