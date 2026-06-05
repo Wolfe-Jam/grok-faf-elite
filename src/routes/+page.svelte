@@ -59,6 +59,14 @@ monorepo:
 	let faf = $state(seedFaf());
 	let score = $state(0);
 	let wasmReady = $state(false);
+	let demoMode = $state(true);
+
+	// the demo reached 100% (or the visitor interrupted it) → hand off a fresh
+	// blank slate so they do it for real.
+	function endDemo() {
+		faf = seedFaf();
+		demoMode = false;
+	}
 	let repoUrl = $state('');
 	let repoOwner = $state('');
 	let repoName = $state('');
@@ -76,6 +84,7 @@ monorepo:
 		if (!m) { scoreError = 'Paste a GitHub repo URL.'; return; }
 		const owner = m[1];
 		const repo = m[2].replace(/\.git$/, '');
+		demoMode = false; // stop the demo if it's still running
 		scoring = true; scoreError = '';
 		try {
 			if (!isWasmReady()) await initWasm();
@@ -136,7 +145,7 @@ monorepo:
 	<!-- the interview = the app -->
 	<div class="mt-4">
 		{#if wasmReady}
-			<Interview bind:faf showDial={false} onScore={(s) => (score = s)} />
+			<Interview bind:faf showDial={false} onScore={(s) => (score = s)} demo={demoMode} onDemoEnd={endDemo} />
 		{:else}
 			<p class="text-center text-sm text-muted-foreground">Warming up the engines…</p>
 		{/if}

@@ -2,57 +2,66 @@
 	/**
 	 * Interview — the easy way to climb the dial to 100%.
 	 * Discovers EVERY empty slot in the .faf and asks them one at a time, in
-	 * plain English, human-Ws first (the part only a person knows), then the
-	 * stack gaps. Re-scores after each answer so the dial climbs live. Works
-	 * from a blank seed (no repo → New Project) OR a scored repo's .faf (fill
-	 * the gaps it found). Honest: never fabricates — skip what you don't know.
+	 * plain English, human-Ws first, then the stack gaps. Each question carries
+	 * a good suggestion: Tab fills it (to edit), Enter accepts it (to fly
+	 * through). Re-scores after each answer so the dial climbs live. Works from
+	 * a blank seed (New Project) or a scored repo's .faf (fill its gaps).
 	 *
 	 * Props:
 	 *   faf      (bindable) — the .faf text it reads + edits
-	 *   showDial            — render its own dial (New Project) or not (repo path,
-	 *                         where the page already shows the main dial)
+	 *   showDial            — render its own dial, or rely on the page's dial
 	 *   onScore            — called with each new score so the page dial can climb
 	 */
+	import { onMount } from 'svelte';
 	import ScoreDial from './ScoreDial.svelte';
 	import { scoreFaf } from '$lib/wasm-loader';
 
 	let {
 		faf = $bindable(''),
 		showDial = true,
-		onScore = (_s: number) => {}
-	}: { faf?: string; showDial?: boolean; onScore?: (s: number) => void } = $props();
+		onScore = (_s: number) => {},
+		demo = false,
+		onDemoEnd = () => {}
+	}: {
+		faf?: string;
+		showDial?: boolean;
+		onScore?: (s: number) => void;
+		demo?: boolean;
+		onDemoEnd?: () => void;
+	} = $props();
 
-	// Nice questions for the known slots, ordered human-Ws first (highest value —
-	// only a human knows the why/who), then project basics, then the stack.
-	const CATALOG = [
-		{ key: 'name',  q: "What's it called?",         hint: "Enter your project's name." },
-		{ key: 'who',   q: 'Who is this for?',          hint: 'The people who use it — not you, them.' },
-		{ key: 'what',  q: 'What does it do?',           hint: 'One plain sentence.' },
-		{ key: 'why',   q: 'Why does it exist?',         hint: "What's broken today that this fixes?" },
-		{ key: 'where', q: 'Where does it run or ship?', hint: 'npm · the edge · a browser · a server…' },
-		{ key: 'when',  q: 'When would you use it?',     hint: 'The moment it helps.' },
-		{ key: 'how',   q: 'How do you get started?',    hint: 'Install / first step.' },
-		{ key: 'goal',  q: 'In one line, the goal?',     hint: 'What it sets out to do.' },
-		{ key: 'main_language', q: 'Main language?',     hint: 'TypeScript · Rust · Python…' },
-		{ key: 'frontend',        q: 'Frontend framework?',  hint: 'React · Svelte · Vue — or none' },
-		{ key: 'css_framework',   q: 'CSS / styling?',        hint: 'Tailwind · plain CSS — or none' },
-		{ key: 'ui_library',      q: 'UI component library?', hint: 'shadcn · MUI — or none' },
-		{ key: 'state_management',q: 'State management?',      hint: 'Redux · stores — or none' },
-		{ key: 'backend',         q: 'Backend / framework?',  hint: 'Express · FastAPI — or none' },
-		{ key: 'api_type',        q: 'API type?',              hint: 'REST · GraphQL · MCP…' },
-		{ key: 'runtime',         q: 'Runtime?',               hint: 'Node · Bun · Deno · browser' },
-		{ key: 'database',        q: 'Database?',              hint: 'Postgres · SQLite — or none' },
-		{ key: 'connection',      q: 'DB layer / ORM?',        hint: 'Prisma · Drizzle — or none' },
-		{ key: 'hosting',         q: 'Where is it hosted?',    hint: 'Cloudflare · Vercel · AWS…' },
-		{ key: 'build',           q: 'Build tool?',            hint: 'Vite · npm · cargo…' },
-		{ key: 'cicd',            q: 'CI / CD?',                hint: 'GitHub Actions — or none' },
-		{ key: 'package_manager', q: 'Package manager?',       hint: 'npm · pnpm · bun · cargo' },
-		{ key: 'monorepo_tool',   q: 'Monorepo tool?',         hint: 'Turborepo · Nx — or none' },
-		{ key: 'workspaces',      q: 'Workspaces?',            hint: 'layout — or none' },
-		{ key: 'admin',           q: 'Admin panel?',           hint: 'tool — or none' },
-		{ key: 'cache',           q: 'Cache?',                  hint: 'Redis — or none' },
-		{ key: 'search',          q: 'Search?',                 hint: 'Algolia — or none' },
-		{ key: 'storage',         q: 'Object storage?',         hint: 'S3 · R2 — or none' }
+	type Q = { key: string; q: string; hint: string; suggest?: string };
+	// Ordered human-Ws first (only a human knows the why/who), then project
+	// basics, then the stack. Each has a sensible suggestion to Tab/Enter.
+	const CATALOG: Q[] = [
+		{ key: 'name',  q: "What's it called?",          hint: "Enter your project's name.",            suggest: 'My Project' },
+		{ key: 'who',   q: 'Who is this for?',           hint: 'The people who use it — not you, them.', suggest: 'Developers & builders' },
+		{ key: 'what',  q: 'What does it do?',           hint: 'One plain sentence.',                    suggest: 'A fast tool that does one thing well' },
+		{ key: 'why',   q: 'Why does it exist?',         hint: "What's broken today that this fixes?",   suggest: 'Existing tools were too slow and heavy' },
+		{ key: 'where', q: 'Where does it run or ship?', hint: 'npm · the edge · a browser · a server…', suggest: 'npm' },
+		{ key: 'when',  q: 'When would you use it?',     hint: 'The moment it helps.',                   suggest: 'When starting a new project' },
+		{ key: 'how',   q: 'How do you get started?',    hint: 'Install / first step.',                  suggest: 'npm install, then run' },
+		{ key: 'goal',  q: 'In one line, the goal?',     hint: 'What it sets out to do.',                suggest: 'Make it simple and fast' },
+		{ key: 'main_language', q: 'Main language?',     hint: 'TypeScript · Rust · Python…',            suggest: 'TypeScript' },
+		{ key: 'frontend',        q: 'Frontend framework?',  hint: 'React · Svelte · Vue — or none', suggest: 'React' },
+		{ key: 'css_framework',   q: 'CSS / styling?',        hint: 'Tailwind · plain CSS — or none', suggest: 'Tailwind' },
+		{ key: 'ui_library',      q: 'UI component library?', hint: 'shadcn · MUI — or none',         suggest: 'none' },
+		{ key: 'state_management',q: 'State management?',      hint: 'Redux · stores — or none',       suggest: 'none' },
+		{ key: 'backend',         q: 'Backend / framework?',  hint: 'Express · FastAPI — or none',    suggest: 'none' },
+		{ key: 'api_type',        q: 'API type?',              hint: 'REST · GraphQL · MCP…',          suggest: 'REST' },
+		{ key: 'runtime',         q: 'Runtime?',               hint: 'Node · Bun · Deno · browser',    suggest: 'Node' },
+		{ key: 'database',        q: 'Database?',              hint: 'Postgres · SQLite — or none',    suggest: 'none' },
+		{ key: 'connection',      q: 'DB layer / ORM?',        hint: 'Prisma · Drizzle — or none',     suggest: 'none' },
+		{ key: 'hosting',         q: 'Where is it hosted?',    hint: 'Cloudflare · Vercel · AWS…',     suggest: 'Cloudflare' },
+		{ key: 'build',           q: 'Build tool?',            hint: 'Vite · npm · cargo…',            suggest: 'Vite' },
+		{ key: 'cicd',            q: 'CI / CD?',                hint: 'GitHub Actions — or none',       suggest: 'GitHub Actions' },
+		{ key: 'package_manager', q: 'Package manager?',       hint: 'npm · pnpm · bun · cargo',       suggest: 'npm' },
+		{ key: 'monorepo_tool',   q: 'Monorepo tool?',         hint: 'Turborepo · Nx — or none',       suggest: 'none' },
+		{ key: 'workspaces',      q: 'Workspaces?',            hint: 'layout — or none',               suggest: 'none' },
+		{ key: 'admin',           q: 'Admin panel?',           hint: 'tool — or none',                 suggest: 'none' },
+		{ key: 'cache',           q: 'Cache?',                  hint: 'Redis — or none',                suggest: 'none' },
+		{ key: 'search',          q: 'Search?',                 hint: 'Algolia — or none',              suggest: 'none' },
+		{ key: 'storage',         q: 'Object storage?',         hint: 'S3 · R2 — or none',              suggest: 'none' }
 	];
 	const CAT = new Map(CATALOG.map((c) => [c.key, c]));
 	const humanize = (k: string) => k.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
@@ -61,8 +70,6 @@
 	let answer = $state('');
 	let skipped = $state<string[]>([]);
 
-	// every 2-space slot whose value is blank (slotignored/filled lines have a
-	// value, so they don't match — they're skipped automatically).
 	function emptySlots(text: string): string[] {
 		const re = /^ {2}([a-z_]+):[ \t]*(?:""|'')?[ \t]*$/gm;
 		const out: string[] = [];
@@ -71,13 +78,12 @@
 		return out;
 	}
 
-	// queue ordered by CATALOG (human-Ws first), then any unknown empty slots
 	const queue = $derived.by(() => {
 		const empties = emptySlots(faf).filter((k) => !skipped.includes(k));
 		const known = CATALOG.filter((c) => empties.includes(c.key));
 		const extra = empties
 			.filter((k) => !CAT.has(k))
-			.map((k) => ({ key: k, q: `${humanize(k)}?`, hint: '' }));
+			.map((k): Q => ({ key: k, q: `${humanize(k)}?`, hint: '' }));
 		return [...known, ...extra];
 	});
 	const current = $derived(queue[0] ?? null);
@@ -100,10 +106,11 @@
 	}
 
 	async function submit() {
-		if (!answer.trim() || !current) return;
-		faf = setSlot(faf, current.key, answer);
+		const val = (answer.trim() || current?.suggest || '').trim();
+		if (!val || !current) return;
+		faf = setSlot(faf, current.key, val);
 		// "What does it do?" IS the project goal — fill it too, but only if blank.
-		if (current.key === 'what' && isEmpty(faf, 'goal')) faf = setSlot(faf, 'goal', answer);
+		if (current.key === 'what' && isEmpty(faf, 'goal')) faf = setSlot(faf, 'goal', val);
 		answer = '';
 		await rescore(faf);
 	}
@@ -112,7 +119,65 @@
 		skipped = [...skipped, current.key];
 		answer = '';
 	}
+
+	// ---- self-running demo: the app shows you the loop, then hands off ----
+	let demoing = $state(false);
+	let aborted = false;
+	const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+	let showTip = $state(true);
+	onMount(() => {
+		try { if (localStorage.getItem('faf_tip_dismissed')) showTip = false; } catch { /* no storage */ }
+		if (demo) runDemo();
+	});
+	function dismissTip() {
+		showTip = false;
+		try { localStorage.setItem('faf_tip_dismissed', '1'); } catch { /* no storage */ }
+	}
+
+	async function runDemo() {
+		demoing = true;
+		aborted = false;
+		await sleep(700); // let wasm warm + the first score settle
+		while (current && !aborted && demo) {
+			const text = current.suggest ?? '';
+			for (let i = 1; i <= text.length && !aborted && demo; i++) {
+				answer = text.slice(0, i); // typewriter
+				await sleep(34);
+			}
+			if (aborted || !demo) break;
+			await sleep(420);
+			if (aborted || !demo) break;
+			await submit(); // dial climbs
+			await sleep(600);
+		}
+		demoing = false;
+		if (aborted || !demo) return; // user took over, or the page switched demo off
+		await sleep(1900); // bask at 100% — Trophy 🏆 + dotFAF, "Happy AI"
+		onDemoEnd();        // hand off for the real user
+	}
+
+	function takeOver() {
+		if (!demoing) return;
+		aborted = true;
+		demoing = false;
+		answer = '';
+		onDemoEnd();
+	}
+
+	function onKey(e: KeyboardEvent) {
+		if (demoing) { takeOver(); return; }
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			submit(); // uses the typed answer, or the suggestion if empty
+		} else if (e.key === 'Tab' && !answer.trim() && current?.suggest) {
+			e.preventDefault();
+			answer = current.suggest; // fill, so they can edit before Enter
+		}
+	}
 </script>
+
+<svelte:window onkeydown={() => { if (demoing) takeOver(); }} />
 
 <div class="interview">
 	{#if showDial}
@@ -120,19 +185,27 @@
 	{/if}
 
 	{#if !done && current}
-		<div class="q">
-			<p class="count">{queue.length} question{queue.length === 1 ? '' : 's'} to a happy AI</p>
+		<div class="q" onpointerdown={takeOver}>
 			<label for="ans" class="ask">{current.q}</label>
 			{#if current.hint}<p class="hint">{current.hint}</p>{/if}
 			<input
 				id="ans"
 				bind:value={answer}
-				placeholder="Type your answer…"
-				onkeydown={(e) => e.key === 'Enter' && submit()}
+				placeholder={current.suggest ?? 'Type your answer…'}
+				onkeydown={onKey}
+				readonly={demoing}
 				autocomplete="off"
 			/>
+			{#if demoing}
+				<p class="demohint">▶ live demo — type or click to start your own</p>
+			{:else if showTip && current.suggest}
+				<p class="tabhint">
+					<kbd>Tab</kbd> to fill · <kbd>Enter</kbd> to accept
+					<button class="tipx" onclick={dismissTip} aria-label="Hide tip">×</button>
+				</p>
+			{/if}
 			<div class="actions">
-				<button class="next" onclick={submit} disabled={!answer.trim()}>Next →</button>
+				<button class="next" onclick={submit} disabled={!answer.trim() && !current.suggest}>Next →</button>
 				<button class="skip" onclick={skip}>Skip</button>
 			</div>
 		</div>
@@ -143,8 +216,7 @@
 
 <style>
 	.interview { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
-	.q { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 360px; }
-	.count { margin: 0; font: 600 12px system-ui; color: #FF6B35; letter-spacing: .04em; text-transform: uppercase; }
+	.q { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 380px; }
 	.ask { font: 700 26px system-ui; color: #fff; line-height: 1.25; }
 	.hint { margin: 0; font: 400 14px system-ui; color: #9aa0a6; }
 	input {
@@ -152,6 +224,17 @@
 		background: #000; border: 1px solid #333; color: #fff; font: 400 17px system-ui;
 	}
 	input:focus { outline: none; border-color: #00D4D4; }
+	.tabhint { margin: 2px 0 0; font: 400 12px system-ui; color: #6b7079; }
+	.tabhint kbd {
+		font: 600 11px ui-monospace, monospace; color: #c8ccd2;
+		background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 1px 5px;
+	}
+	.demohint { margin: 2px 0 0; font: 600 12px system-ui; color: #FF6B35; letter-spacing: .02em; }
+	.tipx {
+		margin-left: 6px; border: none; background: none; cursor: pointer;
+		color: #6b7079; font: 600 13px system-ui; line-height: 1; padding: 0 2px;
+	}
+	.tipx:hover { color: #fff; }
 	.actions { display: flex; align-items: center; gap: 16px; margin-top: 6px; }
 	.next {
 		padding: 11px 26px; border-radius: 10px; border: none;
