@@ -133,38 +133,30 @@ monorepo:
 		grabbed = false;
 	}
 
-	// A primer for the unknown AI session that receives this file. Plain English,
-	// no cryptic markers. It articulates the model so ANY AI, on ANY project, can
-	// consume this: 100% human contribution = `pct`% of a complete project.faf,
-	// and the AI's job is to carry it from there to 100%.
-	function buildPrimer(pct: number): string {
-		return `# ============================================================
-#  project.faf  —  AI context for this project
-#  IANA media type: application/vnd.faf+yaml  ·  https://faf.one
-#
-#  TO ANY AI READING THIS:
-#  A human just completed 100% of the HUMAN contribution at
-#  builder.faf.one — the intent only a person can give:
-#  name, goal, and the 6 Ws (who · what · why · where · when · how).
-#
-#  On the AI-Readiness scale that human half is ${pct}% of a complete
-#  project.faf. The remaining ${100 - pct}% is the technical stack — your job.
-#
-#  YOUR TURN: read this project's codebase and fill the empty
-#  stack: and monorepo: slots below. Take this .faf from ${pct}% to 100%.
-# ============================================================
-`;
-	}
-
-	// What the receiving AI actually gets. The dial uses an internal "slotignored"
-	// sentinel to show 100% of the HUMAN context — but that must never ship as
-	// cryptic text. Strip it to empty slots (the AI fills them), score the real
-	// file honestly, and prepend a primer stamped with that real %.
+	// Export aligned to the .faf single truth (faf-format-single-truth-33-slot):
+	// this builder produces a `documentation` app_type .faf — 9 active slots
+	// (project meta + the 6 Ws). `slotignored` is the CANONICAL on-wire marker
+	// for slots that don't apply to this type (faf-cli writes + reads exactly
+	// this value), so we KEEP it — the file scores a real 100% as a documentation
+	// .faf in any compliant scorer. We add only canonical fields: `app_type`,
+	// `generated:` (metastamp), and a `context:` section (free-form AI primer).
 	async function exportFaf(text: string): Promise<string> {
-		const body = text.replace(/:[ \t]*slotignored\b/g, ':');
-		let pct = 38; // honest fallback if the scorer isn't ready
-		try { pct = Math.round((await scoreFaf(body)).score); } catch { /* wasm not ready */ }
-		return buildPrimer(pct) + body;
+		let pct = 100;
+		try { pct = Math.round((await scoreFaf(text)).score); } catch { /* wasm not ready */ }
+		const inserts: string[] = [];
+		if (!/^app_type:/m.test(text)) inserts.push('app_type: documentation');
+		inserts.push(`generated: ${new Date().toISOString()}`);
+		const head = text.replace(/^(faf_version:.*)$/m, `$1\n${inserts.join('\n')}`);
+		// canonical CONTEXT section: a primer for any receiving AI on any project
+		const context = `context: |
+  This is a documentation-type project.faf — ${pct}% complete for that type.
+  A human gave the intent at builder.faf.one: name, goal, and the 6 Ws
+  (who, what, why, where, when, how). Slots marked "slotignored" do not
+  apply to a documentation project.
+  If this project has a real tech stack, set app_type accordingly
+  (e.g. cli, mcp, frontend, fullstack) and fill the stack/monorepo slots
+  from the codebase to produce a higher-fidelity project.faf.`;
+		return `${head.trimEnd()}\n${context}\n`;
 	}
 
 	async function downloadFaf() {
