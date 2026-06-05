@@ -211,6 +211,31 @@
 			await sleep(52); // calm reading pace
 		}
 	}
+
+	// teletype each question + hint as it appears (re-keyed per question)
+	let qText = $state('');
+	let hintText = $state('');
+	let qToken = 0;
+	$effect(() => { typeQuestion(current); });
+	async function typeQuestion(cur: Q | null) {
+		const my = ++qToken;
+		qText = '';
+		hintText = '';
+		if (!cur) return;
+		for (let i = 1; i <= cur.q.length; i++) {
+			if (my !== qToken) return;
+			qText = cur.q.slice(0, i);
+			await sleep(22);
+		}
+		if (cur.hint) {
+			await sleep(110);
+			for (let i = 1; i <= cur.hint.length; i++) {
+				if (my !== qToken) return;
+				hintText = cur.hint.slice(0, i);
+				await sleep(14);
+			}
+		}
+	}
 </script>
 
 <svelte:window onkeydown={() => { if (demoing) takeOver(); }} />
@@ -222,8 +247,8 @@
 
 	{#if !done && current}
 		<div class="q" onpointerdown={takeOver}>
-			<label for="ans" class="ask">{current.q}</label>
-			{#if current.hint}<p class="hint">{current.hint}</p>{/if}
+			<label for="ans" class="ask">{qText}</label>
+			<p class="hint">{hintText}</p>
 			<input
 				id="ans"
 				bind:value={answer}
@@ -248,9 +273,9 @@
 			{/if}
 		</div>
 	{:else}
-		<div class="done" onpointerdown={onStart}>
+		<div class="done">
 			<p class="donetext">{doneText}</p>
-			<button class="clickstart" onclick={onStart}>Click anywhere to start ▸</button>
+			<button class="clickstart" onclick={onStart}>New project ▸</button>
 		</div>
 	{/if}
 </div>
@@ -260,8 +285,8 @@
 	   below never shifts between question and success states */
 	.interview { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 14px; text-align: center; min-height: 210px; }
 	.q { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 380px; }
-	.ask { font: 700 26px system-ui; color: #fff; line-height: 1.25; }
-	.hint { margin: 0; font: 400 14px system-ui; color: #9aa0a6; }
+	.ask { font: 700 26px system-ui; color: #fff; line-height: 1.25; min-height: 1.25em; }
+	.hint { margin: 0; font: 400 14px system-ui; color: #9aa0a6; min-height: 1.3em; }
 	input {
 		width: 100%; margin-top: 8px; padding: 13px 15px; border-radius: 10px;
 		background: #000; border: 1px solid #333; color: #fff; font: 400 17px system-ui;
