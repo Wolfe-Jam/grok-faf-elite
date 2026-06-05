@@ -128,7 +128,13 @@
 	let showTip = $state(true);
 	onMount(() => {
 		try { if (localStorage.getItem('faf_tip_dismissed')) showTip = false; } catch { /* no storage */ }
-		if (demo) runDemo();
+	});
+	// run the attract-mode demo whenever `demo` turns on — initial load AND the
+	// idle re-fire (demoActivated is a plain flag so the effect tracks only `demo`).
+	let demoActivated = false;
+	$effect(() => {
+		if (demo && !demoActivated) { demoActivated = true; runDemo(); }
+		if (!demo) demoActivated = false;
 	});
 	function dismissTip() {
 		showTip = false;

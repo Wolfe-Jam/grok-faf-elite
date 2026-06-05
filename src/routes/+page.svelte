@@ -79,6 +79,19 @@ monorepo:
 		wasmReady = true;
 	});
 
+	// attract loop: after 30s of no activity, re-fire the demo — but ONLY from a
+	// safe state (untouched start, score===0, or the finished success screen,
+	// score>=100), never mid-interview (would wipe a visitor's answers).
+	let lastActivity = Date.now();
+	const bump = () => { lastActivity = Date.now(); };
+	onMount(() => {
+		const id = setInterval(() => {
+			if (demoMode || Date.now() - lastActivity < 30000) return;
+			if (score === 0 || score >= 100) { faf = seedFaf(); demoMode = true; lastActivity = Date.now(); }
+		}, 4000);
+		return () => clearInterval(id);
+	});
+
 	async function scoreRepo() {
 		const m = repoUrl.trim().match(/github\.com\/([^/\s]+)\/([^/\s?#]+)/i);
 		if (!m) { scoreError = 'Paste a GitHub repo URL.'; return; }
@@ -135,6 +148,9 @@ monorepo:
 <svelte:head>
 	<title>builder.faf.one — make your AI happy</title>
 </svelte:head>
+
+<!-- any activity resets the idle clock (so the attract loop only fires when truly idle) -->
+<svelte:window onmousemove={bump} onkeydown={bump} ontouchstart={bump} onscroll={bump} onpointerdown={bump} />
 
 <div class="mx-auto max-w-md px-4 pb-20">
 	<!-- score: fixed at the top, always in view -->
