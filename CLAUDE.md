@@ -1,76 +1,42 @@
-# CLAUDE.md - Grok-FAF-Elite
+<!-- faf: grok-faf-elite | typescript | web-app | Universal FAF builder - Generate perfect AI context for any repo in one click using championship-grade WASM toolchain -->
+<!-- faf: claim=project.faf | family=FAF -->
 
-## Project Identity
-- **Name**: grok-faf-elite
-- **Purpose**: Instant AI context for your Repos
-- **Edition**: F1-Inspired Elite Edition for elite devs
-- **AI-Readiness**: 95%
+# CLAUDE.md — grok-faf-elite
 
-## Tech Stack
-- **Framework**: SvelteKit 5 with Svelte 5 runes
-- **Styling**: Tailwind CSS 4 with @theme
-- **Language**: TypeScript (strict mode)
-- **Deployment**: Cloudflare Workers via @sveltejs/adapter-cloudflare (migrated 2026-05-06 from Vercel — adapter-vercel hooks.server.ts never fired reliably across 4 fix attempts)
-- **Domain**: builder.faf.one (CF custom domain on the Worker)
-- **Testing**: Playwright E2E
+## What This Is
 
-## Architecture
-```
-src/
-├── lib/components/
-│   ├── BigOrange.svelte    # Animated logo
-│   ├── ActionButton.svelte # Reusable button with icon snippets
-│   └── Modal.svelte        # Native dialog-based modal
-├── routes/
-│   ├── +layout.svelte      # App shell
-│   └── +page.svelte        # Main page with 3 paths
-└── app.css                 # Tailwind theme + animations
-```
+Universal FAF builder - Generate perfect AI context for any repo in one click using championship-grade WASM toolchain
 
-## Three User Paths
-1. **New Project**: Create fresh FAF-ready project from template
-2. **GitHub**: Add FAF to existing repository
-3. **Direct URL**: Get MCP server URL for Grok
+## Stack
 
-## Development Commands
-```bash
-npm run dev      # Start dev server
-npm run build    # Production build
-npm run check    # TypeScript check
-npm run test     # Run E2E tests
-npm run preview  # Preview production build
-```
+- **Language:** typescript
+- **Frontend:** Svelte
+- **Css Framework:** Tailwind CSS
+- **Build:** Vite
+- **Hosting:** Cloudflare Workers
+- **Backend:** SvelteKit
+- **PackageManager:** npm/yarn/pnpm
+- **TargetUser:** developers
+- **CoreProblem:** understanding project
+- **MissionPurpose:** project documentation
+- **MainLanguage:** JavaScript/TypeScript
+- **Cicd:** Playwright
+- **Framework:** SvelteKit
+- **BuildTool:** Vite
+- **Server:** Node.js
+- **State Management:** Runes
+- **Api Type:** Server Routes
+- **Runtime:** Node.js
 
-## Performance
-- Client bundle: 14 kB (5.3 kB gzip)
-- CSS: 21 kB (4.5 kB gzip)
-- Build time: 4-5s
-- Zero TypeScript errors
-- 9/9 E2E tests passing
+## Context
 
-## Brand
-- Primary: Championship Orange oklch(0.75 0.18 50)
-- Background: #000000
-- Foreground: #ffffff
-
-## Integrations
-- grok-faf-mcp (npm: 75+ downloads)
-- MCP Server: https://grok-faf-mcp.vercel.app/sse
-
-## Hidden Pages (URL-only, no nav links)
-- `/assets` - Visual assets dashboard (diagrams, GIFs, screenshots index)
-- `/diagrams` - Diagram index
-- `/diagrams/daaft-banner` - 5:2 X Article banner
-- `/diagrams/daaft-flow` - DAAFT vs SMART flow comparison
-
-**Full asset index:** `/Users/wolfejam/FAF-GOLD/PLANET-FAF/docs/VISUAL-ASSETS-INDEX.md`
+- **Who:** Developers wanting perfect AI context without CLI friction
+- **What:** One-click .faf builder - Paste GitHub URL, get perfect AI context
+- **Why:** Eliminate AI context setup tax - from hours to seconds
+- **Where:** Browser (builder.faf.one), Cloudflare Workers edge
+- **When:** Production v1.0.0 - AI-Readiness dial + 6-Ws interview + dotFAF, on WASM generation + scoring
+- **How:** Rust WASM (generation) + Zig WASM (scoring) + SvelteKit 5
 
 ---
-**STATUS: BI-SYNC ACTIVE** - Synchronized with project.faf
----
 
-**STATUS: BI-SYNC ACTIVE 🔗 - Synchronized with .faf context!**
-
-*Last Sync: 2026-01-28T00:38:13.567Z*
-*Sync Engine: F1-Inspired Software Engineering*
-*🏎️⚡️_championship_sync*
+*STATUS: BI-SYNC ACTIVE — 2026-06-05T15:43:02.009Z*

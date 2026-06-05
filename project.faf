@@ -6,7 +6,7 @@ tech_stack:
   framework: SvelteKit 5
   language: TypeScript (strict)
   styling: Tailwind CSS 4
-  deployment: Vercel
+  deployment: Cloudflare Workers
   wasm: Rust (211KB generator) + Zig (2.7KB scorer)
 architecture:
   pattern: Component-based SPA
@@ -36,16 +36,17 @@ commands:
   build: npm run build
   check: npm run check
   preview: npm run preview
+  test: npm run test
 project:
   name: grok-faf-elite
   goal: Universal FAF builder - Generate perfect AI context for any repo in one click using championship-grade WASM toolchain
-  type: web-app
+  type: web-app  # found: Svelte/SvelteKit
   main_language: typescript
 human_context:
   who: Developers wanting perfect AI context without CLI friction
   what: One-click .faf builder - Paste GitHub URL, get perfect AI context
   why: Eliminate AI context setup tax - from hours to seconds
-  where: Browser (builder.faf.one), Vercel Edge deployment
+  where: Browser (builder.faf.one), Cloudflare Workers edge
   when: Production v1.0.0 - AI-Readiness dial + 6-Ws interview + dotFAF, on WASM generation + scoring
   how: Rust WASM (generation) + Zig WASM (scoring) + SvelteKit 5
 persona:
@@ -58,15 +59,15 @@ persona:
 links:
   github: https://github.com/Wolfe-Jam/grok-faf-elite
   npm: https://www.npmjs.com/package/grok-faf-mcp
-  live: https://grok-faf-elite.vercel.app
+  live: https://builder.faf.one
   faf: https://faf.one
 stack:
   frontend: Svelte
   css_framework: Tailwind CSS
   build: Vite
-  hosting: Vercel
-  database: none
-  backend: none
+  hosting: Cloudflare Workers
+  database: slotignored
+  backend: SvelteKit
   packageManager: npm/yarn/pnpm
   targetUser: developers
   coreProblem: understanding project
@@ -76,6 +77,18 @@ stack:
   framework: SvelteKit
   buildTool: Vite
   server: Node.js
+  ui_library: slotignored
+  state_management: Runes
+  api_type: Server Routes
+  runtime: Node.js
+  connection: slotignored
+  monorepo_tool: slotignored
+  package_manager: slotignored
+  workspaces: slotignored
+  admin: slotignored
+  cache: slotignored
+  search: slotignored
+  storage: slotignored
 generated: 2026-01-28T00:38:13.491Z
 stack_signature: typescript-sveltekit-nodejs
 detected_frameworks:
@@ -92,3 +105,15 @@ turbo_cat_intelligence: 330
 stats:
   last_auto_time: 0.3
   times_run: 1
+faf_version: 2.5.0
+monorepo:
+  packages_count: slotignored
+  build_orchestrator: slotignored
+  versioning_strategy: slotignored
+  shared_configs: slotignored
+  remote_cache: slotignored
+key_files:
+  - package.json
+  - README.md
+  - tsconfig.json
+  - wrangler.jsonc

@@ -2,79 +2,94 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-deployed-orange)](https://builder.faf.one)
-[![FAF](https://img.shields.io/badge/FAF-98%25-orange)](https://faf.one)
+[![FAF](https://img.shields.io/badge/FAF-Trophy%20100%25-orange)](https://faf.one)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/Wolfe-Jam/grok-faf-elite)
 
-**Instant AI context for your repos.** Paste a GitHub URL, get perfect .faf in one click.
+**Make your AI happy.** 🏆
 
-F1-Inspired championship-grade toolchain: Rust WASM (211KB generation) + Zig WASM (2.7KB scoring).
+**AI thrives on facts — and `.faf` provides them.** Your AI does its best work when it understands your project, so **builder.faf.one** helps you create one small file — `project.faf` — that tells any AI what you're building, who it's for, and why. Hand it over, and your AI stops guessing.
 
-## Features
+→ **Try it: [builder.faf.one](https://builder.faf.one)**
 
-- **One-Click Generation**: Paste GitHub URL → Generate .faf in ~3ms
-- **Dual WASM Engine**: Rust generator + Zig scorer (71,428 scores/sec)
-- **Real-Time Scoring**: 0-100% AI-readiness score instantly
-- **GitHub OAuth**: Commit directly to your repo or download
-- **Multi-Language Support**: Python, JavaScript, Rust, Go, Java, C++, and more
-- **Type Detection**: Auto-detects web-app, library, ml-research, cli-tool, etc.
+## How it works
 
-## Tech Stack
+A few quick questions. As you answer, a score climbs toward 100%.
 
-**Frontend:**
-- SvelteKit 5 with Svelte 5 runes ($state, $props, $effect)
-- Tailwind CSS 4 with @theme
-- TypeScript strict mode
+1. **Start typing** — or paste a GitHub link and we'll fill in what we can.
+2. **Answer a few questions** — who it's for, what it does, why it exists. Press **Tab** to accept a suggestion, **Enter** to move on.
+3. **Reach 100%** — download your `project.faf` and give it to your AI: Claude, Grok, Gemini, Cursor — any of them.
 
-**WASM Toolchain:**
-- Rust WASM (faf-wasm-sdk v1.2.2) - 211KB generator
-- Zig WASM (xai-faf-ghost) - 2.7KB scorer, 14μs scoring time
+That's it. Your AI is now on the same page as you.
 
-**Infrastructure:**
-- Vercel Edge deployment
-- GitHub OAuth integration
-- GitHub API (repo metadata, README fetching)
+## What's a .faf?
 
-## Development
+One small file with the facts about your project, written so any AI can read it. Think of it as a quick briefing you hand your AI before it starts — so it works *with* you instead of guessing.
+
+<details>
+<summary><b>What are the facts?</b></summary>
+
+<br>
+
+Your project's **structured data** — who it's for, what it does, why it exists, where it runs, and the stack it's built on.
+
+<details>
+<summary>How? <i>(deep dive)</i></summary>
+
+<br>
+
+A `.faf` is clean **YAML** organized into **slots**:
+
+- **The 6 Ws** — who · what · why · where · when · how (the human context only you know)
+- **The stack** — language, framework, runtime, database, hosting, build, CI…
+
+Each filled slot is one fact your AI no longer has to guess. Slots that don't apply are marked `slotignored` — correctly scoped out, not missing. The score is simply *filled ÷ applicable*.
+
+And it's an **open standard**: `.faf` is **[IANA-registered](https://faf.one)** (`application/vnd.faf+yaml`), so it's portable across any AI, tool, or editor. One file, human- and machine-readable.
+
+</details>
+
+</details>
+
+The score isn't marking your code. It's how ready your project is for AI:
+
+- a **low** score means *"your AI would have to guess here"*
+- **100%** means it won't have to. 🏆
+
+---
+
+## For developers
+
+builder.faf.one runs the real FAF engines right in your browser — no server round-trip:
+
+- **Zig → WASM scorer** — 2.7 KB, ~14 µs per score. The same deterministic score the FAF CLI gives.
+- **Rust → WASM generator** — turns a GitHub repo into a `.faf`.
+- **Parity-verified** — the Rust and Zig engines agree on every score. The score doesn't lie.
+
+**The fastest way to smarter code.** ⚡
+
+### Develop
 
 ```bash
 npm install
-npm run dev
+npm run dev      # dev server
+npm run build    # production build (Cloudflare Workers)
+npm run check    # TypeScript
+npm run test     # Playwright E2E
 ```
 
-## Build
+### Stack
 
-```bash
-npm run build
-npm run preview
-```
+SvelteKit 5 (Svelte 5 runes) · Tailwind CSS 4 · TypeScript (strict) · Cloudflare Workers · Rust + Zig → WASM.
 
-## Type Check
-
-```bash
-npm run check
-```
-
-## Performance
-
-**Bundle Sizes:**
-- Client bundle: ~14 kB (5.3 kB gzip)
-- CSS: ~21 kB (4.5 kB gzip)
-- Rust WASM: 211 KB (one-time load, cached forever)
-- Zig WASM: 2.7 KB
-
-**Speed:**
-- .faf Generation: ~3ms (Rust WASM)
-- Scoring: ~14μs (Zig WASM, 71,428 scores/second)
-- Build time: <5s
-- Total end-to-end: <100ms (including GitHub API)
+This repo dogfoods its own context — see [`project.faf`](./project.faf), Trophy 100%. 🏆
 
 ## Links
 
+- **[builder.faf.one](https://builder.faf.one)** — the builder
+- [FAF format](https://faf.one) — the standard
 - [grok-faf-mcp on npm](https://www.npmjs.com/package/grok-faf-mcp)
-- [MCP Server URL](https://mcpaas.live/grok/mcp/v1) — hosted on Cloudflare Workers, sub-ms cold start. Discovery: [/info](https://mcpaas.live/grok/mcp/v1/info)
-- [FAF Format](https://faf.one)
-- [GitHub](https://github.com/Wolfe-Jam/grok-faf-elite)
+- [MCP server](https://mcpaas.live/grok/mcp/v1) — Cloudflare Workers, sub-ms cold start
 
 ## License
 
-MIT - Free forever. Juice UP your repos!
+MIT — free forever. Make your AI happy. 🏆
