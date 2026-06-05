@@ -232,17 +232,19 @@
 				autocomplete="off"
 			/>
 			{#if demoing}
-				<p class="demohint">▶ live demo — type or click to start your own</p>
-			{:else if showTip && current.suggest}
-				<p class="tabhint">
-					<kbd>Tab</kbd> to fill · <kbd>Enter</kbd> to accept
-					<button class="tipx" onclick={dismissTip} aria-label="Hide tip">×</button>
-				</p>
+				<button class="clickstart" onclick={takeOver}>Click to start ▸</button>
+			{:else}
+				{#if showTip && current.suggest}
+					<p class="tabhint">
+						<kbd>Tab</kbd> to fill · <kbd>Enter</kbd> to accept
+						<button class="tipx" onclick={dismissTip} aria-label="Hide tip">×</button>
+					</p>
+				{/if}
+				<div class="actions">
+					<button class="next" onclick={submit} disabled={!answer.trim() && !current.suggest}>Next →</button>
+					<button class="skip" onclick={skip}>Skip</button>
+				</div>
 			{/if}
-			<div class="actions">
-				<button class="next" onclick={submit} disabled={!answer.trim() && !current.suggest}>Next →</button>
-				<button class="skip" onclick={skip}>Skip</button>
-			</div>
 		</div>
 	{:else}
 		<div class="done">
@@ -268,7 +270,17 @@
 		font: 600 11px ui-monospace, monospace; color: #c8ccd2;
 		background: #1a1a1a; border: 1px solid #333; border-radius: 4px; padding: 1px 5px;
 	}
-	.demohint { margin: 2px 0 0; font: 600 12px system-ui; color: #FF6B35; letter-spacing: .02em; }
+	.clickstart {
+		margin-top: 8px; padding: 11px 26px; border-radius: 999px;
+		border: 1.5px solid #FF6B35; background: rgba(255, 107, 53, .08); color: #FF6B35;
+		font: 700 15px system-ui; cursor: pointer; animation: cta-pulse 1.5s ease-in-out infinite;
+	}
+	.clickstart:hover { background: rgba(255, 107, 53, .18); }
+	@keyframes cta-pulse {
+		0%   { box-shadow: 0 0 0 0 rgba(255, 107, 53, .5); }
+		70%  { box-shadow: 0 0 0 14px rgba(255, 107, 53, 0); }
+		100% { box-shadow: 0 0 0 0 rgba(255, 107, 53, 0); }
+	}
 	.tipx {
 		margin-left: 6px; border: none; background: none; cursor: pointer;
 		color: #6b7079; font: 600 13px system-ui; line-height: 1; padding: 0 2px;
