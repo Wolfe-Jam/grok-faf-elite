@@ -221,4 +221,18 @@ monorepo:
 			{#if scoreError}<p class="mt-2 text-center text-xs text-red-400">{scoreError}</p>{/if}
 		{/if}
 	</div>
+
+	<!-- footer: the trust signal (why .faf is real) + home + legal -->
+	<footer class="mt-12 border-t border-white/10 pt-6 text-center">
+		<p class="text-xs text-muted-foreground">
+			Why trust <span class="font-medium text-white">.faf</span>? IANA-registered, Oct 2025.
+		</p>
+		<p class="mt-2 text-xs text-muted-foreground">
+			<a href="https://faf.one" target="_blank" rel="noopener" class="hover:text-white hover:underline">faf.one</a>
+			<span class="px-1 text-white/20">·</span>
+			<a href="https://faf.one/privacy" target="_blank" rel="noopener" class="hover:text-white hover:underline">Privacy</a>
+			<span class="px-1 text-white/20">·</span>
+			<a href="https://faf.one/terms" target="_blank" rel="noopener" class="hover:text-white hover:underline">Terms</a>
+		</p>
+	</footer>
 </div>
