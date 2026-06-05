@@ -3,8 +3,6 @@
   "installCommand": "",
   "outputDirectory": ".",
   "redirects": [
-    { "source": "/sse", "destination": "https://mcpaas.live/grok/mcp/v1", "permanent": true },
-    { "source": "/sse/(.*)", "destination": "https://mcpaas.live/grok/mcp/v1", "permanent": true },
-    { "source": "/(.*)", "destination": "https://grok.faf.one/", "permanent": true }
+    { "source": "/(.*)", "destination": "https://builder.faf.one/", "permanent": true }
   ]
 }
