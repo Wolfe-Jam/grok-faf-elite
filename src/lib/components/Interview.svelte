@@ -21,13 +21,15 @@
 		showDial = true,
 		onScore = (_s: number) => {},
 		demo = false,
-		onDemoEnd = () => {}
+		onDemoEnd = () => {},
+		onStart = () => {}
 	}: {
 		faf?: string;
 		showDial?: boolean;
 		onScore?: (s: number) => void;
 		demo?: boolean;
-		onDemoEnd?: () => void;
+		onDemoEnd?: () => void;   // natural demo completion → success screen stays up
+		onStart?: () => void;     // barge-in / "click to start" → fresh blank interview
 	} = $props();
 
 	type Q = { key: string; q: string; hint: string; suggest?: string };
@@ -159,8 +161,7 @@
 		}
 		demoing = false;
 		if (aborted || !demo) return; // user took over, or the page switched demo off
-		await sleep(1900); // bask at 100% — Trophy 🏆 + dotFAF, "Happy AI"
-		onDemoEnd();        // hand off for the real user
+		onDemoEnd(); // natural completion → the success screen stays up (with "click to start")
 	}
 
 	function takeOver() {
@@ -168,7 +169,7 @@
 		aborted = true;
 		demoing = false;
 		answer = '';
-		onDemoEnd();
+		onStart(); // barge-in → start a fresh interview
 	}
 
 	function onKey(e: KeyboardEvent) {
@@ -247,8 +248,9 @@
 			{/if}
 		</div>
 	{:else}
-		<div class="done">
+		<div class="done" onpointerdown={onStart}>
 			<p class="donetext">{doneText}</p>
+			<button class="clickstart" onclick={onStart}>Click anywhere to start ▸</button>
 		</div>
 	{/if}
 </div>
@@ -298,6 +300,6 @@
 		font: 500 15px system-ui; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
 	}
 	.skip:hover { color: #fff; }
-	.done { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+	.done { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 6px; }
 	.donetext { margin: 0; font: 600 18px system-ui; color: #fff; line-height: 1.45; max-width: 360px; min-height: 1.45em; }
 </style>

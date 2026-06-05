@@ -61,11 +61,11 @@ monorepo:
 	let wasmReady = $state(false);
 	let demoMode = $state(true);
 
-	// the demo reached 100% (or the visitor interrupted it) → hand off a fresh
-	// blank slate so they do it for real.
-	function endDemo() {
-		faf = seedFaf();
+	// natural demo completion → leave the success screen up (with its "click to
+	// start" CTA); just exit demo mode and give it a full idle window.
+	function demoFinished() {
 		demoMode = false;
+		lastActivity = Date.now();
 	}
 	let repoUrl = $state('');
 	let repoOwner = $state('');
@@ -118,8 +118,11 @@ monorepo:
 		}
 	}
 
+	// barge-in / "click to start" / repo "start fresh" → a clean blank interview
 	function startFresh() {
 		faf = seedFaf();
+		demoMode = false;
+		lastActivity = Date.now();
 		repoUrl = '';
 		repoOwner = '';
 		repoName = '';
@@ -161,7 +164,7 @@ monorepo:
 	<!-- the interview = the app -->
 	<div class="mt-4">
 		{#if wasmReady}
-			<Interview bind:faf showDial={false} onScore={(s) => (score = s)} demo={demoMode} onDemoEnd={endDemo} />
+			<Interview bind:faf showDial={false} onScore={(s) => (score = s)} demo={demoMode} onDemoEnd={demoFinished} onStart={startFresh} />
 		{:else}
 			<p class="text-center text-sm text-muted-foreground">Warming up the engines…</p>
 		{/if}
