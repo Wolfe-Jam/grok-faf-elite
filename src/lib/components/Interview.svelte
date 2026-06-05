@@ -186,9 +186,9 @@
 
 	// ---- success-screen sequence: "happy" → typewriter the what-next ----
 	const DONE_SEQ = [
-		'Your AI is happy',
-		"We've created a project.faf file for you, behind the scenes — copy & paste it into your AI tool now",
-		'Download, or copy & paste your .faf'
+		'Your half is done',
+		"We've created your project.faf — the human intent only you could give",
+		'Download or copy it, then take it to your preferred AI to fill in the tech stack'
 	];
 	let doneText = $state('');
 	let doneToken = 0;
