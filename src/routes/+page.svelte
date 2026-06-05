@@ -77,6 +77,27 @@ monorepo:
 	// surface "New project", so the success moment stays focused on the win.
 	let grabbed = $state(false);
 
+	// Optional "what are you building?" — bonus intent. Does NOT change scoring
+	// (the file stays app_type: intent → 100%); the pick is recorded in the
+	// context: primer as the TARGET the AI firms up when it fills the real stack.
+	// "" = Not sure yet = pure intent. Values are canonical app_types (slots.ts).
+	const APP_TYPE_OPTIONS = [
+		{ label: 'Not sure yet', value: '' },
+		{ label: 'Website', value: 'website' },
+		{ label: 'Frontend app', value: 'frontend' },
+		{ label: 'Mobile app', value: 'mobile' },
+		{ label: 'Browser extension', value: 'extension' },
+		{ label: 'CLI tool', value: 'cli' },
+		{ label: 'Library', value: 'library' },
+		{ label: 'SDK', value: 'sdk' },
+		{ label: 'Backend / API', value: 'backend' },
+		{ label: 'MCP server', value: 'mcp' },
+		{ label: 'Fullstack app', value: 'fullstack' },
+		{ label: 'SaaS', value: 'saas' },
+		{ label: 'Data science', value: 'data-science' }
+	];
+	let targetType = $state('');
+
 	onMount(async () => {
 		try { await initWasm(); } catch (e) { console.error(e); }
 		wasmReady = true;
@@ -147,6 +168,11 @@ monorepo:
 		if (!/^app_type:/m.test(text)) inserts.push('app_type: intent');
 		inserts.push(`generated: ${new Date().toISOString()}`);
 		const head = text.replace(/^(faf_version:.*)$/m, `$1\n${inserts.join('\n')}`);
+		// optional bonus: the human's intended app_type (from the dropdown)
+		const targetLine = targetType
+			? `\n  The human indicated the intended type: ${targetType}. Confirm it against
+  the codebase, then set app_type: ${targetType} and fill its active slots.`
+			: '';
 		// canonical CONTEXT section: a primer for any receiving AI on any project
 		const context = `context: |
   This is an intent-type project.faf — ${pct}% complete for that type.
@@ -155,7 +181,7 @@ monorepo:
   part of the intent type.
   YOUR TURN: read this project's codebase, set app_type to the real type
   (e.g. cli, mcp, frontend, fullstack), and fill the now-active stack/monorepo
-  slots to produce a higher-fidelity project.faf.`;
+  slots to produce a higher-fidelity project.faf.${targetLine}`;
 		return `${head.trimEnd()}\n${context}\n`;
 	}
 
@@ -203,8 +229,23 @@ monorepo:
 		{/if}
 	</div>
 
+	<!-- optional: what are you building? bonus intent → guides the AI's re-type.
+	     "Not sure yet" keeps it pure intent. Does not change the score. -->
+	<div class="mt-8 flex items-center justify-center gap-2 text-sm">
+		<label for="apptype" class="text-muted-foreground">Building?</label>
+		<select
+			id="apptype"
+			bind:value={targetType}
+			class="rounded-lg border border-white/20 bg-black px-2 py-1.5 text-white focus:border-primary/60 focus:outline-none"
+		>
+			{#each APP_TYPE_OPTIONS as o}
+				<option value={o.value}>{o.label}</option>
+			{/each}
+		</select>
+	</div>
+
 	<!-- take your .faf — quiet secondary actions -->
-	<div class="mt-8 flex justify-center gap-3">
+	<div class="mt-4 flex justify-center gap-3">
 		<button onclick={downloadFaf} class="rounded-lg border border-white/30 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white/10">
 			Download .faf
 		</button>
