@@ -73,6 +73,9 @@ monorepo:
 	let scoring = $state(false);
 	let scoreError = $state('');
 	let copied = $state(false);
+	// true once the user has taken their .faf (download or copy) — only then do we
+	// surface "New project", so the success moment stays focused on the win.
+	let grabbed = $state(false);
 
 	onMount(async () => {
 		try { await initWasm(); } catch (e) { console.error(e); }
@@ -127,6 +130,7 @@ monorepo:
 		repoOwner = '';
 		repoName = '';
 		scoreError = '';
+		grabbed = false;
 	}
 
 	function downloadFaf() {
@@ -137,12 +141,14 @@ monorepo:
 		a.download = 'project.faf';
 		a.click();
 		URL.revokeObjectURL(url);
+		grabbed = true;
 	}
 
 	async function copyFaf() {
 		try {
 			await navigator.clipboard.writeText(faf);
 			copied = true;
+			grabbed = true;
 			setTimeout(() => (copied = false), 1500);
 		} catch { /* clipboard blocked */ }
 	}
@@ -180,6 +186,15 @@ monorepo:
 		</button>
 	</div>
 
+	<!-- New project = the next step *after* you've taken your .faf, never before -->
+	{#if grabbed}
+		<div class="mt-4 flex justify-center">
+			<button onclick={startFresh} class="text-sm text-muted-foreground underline underline-offset-2 transition-colors hover:text-white">
+				New project ▸
+			</button>
+		</div>
+	{/if}
+
 	<!-- quiet repo path, below -->
 	<div class="mt-10 border-t border-white/10 pt-6">
 		{#if repoOwner}
@@ -191,7 +206,7 @@ monorepo:
 				· <button onclick={startFresh} class="underline underline-offset-2 hover:text-white">start fresh</button>
 			</p>
 		{:else}
-			<p class="mb-3 text-center text-sm text-muted-foreground">Got a repo? Score it to seed the interview.</p>
+			<p class="mb-3 text-center text-sm text-muted-foreground">Got a repo? Score it to start.</p>
 			<div class="flex gap-2">
 				<input
 					bind:value={repoUrl}
