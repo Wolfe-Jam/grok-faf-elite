@@ -225,7 +225,9 @@ monorepo:
 	<!-- footer: the trust signal (why .faf is real) + home + legal -->
 	<footer class="mt-12 border-t border-white/10 pt-6 text-center">
 		<p class="text-xs text-muted-foreground">
-			Why trust <span class="font-medium text-white">.faf</span>? IANA-registered AI-context format since Oct 2025.
+			Why trust <span class="font-medium text-white">.faf</span>?
+			<a href="https://www.iana.org/assignments/media-types/application/vnd.faf+yaml" target="_blank" rel="noopener" class="hover:text-white hover:underline">IANA-registered</a>
+			AI-context format since Oct 2025.
 		</p>
 		<p class="mt-2 text-xs text-muted-foreground">
 			<a href="https://faf.one" target="_blank" rel="noopener" class="hover:text-white hover:underline">faf.one</a>
