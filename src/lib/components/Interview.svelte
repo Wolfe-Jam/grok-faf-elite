@@ -275,7 +275,8 @@
 	{:else}
 		<div class="done">
 			<p class="donetext">{doneText}</p>
-			<button class="clickstart" onclick={onStart}>New project ▸</button>
+			<!-- Success = focus on the win. Next step is grab the .faf, not start
+			     a new project, so the "New project" CTA is intentionally hidden here. -->
 		</div>
 	{/if}
 </div>
