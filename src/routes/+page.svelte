@@ -18,7 +18,7 @@
 project:
   name: ${name}
   goal:
-  main_language:
+  main_language: ${si}
   type: documentation
 stack:
   frontend: ${si}

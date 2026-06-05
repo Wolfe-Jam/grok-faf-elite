@@ -37,14 +37,13 @@
 	// basics, then the stack. Each has a sensible suggestion to Tab/Enter.
 	const CATALOG: Q[] = [
 		{ key: 'name',  q: "What's it called?",          hint: "Enter your project's name.",            suggest: 'My Project' },
+		{ key: 'goal',  q: 'Your goal?',                  hint: 'A sentence or two — what it is and why. The richer this is, the more we can fill for you.', suggest: 'A fast, simple tool that does one thing well' },
 		{ key: 'who',   q: 'Who is this for?',           hint: 'The people who use it — not you, them.', suggest: 'Developers & builders' },
 		{ key: 'what',  q: 'What does it do?',           hint: 'One plain sentence.',                    suggest: 'A fast tool that does one thing well' },
 		{ key: 'why',   q: 'Why does it exist?',         hint: "What's broken today that this fixes?",   suggest: 'Existing tools were too slow and heavy' },
 		{ key: 'where', q: 'Where does it run or ship?', hint: 'npm · the edge · a browser · a server…', suggest: 'npm' },
 		{ key: 'when',  q: 'When would you use it?',     hint: 'The moment it helps.',                   suggest: 'When starting a new project' },
 		{ key: 'how',   q: 'How do you get started?',    hint: 'Install / first step.',                  suggest: 'npm install, then run' },
-		{ key: 'goal',  q: 'In one line, the goal?',     hint: 'What it sets out to do.',                suggest: 'Make it simple and fast' },
-		{ key: 'main_language', q: 'Main language?',     hint: 'TypeScript · Rust · Python…',            suggest: 'TypeScript' },
 		{ key: 'frontend',        q: 'Frontend framework?',  hint: 'React · Svelte · Vue — or none', suggest: 'React' },
 		{ key: 'css_framework',   q: 'CSS / styling?',        hint: 'Tailwind · plain CSS — or none', suggest: 'Tailwind' },
 		{ key: 'ui_library',      q: 'UI component library?', hint: 'shadcn · MUI — or none',         suggest: 'none' },
