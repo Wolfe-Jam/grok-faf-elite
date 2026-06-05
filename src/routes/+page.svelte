@@ -169,10 +169,10 @@ monorepo:
 
 	<!-- take your .faf — quiet secondary actions -->
 	<div class="mt-8 flex justify-center gap-3">
-		<button onclick={downloadFaf} class="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5">
+		<button onclick={downloadFaf} class="rounded-lg border border-white/30 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white/10">
 			Download .faf
 		</button>
-		<button onclick={copyFaf} class="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5">
+		<button onclick={copyFaf} class="rounded-lg border border-white/30 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white/10">
 			{copied ? '✓ Copied' : 'Copy'}
 		</button>
 	</div>
@@ -196,7 +196,7 @@ monorepo:
 					onkeydown={(e) => e.key === 'Enter' && scoreRepo()}
 					class="flex-1 rounded-lg border border-white/15 bg-black px-3 py-2.5 text-base text-white focus:border-primary/60 focus:outline-none"
 				/>
-				<button onclick={scoreRepo} disabled={scoring} class="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5 disabled:opacity-50">
+				<button onclick={scoreRepo} disabled={scoring} class="rounded-lg border border-white/30 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white/10 disabled:opacity-50">
 					{scoring ? '…' : 'Score'}
 				</button>
 			</div>
