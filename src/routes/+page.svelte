@@ -133,8 +133,32 @@ monorepo:
 		grabbed = false;
 	}
 
+	// A primer for the unknown AI session that receives this file. Plain English,
+	// no cryptic markers — it explains what the file is and what the AI should do.
+	const FAF_PRIMER = `# ============================================================
+#  project.faf  —  your AI context for this project
+#  IANA media type: application/vnd.faf+yaml  ·  https://faf.one
+#
+#  A human handed you this file. It carries the part only a human
+#  can give: the intent — name, goal, and the 6 Ws
+#  (who · what · why · where · when · how). That is 100% of the
+#  human context an AI needs to start.
+#
+#  Your turn: fill the empty stack: and monorepo: slots from the
+#  codebase. When they are complete, this is a full project.faf.
+# ============================================================
+`;
+
+	// What the receiving AI actually gets. The dial uses an internal "slotignored"
+	// sentinel to score 100% of the HUMAN context — but that must never ship as
+	// cryptic text. Strip it to empty slots (the AI fills them) and prepend the
+	// primer, so the download is a real, honest .faf.
+	function exportFaf(text: string): string {
+		return FAF_PRIMER + text.replace(/:[ \t]*slotignored\b/g, ':');
+	}
+
 	function downloadFaf() {
-		const blob = new Blob([faf], { type: 'text/yaml' });
+		const blob = new Blob([exportFaf(faf)], { type: 'text/yaml' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
@@ -146,7 +170,7 @@ monorepo:
 
 	async function copyFaf() {
 		try {
-			await navigator.clipboard.writeText(faf);
+			await navigator.clipboard.writeText(exportFaf(faf));
 			copied = true;
 			grabbed = true;
 			setTimeout(() => (copied = false), 1500);
