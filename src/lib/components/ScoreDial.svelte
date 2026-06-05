@@ -25,18 +25,29 @@
 	const trackDash = `${HALF * C} ${C}`;
 	const progDash = $derived(`${((tw.current / 100) * HALF * C).toFixed(2)} ${C}`);
 	const isMax = $derived(pct >= 100);
+	// colour warms up EARLY — visible from the very first answer
 	const arcColor = $derived(
-		pct >= 100 ? '#4ade80' :      // FAF green — the 100% / Happy AI colour
-		pct >= 85 ? '#FF6B35' :       // orange (bronze+)
-		pct >= 55 ? '#00D4D4' :       // cyan (green/yellow)
-		'#6b7280'                     // grey (low)
+		pct >= 100 ? '#4ade80' :      // green = go (Happy AI)
+		pct >= 50 ? '#FF6B35' :       // orange — warmed up by halfway
+		pct >= 8 ? '#00D4D4' :        // cyan — colour from answer #1
+		'#6b7280'                     // grey only at the very start
 	);
+	// trophy is VISIBLE from the start (no faint ghost) and reaches full
+	// colour by ~70% — so each answer notches the contrast up noticeably
 	const trophyFilter = $derived(
-		`grayscale(${(1 - pct / 100).toFixed(2)}) ` +
-		`saturate(${(0.6 + 0.9 * pct / 100).toFixed(2)}) ` +
-		`brightness(${(0.6 + 0.5 * pct / 100).toFixed(2)}) ` +
-		`opacity(${(0.32 + 0.68 * pct / 100).toFixed(2)})`
+		`grayscale(${Math.max(0, 0.9 - 1.3 * pct / 100).toFixed(2)}) ` +
+		`saturate(${(0.85 + 0.75 * pct / 100).toFixed(2)}) ` +
+		`brightness(${(0.74 + 0.4 * pct / 100).toFixed(2)}) ` +
+		`opacity(${(0.5 + 0.5 * pct / 100).toFixed(2)})`
 	);
+
+	// a visual "notch up" each time the score actually increases (per answer)
+	let notch = $state(0);
+	let prevTarget = 0;
+	$effect(() => {
+		if (target > prevTarget) notch++;
+		prevTarget = target;
+	});
 </script>
 
 <div class="dial" style="width:{size}px">
@@ -55,7 +66,9 @@
 		{#if isMax}
 			<div class="dotfaf"><img src="/dotfaf-happy.png" alt="dotFAF — your AI is happy" /></div>
 		{:else}
-			<div class="trophy" style="filter:{trophyFilter}">🏆</div>
+			{#key notch}
+				<div class="trophy" style="filter:{trophyFilter}">🏆</div>
+			{/key}
 		{/if}
 	</div>
 
@@ -78,6 +91,12 @@
 	.trophy {
 		position: absolute; left: 50%; bottom: 1px; transform: translateX(-50%);
 		font-size: 42px; line-height: 1; transition: filter .5s ease;
+		animation: notchpop .35s ease;   /* a pop on each answer (re-keyed by `notch`) */
+	}
+	@keyframes notchpop {
+		0%   { transform: translateX(-50%) scale(1); }
+		45%  { transform: translateX(-50%) scale(1.18); }
+		100% { transform: translateX(-50%) scale(1); }
 	}
 	/* at 100% dotFAF takes the trophy's exact spot — no new element, no shift */
 	.dotfaf { position: absolute; left: 50%; bottom: 1px; transform: translateX(-50%); }
