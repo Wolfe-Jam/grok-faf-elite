@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import ScoreDial from '$lib/components/ScoreDial.svelte';
 	import Interview from '$lib/components/Interview.svelte';
-	import { initWasm, isWasmReady, generateAndScore } from '$lib/wasm-loader';
+	import { initWasm, isWasmReady, generateAndScore, scoreFaf } from '$lib/wasm-loader';
 
 	// A fresh idea has no stack yet → slotignore it, so only project + the human
 	// Ws count. A scored repo replaces this whole .faf with its generated one.
@@ -134,31 +134,42 @@ monorepo:
 	}
 
 	// A primer for the unknown AI session that receives this file. Plain English,
-	// no cryptic markers — it explains what the file is and what the AI should do.
-	const FAF_PRIMER = `# ============================================================
-#  project.faf  —  your AI context for this project
+	// no cryptic markers. It articulates the model so ANY AI, on ANY project, can
+	// consume this: 100% human contribution = `pct`% of a complete project.faf,
+	// and the AI's job is to carry it from there to 100%.
+	function buildPrimer(pct: number): string {
+		return `# ============================================================
+#  project.faf  —  AI context for this project
 #  IANA media type: application/vnd.faf+yaml  ·  https://faf.one
 #
-#  A human handed you this file. It carries the part only a human
-#  can give: the intent — name, goal, and the 6 Ws
-#  (who · what · why · where · when · how). That is 100% of the
-#  human context an AI needs to start.
+#  TO ANY AI READING THIS:
+#  A human just completed 100% of the HUMAN contribution at
+#  builder.faf.one — the intent only a person can give:
+#  name, goal, and the 6 Ws (who · what · why · where · when · how).
 #
-#  Your turn: fill the empty stack: and monorepo: slots from the
-#  codebase. When they are complete, this is a full project.faf.
+#  On the AI-Readiness scale that human half is ${pct}% of a complete
+#  project.faf. The remaining ${100 - pct}% is the technical stack — your job.
+#
+#  YOUR TURN: read this project's codebase and fill the empty
+#  stack: and monorepo: slots below. Take this .faf from ${pct}% to 100%.
 # ============================================================
 `;
-
-	// What the receiving AI actually gets. The dial uses an internal "slotignored"
-	// sentinel to score 100% of the HUMAN context — but that must never ship as
-	// cryptic text. Strip it to empty slots (the AI fills them) and prepend the
-	// primer, so the download is a real, honest .faf.
-	function exportFaf(text: string): string {
-		return FAF_PRIMER + text.replace(/:[ \t]*slotignored\b/g, ':');
 	}
 
-	function downloadFaf() {
-		const blob = new Blob([exportFaf(faf)], { type: 'text/yaml' });
+	// What the receiving AI actually gets. The dial uses an internal "slotignored"
+	// sentinel to show 100% of the HUMAN context — but that must never ship as
+	// cryptic text. Strip it to empty slots (the AI fills them), score the real
+	// file honestly, and prepend a primer stamped with that real %.
+	async function exportFaf(text: string): Promise<string> {
+		const body = text.replace(/:[ \t]*slotignored\b/g, ':');
+		let pct = 38; // honest fallback if the scorer isn't ready
+		try { pct = Math.round((await scoreFaf(body)).score); } catch { /* wasm not ready */ }
+		return buildPrimer(pct) + body;
+	}
+
+	async function downloadFaf() {
+		const out = await exportFaf(faf);
+		const blob = new Blob([out], { type: 'text/yaml' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
@@ -170,7 +181,7 @@ monorepo:
 
 	async function copyFaf() {
 		try {
-			await navigator.clipboard.writeText(exportFaf(faf));
+			await navigator.clipboard.writeText(await exportFaf(faf));
 			copied = true;
 			grabbed = true;
 			setTimeout(() => (copied = false), 1500);
