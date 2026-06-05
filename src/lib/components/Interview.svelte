@@ -65,8 +65,12 @@
 		{ key: 'search',          q: 'Search?',                 hint: 'Algolia — or none',              suggest: 'none' },
 		{ key: 'storage',         q: 'Object storage?',         hint: 'S3 · R2 — or none',              suggest: 'none' }
 	];
-	const CAT = new Map(CATALOG.map((c) => [c.key, c]));
-	const humanize = (k: string) => k.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+	// The interview captures the HUMAN score — intent only (the Ws). A human who
+	// pastes their idea into any AI doesn't need to answer stack questions: the AI
+	// picks the stack itself on the next run, and the .faf travels to any session.
+	// So we only ever ASK these human keys. Stack slots stay empty for the
+	// downstream AI (or repo auto-detection) to fill — never a burden on a human.
+	const HUMAN_KEYS = ['name', 'who', 'what', 'why', 'where', 'when', 'how', 'goal'];
 
 	let score = $state(0);
 	let answer = $state('');
@@ -82,11 +86,8 @@
 
 	const queue = $derived.by(() => {
 		const empties = emptySlots(faf).filter((k) => !skipped.includes(k));
-		const known = CATALOG.filter((c) => empties.includes(c.key));
-		const extra = empties
-			.filter((k) => !CAT.has(k))
-			.map((k): Q => ({ key: k, q: `${humanize(k)}?`, hint: '' }));
-		return [...known, ...extra];
+		// human-Ws only — never ask a human about the stack (see HUMAN_KEYS note)
+		return CATALOG.filter((c) => HUMAN_KEYS.includes(c.key) && empties.includes(c.key));
 	});
 	const current = $derived(queue[0] ?? null);
 	const done = $derived(queue.length === 0);
