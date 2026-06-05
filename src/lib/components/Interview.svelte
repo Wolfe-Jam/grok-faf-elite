@@ -165,7 +165,9 @@
 				await sleep(600);
 			}
 			if (aborted || !demo) break;
-			await sleep(1900);    // let the dial land on 100% and breathe
+			// hold long enough to show the 100% 🏆 (the badge) THEN the dotFAF smiley
+			// before resetting — mirrors the dial's TROPHY_HOLD (2.5s) + smiley beat.
+			await sleep(4600);
 			if (aborted || !demo) break;
 			onDemoReset();        // parent: faf = seedFaf() — fresh blank, stays in demo
 			await sleep(650);
@@ -194,7 +196,7 @@
 
 	// ---- success-screen sequence: "happy" → typewriter the what-next ----
 	const DONE_SEQ = [
-		'Your AI is happy',
+		'Your AI-Context is optimised for AI',
 		"We've created a project.faf file for you, behind the scenes — copy & paste it into your AI tool now",
 		'Download, or copy & paste your .faf'
 	];
@@ -286,7 +288,7 @@
 		<div class="done">
 			{#if demoing}
 				<!-- demo payoff: 100% reached, then it loops — no download steps here -->
-				<p class="donetext">100% — your AI is happy</p>
+				<p class="donetext">100% — your AI-Context is optimised for AI</p>
 				<button class="clickstart" onclick={takeOver}>Click to start ▸</button>
 			{:else}
 				<!-- Success = focus on the win. Next step is grab the .faf, not start

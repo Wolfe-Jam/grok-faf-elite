@@ -48,6 +48,22 @@
 		if (target > prevTarget) notch++;
 		prevTarget = target;
 	});
+
+	// At 100% hold the trophy 🏆 first — that's the artifact people recognise in
+	// repos, READMEs and badges — then bloom into the dotFAF smiley as the final.
+	const TROPHY_HOLD = 2500;
+	let showSmiley = $state(false);
+	let smileyTimer: ReturnType<typeof setTimeout> | null = null;
+	$effect(() => {
+		if (isMax) {
+			if (!showSmiley && smileyTimer === null) {
+				smileyTimer = setTimeout(() => { showSmiley = true; smileyTimer = null; }, TROPHY_HOLD);
+			}
+		} else {
+			showSmiley = false;
+			if (smileyTimer !== null) { clearTimeout(smileyTimer); smileyTimer = null; }
+		}
+	});
 </script>
 
 <div class="dial" style="width:{size}px">
@@ -62,8 +78,9 @@
 				stroke={arcColor} stroke-width="9" stroke-linecap="round"
 				stroke-dasharray={progDash} transform={ARC} class="arc" />
 		</svg>
-		<!-- trophy brightens as you climb; at 100% it becomes dotFAF — same spot, no shift -->
-		{#if isMax}
+		<!-- trophy brightens as you climb; at 100% it holds 🏆 (the badge) then
+		     blooms into dotFAF — same spot, no shift -->
+		{#if isMax && showSmiley}
 			<div class="dotfaf"><img src="/dotfaf-happy.png" alt="dotFAF — your AI is happy" /></div>
 		{:else}
 			{#key notch}
