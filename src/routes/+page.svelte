@@ -206,7 +206,7 @@ monorepo:
 				· <button onclick={startFresh} class="underline underline-offset-2 hover:text-white">start fresh</button>
 			</p>
 		{:else}
-			<p class="mb-3 text-center text-sm text-muted-foreground">Got a repo? Score it to start.</p>
+			<p class="mb-3 text-center text-lg font-semibold text-white">Got a repo? <span class="font-normal text-muted-foreground">Score it to start.</span></p>
 			<div class="flex gap-2">
 				<input
 					bind:value={repoUrl}
