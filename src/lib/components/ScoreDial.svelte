@@ -82,7 +82,7 @@
 		to   { transform: scale(1.08); filter: grayscale(0) saturate(1.6) brightness(1.15) opacity(1) drop-shadow(0 0 10px #FFB000); }
 	}
 	.pct { font: 700 24px -apple-system, system-ui, sans-serif; margin-top: 4px; }
-	.lbl { font: 600 7px -apple-system, system-ui, sans-serif; color: #9aa0a6; letter-spacing: .1em; text-transform: uppercase; }
+	.lbl { font: 600 9px -apple-system, system-ui, sans-serif; color: #9aa0a6; letter-spacing: .1em; text-transform: uppercase; }
 
 	.happy { margin-top: 10px; text-align: center; animation: rise .5s ease both; }
 	.happy img { display: block; margin: 0 auto 4px; animation: bob 2s ease-in-out infinite; }

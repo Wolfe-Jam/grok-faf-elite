@@ -25,7 +25,7 @@
 	// Nice questions for the known slots, ordered human-Ws first (highest value —
 	// only a human knows the why/who), then project basics, then the stack.
 	const CATALOG = [
-		{ key: 'name',  q: "What's it called?",         hint: 'Your project name.' },
+		{ key: 'name',  q: "What's it called?",         hint: "Enter your project's name." },
 		{ key: 'who',   q: 'Who is this for?',          hint: 'The people who use it — not you, them.' },
 		{ key: 'what',  q: 'What does it do?',           hint: 'One plain sentence.' },
 		{ key: 'why',   q: 'Why does it exist?',         hint: "What's broken today that this fixes?" },
@@ -144,23 +144,24 @@
 <style>
 	.interview { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
 	.q { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 360px; }
-	.count { margin: 0; font: 600 11px system-ui; color: #FF6B35; letter-spacing: .04em; text-transform: uppercase; }
-	.ask { font: 700 18px system-ui; color: #fff; }
-	.hint { margin: 0; font: 400 12px system-ui; color: #9aa0a6; }
+	.count { margin: 0; font: 600 12px system-ui; color: #FF6B35; letter-spacing: .04em; text-transform: uppercase; }
+	.ask { font: 700 26px system-ui; color: #fff; line-height: 1.25; }
+	.hint { margin: 0; font: 400 14px system-ui; color: #9aa0a6; }
 	input {
-		width: 100%; margin-top: 6px; padding: 10px 12px; border-radius: 8px;
-		background: #000; border: 1px solid #333; color: #fff; font: 400 14px system-ui;
+		width: 100%; margin-top: 8px; padding: 13px 15px; border-radius: 10px;
+		background: #000; border: 1px solid #333; color: #fff; font: 400 17px system-ui;
 	}
 	input:focus { outline: none; border-color: #00D4D4; }
-	.actions { display: flex; align-items: center; gap: 14px; margin-top: 4px; }
+	.actions { display: flex; align-items: center; gap: 16px; margin-top: 6px; }
 	.next {
-		padding: 8px 18px; border-radius: 8px; border: none;
-		background: #FF6B35; color: #000; font: 700 14px system-ui; cursor: pointer;
+		padding: 11px 26px; border-radius: 10px; border: none;
+		background: #fff; color: #000; font: 700 16px system-ui; cursor: pointer;
 	}
-	.next:disabled { opacity: .4; cursor: default; }
+	.next:hover { background: #e6e6e6; }
+	.next:disabled { opacity: .35; cursor: default; }
 	.skip {
-		padding: 8px 4px; border: none; background: none; color: #9aa0a6;
-		font: 500 13px system-ui; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
+		padding: 10px 4px; border: none; background: none; color: #9aa0a6;
+		font: 500 15px system-ui; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
 	}
 	.skip:hover { color: #fff; }
 	.done { font: 600 14px system-ui; color: #fff; max-width: 320px; }

@@ -142,12 +142,12 @@ monorepo:
 		{/if}
 	</div>
 
-	<!-- take your .faf -->
+	<!-- take your .faf — quiet secondary actions -->
 	<div class="mt-8 flex justify-center gap-3">
-		<button onclick={downloadFaf} class="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-black hover:bg-primary/90">
+		<button onclick={downloadFaf} class="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5">
 			Download .faf
 		</button>
-		<button onclick={copyFaf} class="rounded-lg border border-white/15 px-4 py-2 text-sm text-white hover:bg-white/5">
+		<button onclick={copyFaf} class="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5">
 			{copied ? '✓ Copied' : 'Copy'}
 		</button>
 	</div>
@@ -155,7 +155,7 @@ monorepo:
 	<!-- quiet repo path, below -->
 	<div class="mt-10 border-t border-white/10 pt-6">
 		{#if repoOwner}
-			<p class="text-center text-xs text-muted-foreground">
+			<p class="text-center text-sm text-muted-foreground">
 				Seeded from
 				<a href="https://github.com/{repoOwner}/{repoName}" target="_blank" rel="noopener" class="text-primary hover:underline">
 					{repoOwner}/{repoName} ↗
@@ -163,15 +163,15 @@ monorepo:
 				· <button onclick={startFresh} class="underline underline-offset-2 hover:text-white">start fresh</button>
 			</p>
 		{:else}
-			<p class="mb-3 text-center text-xs text-muted-foreground">Got a repo? Score it to seed the interview.</p>
+			<p class="mb-3 text-center text-sm text-muted-foreground">Got a repo? Score it to seed the interview.</p>
 			<div class="flex gap-2">
 				<input
 					bind:value={repoUrl}
 					placeholder="github.com/you/repo"
 					onkeydown={(e) => e.key === 'Enter' && scoreRepo()}
-					class="flex-1 rounded-lg border border-white/15 bg-black px-3 py-2 text-sm text-white focus:border-primary/60 focus:outline-none"
+					class="flex-1 rounded-lg border border-white/15 bg-black px-3 py-2.5 text-base text-white focus:border-primary/60 focus:outline-none"
 				/>
-				<button onclick={scoreRepo} disabled={scoring} class="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-black disabled:opacity-50">
+				<button onclick={scoreRepo} disabled={scoring} class="rounded-lg border border-white/15 px-4 py-2 text-sm text-white/85 hover:bg-white/5 disabled:opacity-50">
 					{scoring ? '…' : 'Score'}
 				</button>
 			</div>
