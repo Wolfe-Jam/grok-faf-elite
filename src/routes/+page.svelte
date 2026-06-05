@@ -19,7 +19,7 @@ project:
   name: ${name}
   goal:
   main_language: ${si}
-  type: documentation
+  type: intent
 stack:
   frontend: ${si}
   css_framework: ${si}
@@ -144,18 +144,18 @@ monorepo:
 		let pct = 100;
 		try { pct = Math.round((await scoreFaf(text)).score); } catch { /* wasm not ready */ }
 		const inserts: string[] = [];
-		if (!/^app_type:/m.test(text)) inserts.push('app_type: documentation');
+		if (!/^app_type:/m.test(text)) inserts.push('app_type: intent');
 		inserts.push(`generated: ${new Date().toISOString()}`);
 		const head = text.replace(/^(faf_version:.*)$/m, `$1\n${inserts.join('\n')}`);
 		// canonical CONTEXT section: a primer for any receiving AI on any project
 		const context = `context: |
-  This is a documentation-type project.faf — ${pct}% complete for that type.
+  This is an intent-type project.faf — ${pct}% complete for that type.
   A human gave the intent at builder.faf.one: name, goal, and the 6 Ws
-  (who, what, why, where, when, how). Slots marked "slotignored" do not
-  apply to a documentation project.
-  If this project has a real tech stack, set app_type accordingly
-  (e.g. cli, mcp, frontend, fullstack) and fill the stack/monorepo slots
-  from the codebase to produce a higher-fidelity project.faf.`;
+  (who, what, why, where, when, how). Slots marked "slotignored" are not
+  part of the intent type.
+  YOUR TURN: read this project's codebase, set app_type to the real type
+  (e.g. cli, mcp, frontend, fullstack), and fill the now-active stack/monorepo
+  slots to produce a higher-fidelity project.faf.`;
 		return `${head.trimEnd()}\n${context}\n`;
 	}
 
