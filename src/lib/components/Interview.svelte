@@ -196,7 +196,7 @@
 
 	// ---- success-screen sequence: "happy" → typewriter the what-next ----
 	const DONE_SEQ = [
-		'Your Context is 100% optimised for AI to code',
+		'Your Context is optimised for AI to code',
 		"We've created a project.faf file for you, behind the scenes — copy & paste it into your AI tool now",
 		'Download, or copy & paste your .faf'
 	];
@@ -288,7 +288,7 @@
 		<div class="done">
 			{#if demoing}
 				<!-- demo payoff: 100% reached, then it loops — no download steps here -->
-				<p class="donetext">Your Context is 100% optimised for AI to code</p>
+				<p class="donetext">Your Context is optimised for AI to code</p>
 				<button class="clickstart" onclick={takeOver}>Click to start ▸</button>
 			{:else}
 				<!-- Success = focus on the win. Next step is grab the .faf, not start
