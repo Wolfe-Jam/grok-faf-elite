@@ -51,7 +51,12 @@
 				stroke={arcColor} stroke-width="9" stroke-linecap="round"
 				stroke-dasharray={progDash} transform={ARC} class="arc" />
 		</svg>
-		<div class="trophy" class:ignite={isMax} style="filter:{trophyFilter}">🏆</div>
+		<!-- trophy brightens as you climb; at 100% it becomes dotFAF — same spot, no shift -->
+		{#if isMax}
+			<div class="dotfaf"><img src="/dotfaf-happy.png" alt="dotFAF — your AI is happy" /></div>
+		{:else}
+			<div class="trophy" style="filter:{trophyFilter}">🏆</div>
+		{/if}
 	</div>
 
 	<!-- text below the graphic -->
@@ -59,13 +64,6 @@
 		<div class="pct" style="color:{arcColor}">{pct}%</div>
 		<div class="lbl">AI-Readiness</div>
 	</div>
-
-	{#if isMax}
-		<div class="happy">
-			<img src="/dotfaf-happy.png" alt="dotFAF — your AI is happy" width="60" height="60" />
-			<p>You made your AI happy</p>
-		</div>
-	{/if}
 </div>
 
 <style>
@@ -81,19 +79,12 @@
 		position: absolute; left: 50%; bottom: 1px; transform: translateX(-50%);
 		font-size: 42px; line-height: 1; transition: filter .5s ease;
 	}
-	.trophy.ignite { animation: glow 1.6s ease-in-out infinite alternate; }
-	@keyframes glow {
-		from { transform: translateX(-50%) scale(1);    filter: grayscale(0) saturate(1.5) brightness(1) opacity(1); }
-		to   { transform: translateX(-50%) scale(1.1);  filter: grayscale(0) saturate(1.6) brightness(1.15) opacity(1) drop-shadow(0 0 10px #FFB000); }
-	}
+	/* at 100% dotFAF takes the trophy's exact spot — no new element, no shift */
+	.dotfaf { position: absolute; left: 50%; bottom: 1px; transform: translateX(-50%); }
+	.dotfaf img { display: block; width: 46px; height: 46px; animation: pop-in .45s ease both; }
+	@keyframes pop-in { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
 
 	.text { display: flex; flex-direction: column; align-items: center; gap: 1px; margin-top: 8px; }
 	.pct { font: 700 24px -apple-system, system-ui, sans-serif; }
 	.lbl { font: 600 9px -apple-system, system-ui, sans-serif; color: #9aa0a6; letter-spacing: .1em; text-transform: uppercase; }
-
-	.happy { margin-top: 10px; text-align: center; animation: rise .5s ease both; }
-	.happy img { display: block; margin: 0 auto 4px; animation: bob 2s ease-in-out infinite; }
-	.happy p { margin: 0; font: 700 13px -apple-system, system-ui, sans-serif; color: #FF6B35; }
-	@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-	@keyframes bob  { 50% { transform: translateY(-4px); } }
 </style>

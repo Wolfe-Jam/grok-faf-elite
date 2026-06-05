@@ -210,12 +210,17 @@
 			</div>
 		</div>
 	{:else}
-		<p class="done">That's your context — your AI's in tune. Save the <code>.faf</code> to your repo.</p>
+		<div class="done">
+			<p class="ask">Your AI is happy.</p>
+			<p class="hint">Save your <code>.faf</code> below.</p>
+		</div>
 	{/if}
 </div>
 
 <style>
-	.interview { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+	/* constant height + top-aligned so the headline stays put and the page
+	   below never shifts between question and success states */
+	.interview { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 14px; text-align: center; min-height: 210px; }
 	.q { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 380px; }
 	.ask { font: 700 26px system-ui; color: #fff; line-height: 1.25; }
 	.hint { margin: 0; font: 400 14px system-ui; color: #9aa0a6; }
@@ -247,6 +252,6 @@
 		font: 500 15px system-ui; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
 	}
 	.skip:hover { color: #fff; }
-	.done { font: 600 14px system-ui; color: #fff; max-width: 320px; }
+	.done { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 	.done code { color: #FF6B35; }
 </style>
