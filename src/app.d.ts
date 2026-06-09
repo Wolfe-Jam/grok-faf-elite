@@ -1,6 +1,10 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
+	// Injected by Vite at build time from package.json (see vite.config.ts) — the
+	// single source of truth for the version shown in the top-left badge.
+	const __APP_VERSION__: string;
+
 	namespace App {
 		// interface Error {}
 		// interface Locals {}
