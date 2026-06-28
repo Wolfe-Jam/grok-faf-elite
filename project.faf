@@ -30,7 +30,7 @@ performance_targets:
   first_paint: <100ms
 integrations:
   - grok-faf-mcp (npm package)
-  - MCP server at https://grok-faf-mcp.vercel.app/sse
+  - MCP server at https://mcpaas.live/grok/mcp/v1
 commands:
   dev: npm run dev
   build: npm run build
