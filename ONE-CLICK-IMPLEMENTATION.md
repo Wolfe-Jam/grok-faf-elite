@@ -203,7 +203,7 @@ Dev server starts successfully.
 
 ## Environment Variables
 
-Make sure these are set in Vercel:
+Make sure these are set in Cloudflare Workers (wrangler secrets or dashboard):
 - `VITE_GITHUB_CLIENT_ID` - GitHub OAuth app client ID
 - `GITHUB_CLIENT_SECRET` - GitHub OAuth app secret (server-side only)
 
@@ -262,8 +262,8 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
    git push
    ```
 
-6. **Vercel Auto-Deploy:**
-   - Vercel detects push
+6. **Cloudflare Workers Deploy:**
+   - Run `wrangler pages deploy` (or push triggers CI if configured)
    - Builds with WASM support
    - Deploys to builder.faf.one
    - Monitor deployment logs

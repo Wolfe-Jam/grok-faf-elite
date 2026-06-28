@@ -6,7 +6,7 @@
 // served as a static asset bundle, bypassing the server runtime entirely.
 // Hook never fires, counters never increment.
 //
-// Diagnosed 2026-05-03 after Safari real-user testing showed only Vercel-internal
+// Diagnosed 2026-05-03 after Safari real-user testing showed only internal
 // favicon-crawler hits firing the hook. See task #31 in the project task list.
 
 import type { PageServerLoad } from './$types';

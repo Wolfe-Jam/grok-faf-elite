@@ -1,4 +1,4 @@
-// Bot-block at the Vercel Edge — fires BEFORE the SvelteKit adapter, so this
+// Bot-block at the Cloudflare edge — fires BEFORE the SvelteKit adapter, so this
 // runs whether the route prerenders or SSRs. The hooks.server.ts block-by-UA
 // stays in place as a belt-and-braces second layer for SSR routes.
 //

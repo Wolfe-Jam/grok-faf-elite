@@ -22,7 +22,7 @@
 
 ## Tech Stack
 - **Framework**: SvelteKit 5
-- **Deployment**: Vercel (serverless)
+- **Deployment**: Cloudflare Workers
 - **Generation**: Template-based (no CLI dependencies)
 - **OAuth**: GitHub OAuth App (Device Flow enabled)
 
@@ -63,7 +63,7 @@ ai_readiness:
 ## Why This Ships TODAY
 1. **No more secret builds** - 8 weeks of fafdev.tools got zero traction
 2. **Public launch first** - Get 10K users, THEN negotiate from strength
-3. **Serverless-ready** - Works on Vercel, no infrastructure
+3. **Edge-ready** - Runs on Cloudflare Workers, no infrastructure
 4. **Simple UX** - No confusion, just one green button
 5. **Real value** - Instant AI context for any repo
 
@@ -77,7 +77,7 @@ ai_readiness:
 
 ## Next Steps After Local Test
 1. ✅ Test OAuth flow with test-faf-demo
-2. 🔄 Deploy to Vercel production
+2. 🔄 Deploy to Cloudflare Workers (production)
 3. 🔄 Test live on real repo
 4. 🔄 HN post + Twitter launch
 5. 🔄 Add viral mechanics (share to X, badges)

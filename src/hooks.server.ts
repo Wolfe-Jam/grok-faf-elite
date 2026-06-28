@@ -1,4 +1,4 @@
-// Stats middleware — fire-and-forget Redis counters in shared faf-vercel-apps DB.
+// Stats middleware — fire-and-forget Redis counters in shared analytics DB.
 // Pattern mirrors faf-mcp / claude-faf-mcp / grok-faf-mcp. Prefix `elite:` per
 // architecture doctrine — grok-faf-elite is the Grok premium UI tier (1-click
 // FAST⚡AF, scoring) sitting on top of grok-faf-mcp.

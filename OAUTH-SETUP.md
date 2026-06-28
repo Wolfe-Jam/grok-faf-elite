@@ -21,9 +21,9 @@ GITHUB_CLIENT_ID=your_client_id_here
 GITHUB_CLIENT_SECRET=your_client_secret_here
 ```
 
-**For production (Vercel):**
+**For production (Cloudflare Workers):**
 
-1. Go to Vercel dashboard → Project Settings → Environment Variables
+1. Set via `wrangler secret put GITHUB_CLIENT_ID` and `wrangler secret put GITHUB_CLIENT_SECRET`, or add in the Cloudflare dashboard → Workers & Pages → Settings → Variables and Secrets.
 2. Add:
    - `GITHUB_CLIENT_ID` = your_client_id
    - `GITHUB_CLIENT_SECRET` = your_client_secret
@@ -44,15 +44,14 @@ npm run dev
 5. Authorize the app
 6. Should create project.faf and commit to repo
 
-## Step 4: Deploy to Vercel
+## Step 4: Deploy to Cloudflare Workers
 
 ```bash
 git add .
 git commit -m "feat: Add 1-Click project.faf generation"
 git push
+# Then: wrangler pages deploy (or push triggers CI if configured)
 ```
-
-Vercel will auto-deploy with the environment variables.
 
 ## How It Works
 
@@ -87,7 +86,7 @@ Users see exactly what we're requesting during OAuth flow.
 - Client secret is server-side only (never exposed to browser)
 - Access tokens are used once and not stored
 - Temp directories are cleaned up after each generation
-- All operations happen on Vercel serverless functions (ephemeral)
+- All operations happen on Cloudflare Workers (ephemeral, request-scoped)
 
 ---
 
