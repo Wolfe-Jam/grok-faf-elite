@@ -15,9 +15,14 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm run build
+      # Pinned wrangler, run directly. wrangler-action@v3 bundles wrangler
+      # 3.90.0, which returned "Authentication error [code: 10000]" on
+      # rust-faf-worker for a token that deployed fine on wrangler 4.
+      # This deploy had not run since 2026-08-15, so it was untested against
+      # whatever the action installs now. See
+      # PLANET-FAF/05-OPERATIONS/CI-DEPLOY-REQUIREMENTS.md
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: 1bf695f464907ab0615bc69e7b52e2bf
-          command: deploy
+        run: npx --yes wrangler@4.139.0 deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 1bf695f464907ab0615bc69e7b52e2bf
