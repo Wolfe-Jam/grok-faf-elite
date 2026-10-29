@@ -7,6 +7,8 @@
 
 **Make your AI happy.** 🏆
 
+⭐ [Star it on GitHub](https://github.com/Wolfe-Jam/grok-faf-elite): bookmarks it for you, helps other devs find it too.
+
 **AI thrives on facts — and `.faf` provides them.** Your AI does its best work when it understands your project, so **builder.faf.one** helps you create one small file — `project.faf` — that tells any AI what you're building, who it's for, and why. Hand it over, and your AI stops guessing.
 
 → **Try it: [builder.faf.one](https://builder.faf.one)**
